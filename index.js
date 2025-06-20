@@ -65,3 +65,10 @@ window.onscroll = function(){
     let progressHeight = (window.pageYOffset / totalHeight) * 100;
     progress.style.height = progressHeight + "%";
 }
+function loaderAnimation() {
+    var loader = document.querySelector("#loader")
+    setTimeout(function () {
+        loader.style.top = "-100%"
+    }, 4200)
+}
+loaderAnimation()
