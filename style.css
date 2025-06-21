@@ -101,7 +101,7 @@ ul { list-style: none; }
 }
 .logo { height:45px; }
 .nav {
-  display:flex; gap:1rem; align-items:center;
+  display:flex; gap:0.5rem; align-items:center;
 }
 .nav a {
   padding:0.5rem 0.75rem;
