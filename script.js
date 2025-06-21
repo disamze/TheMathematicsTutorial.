@@ -20,11 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ——— DYNAMIC NOTES & QUESTIONS ———
   const notes = [
-    { title: 'SST', file: 'notes/SST99days.pdf' },
+    { title: 'SST', file: 'SST99days.pdf' },
     // → add your own here
   ];
   const questions = [
-    { title: 'Maths Formulas For class 10', file: 'questions\MATH FORMULA CLASS 10TH.pdf' },
+    { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
     // → add yours here
   ];
   function renderList(items, containerId) {
