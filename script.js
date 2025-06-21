@@ -94,3 +94,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+    function toggleTheme() {
+      const html = document.body;
+      const current = html.getAttribute('data-theme');
+      const icon = document.querySelector('.theme-toggle i');
+      if (current === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        icon.className = 'bx bx-moon';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        icon.className = 'bx bx-sun';
+      }
+    }
+
+    // Update profile info for the logged-in user
+    const userProfile = document.getElementById('user-profile');
+    // Get actual user data from your auth logic
+    const userName = localStorage.getItem('userName') || 'Guest';
+    const userImage = localStorage.getItem('userImage') || 'https://via.placeholder.com/40';
+    userProfile.innerHTML = `<img src="${userImage}" alt="User"><span>${userName}</span>`;
