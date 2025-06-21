@@ -197,10 +197,47 @@
         display: none;
       }
     }
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border-left-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .fade-out {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease-out;
+    }
   </style>
 </head>
 
 <body>
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
   <div id="login-screen" class="login-screen">
     <div class="login-box">
       <div id="g_id_onload"
@@ -352,6 +389,37 @@
     }
 
     AOS.init();
+      window.addEventListener('load', () => {
+      const pre = document.getElementById('preloader');
+      if (!pre) return;
+      pre.classList.add('fade-out');
+      setTimeout(() => pre.remove(), 900);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Dynamic Notes & Questions
+      const notes = [
+        { title: 'SST', file: 'notes/SST99days.pdf' },
+        // Add more note entries if needed
+      ];
+      const questions = [
+        { title: 'Maths Formulas For Class 10', file: 'questions/MATH FORMULA CLASS 10TH.pdf' },
+        // Add more question entries if needed
+      ];
+
+      function renderList(items, containerId) {
+        const ul = document.getElementById(containerId);
+        if (!ul) return;
+        items.forEach(({ title, file }) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<span>${title}</span> <a href="${file}" target="_blank" rel="noopener">Download</a>`;
+          ul.appendChild(li);
+        });
+      }
+
+      renderList(notes, 'notes-list');
+      renderList(questions, 'questions-list');
+    });
   </script>
 </body>
 
