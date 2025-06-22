@@ -1,6 +1,14 @@
 /*———————— RESET & BASE ————————*/
 /* FULL SITE RESPONSIVE FIX */
-
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--card-bg);
+  box-shadow: 0 2px 8px var(--shadow);
+}
 html, body {
   max-width: 100%;
   overflow-x: hidden;
