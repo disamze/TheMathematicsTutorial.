@@ -423,76 +423,99 @@
 
   <!-- Inline Login Logic -->
 <script>
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
-      );
-      return JSON.parse(jsonPayload);
-    }
+  // Google Sign-In callback must be globally accessible
+  window.handleCredentialResponse = function (response) {
+    const data = parseJwt(response.credential);
+    if (!data || !data.name || !data.picture) return;
 
-    function showMainUI(data) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      document.getElementById('main-header').style.display = 'block';
+    // Save user data in sessionStorage
+    sessionStorage.setItem('user', JSON.stringify(data));
+    showMainUI(data);
+  };
 
-      const profileDiv = document.getElementById('profile-info');
-      if (profileDiv && data.picture && data.name) {
-        profileDiv.innerHTML = `
-          <img src="${data.picture}" alt="Profile Picture">
-          <span>${data.name}</span>
-        `;
-        profileDiv.style.display = 'flex';
-      }
-
-      document.getElementById('popup-name').textContent = data.name;
-      document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
-      document.getElementById('signout-btn').style.display = 'inline-block';
-    }
-
-    document.getElementById('signout-btn').addEventListener('click', () => {
-      sessionStorage.removeItem('user');
-      document.getElementById('popup-overlay').style.display = 'none';
-      document.getElementById('signout-popup').style.display = 'none';
-      document.getElementById('main-content').style.display = 'none';
-      document.getElementById('main-header').style.display = 'none';
-      document.getElementById('profile-info').style.display = 'none';
-      document.getElementById('login-screen').style.display = 'flex';
-      document.querySelector('.g_id_signin').style.display = 'block';
-      document.getElementById('welcome-message').textContent = '';
-      document.getElementById('signout-btn').style.display = 'none';
-    });
-
-    document.addEventListener('click', (e) => {
-  if (e.target.closest('#profile-info')) {
-    const data = JSON.parse(sessionStorage.getItem('user'));
-    if (data) {
-      document.getElementById('popup-name').textContent = data.name;
-      document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('popup-overlay').style.display = 'block';
-      document.getElementById('signout-popup').style.display = 'block';
-    }
+  // Parse JWT token to extract user info
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
   }
-});
 
-    document.getElementById('popup-overlay').addEventListener('click', () => {
-      document.getElementById('popup-overlay').style.display = 'none';
-      document.getElementById('signout-popup').style.display = 'none';
-    });
+  // Display UI after successful login or session restore
+  function showMainUI(data) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('main-header').style.display = 'block';
 
-    window.addEventListener('load', () => {
-      const pre = document.getElementById('preloader');
-      if (pre) {
-        pre.classList.add('fade-out');
-        setTimeout(() => pre.remove(), 900);
+    const profileDiv = document.getElementById('profile-info');
+    if (profileDiv && data.picture && data.name) {
+      profileDiv.innerHTML = `
+        <img src="${data.picture}" alt="Profile Picture">
+        <span>${data.name}</span>
+      `;
+      profileDiv.style.display = 'flex';
+    }
+
+    document.getElementById('popup-name').textContent = data.name;
+    document.getElementById('popup-pic').src = data.picture;
+    document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
+    document.getElementById('signout-btn').style.display = 'inline-block';
+  }
+
+  // Handle sign out
+  document.getElementById('signout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('user');
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-header').style.display = 'none';
+    document.getElementById('profile-info').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.querySelector('.g_id_signin').style.display = 'block';
+    document.getElementById('welcome-message').textContent = '';
+    document.getElementById('signout-btn').style.display = 'none';
+  });
+
+  // Handle profile click to show popup
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#profile-info')) {
+      const data = JSON.parse(sessionStorage.getItem('user'));
+      if (data) {
+        document.getElementById('popup-name').textContent = data.name;
+        document.getElementById('popup-pic').src = data.picture;
+        document.getElementById('popup-overlay').style.display = 'block';
+        document.getElementById('signout-popup').style.display = 'block';
       }
-      const userData = sessionStorage.getItem('user');
-      if (userData) {
-        const data = JSON.parse(userData);
-        showMainUI(data);
-      }
-    });
-  </script>
+    }
+  });
+
+  // Hide popup on outside click
+  document.getElementById('popup-overlay').addEventListener('click', () => {
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
+  });
+
+  // Preloader and session restore
+  window.addEventListener('load', () => {
+    const pre = document.getElementById('preloader');
+    if (pre) {
+      pre.classList.add('fade-out');
+      setTimeout(() => pre.remove(), 900);
+    }
+
+    const userData = sessionStorage.getItem('user');
+    if (userData) {
+      const data = JSON.parse(userData);
+      showMainUI(data);
+    }
+  });
+</script>
+
 
 
   <!-- External Scripts -->
