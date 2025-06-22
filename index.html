@@ -345,9 +345,10 @@
     function handleCredentialResponse(response) {
       const data = parseJwt(response.credential);
 
-      // Hide login, show main
+      // Hide login, show main and navbar
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-content').style.display = 'block';
+      document.getElementById('main-header').style.display = 'block';
 
       // Navbar profile
       document.getElementById('profile-info').innerHTML = `
@@ -383,6 +384,7 @@
       pre.classList.add('fade-out');
       setTimeout(() => pre.remove(), 900);
     });
+    
   </script>
 
   <!-- External Scripts -->
