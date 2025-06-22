@@ -17,6 +17,37 @@
   <style>
     :root { --header-height: 80px; }
     html, body { font-size: 18px; }
+
+    #login-screen {
+      background: linear-gradient(135deg, #345995, #f76c6c);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
     
         .login-container {
             display: flex;
@@ -93,7 +124,7 @@
   </div>
 
   <!-- Header / Navbar -->
-  <header class="header">
+  <header class="header" id="main-header" style="display: none;">
     <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
       <img src="logo.png" alt="Logo" class="logo" />
       <nav class="nav">
@@ -105,7 +136,7 @@
         <a href="#testimonials">Testimonials</a>
         <a href="#contact" class="btn small">Contact</a>
       </nav>
-      <div class="profile-info" id="profile-info" style="display: none;"></div>
+      <div class="profile-info" id="profile-info"></div>
       <button class="theme-toggle" aria-label="Toggle theme" aria-expanded="false">
         <i class="bx bx-moon"></i>
       </button>
@@ -191,7 +222,7 @@
         </div>
       </section>
 
-     <section id="skills" class="skills">
+      <section id="skills" class="skills">
             <div class="container">
                 <h2>Core Competencies</h2>
                 <ul class="skills-list">
@@ -329,7 +360,6 @@
                 </form>
             </div>
         </section>
-      <!-- unchanged -->
     </main>
 
     <footer class="footer">
