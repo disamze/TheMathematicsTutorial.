@@ -223,23 +223,24 @@ ul { list-style: none; }
 
 /*———————— TESTIMONIALS ————————*/
 .testimonial-grid {
-  display: block;
-  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 1rem 0;
+  gap: 1rem;
+  padding: 1rem;
   width: 100%;
   cursor: grab;
-  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   user-select: none;
 }
 
 .testimonial-card {
-  display: inline-block;
-  vertical-align: top;
-  width: 300px;
-  margin-right: 1rem;
+  flex: 0 0 auto;
+  width: 280px;
+  scroll-snap-align: start;
   background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 6px;
