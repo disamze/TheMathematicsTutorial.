@@ -81,7 +81,7 @@ ul { list-style: none; }
 .container {
   width: min(90%,1000px);
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 1.5rem 0;
 }
 .grid-3 {
   display: grid;
