@@ -421,16 +421,7 @@
   </div>
 
   <!-- Inline Login Logic -->
- <script>
-    window.handleCredentialResponse = function (response) {
-      const data = parseJwt(response.credential);
-      if (!data || !data.name || !data.picture) return;
-      sessionStorage.setItem('user', JSON.stringify(data));
-      showMainUI(data);
-    };
-
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
+<script>
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(
         atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
@@ -471,8 +462,36 @@
       document.getElementById('signout-btn').style.display = 'none';
     });
 
-  </script>
+    document.addEventListener('click', (e) => {
+  if (e.target.closest('#profile-info')) {
+    const data = JSON.parse(sessionStorage.getItem('user'));
+    if (data) {
+      document.getElementById('popup-name').textContent = data.name;
+      document.getElementById('popup-pic').src = data.picture;
+      document.getElementById('popup-overlay').style.display = 'block';
+      document.getElementById('signout-popup').style.display = 'block';
+    }
+  }
+});
 
+    document.getElementById('popup-overlay').addEventListener('click', () => {
+      document.getElementById('popup-overlay').style.display = 'none';
+      document.getElementById('signout-popup').style.display = 'none';
+    });
+
+    window.addEventListener('load', () => {
+      const pre = document.getElementById('preloader');
+      if (pre) {
+        pre.classList.add('fade-out');
+        setTimeout(() => pre.remove(), 900);
+      }
+      const userData = sessionStorage.getItem('user');
+      if (userData) {
+        const data = JSON.parse(userData);
+        showMainUI(data);
+      }
+    });
+  </script>
 
 
   <!-- External Scripts -->
