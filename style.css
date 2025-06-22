@@ -371,7 +371,7 @@ ul { list-style: none; }
 .container {
   width: min(90%, 1200px);
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1.3rem 1rem;
   overflow-x: hidden;
 }
 
