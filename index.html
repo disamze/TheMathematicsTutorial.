@@ -373,24 +373,25 @@
   <!-- Inline Login Logic -->
   <script>
     function handleCredentialResponse(response) {
-      const data = parseJwt(response.credential);
+  const data = parseJwt(response.credential);
 
-      // Hide login, show main and navbar
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      document.getElementById('main-header').style.display = 'block';
+  // Hide login, show main and navbar
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  document.getElementById('main-header').style.display = 'block';
 
-      // Navbar profile
-      document.getElementById('profile-info').innerHTML = `
-        <img src="${data.picture}" alt="Profile">
-        <span>${data.name}</span>
-      `;
-      document.getElementById('profile-info').style.display = 'flex';
-
-      // Optional welcome message
-      document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
-      document.getElementById('signout-btn').style.display = 'inline-block';
-    }
+  // Show navbar profile after slight delay to ensure element is visible
+  setTimeout(() => {
+    const profileDiv = document.getElementById('profile-info');
+    profileDiv.innerHTML = `
+      <img src="${data.picture}" alt="Profile">
+      <span>${data.name}</span>
+    `;
+    profileDiv.style.display = 'flex';
+  }, 100); // 100ms delay
+}
+      
+  
 
     function parseJwt(token) {
       const base64Url = token.split('.')[1];
