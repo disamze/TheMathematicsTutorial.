@@ -119,6 +119,37 @@
         .profile-info span {
             font-weight: 600;
         }
+    
+    /* Signout popup */
+    #signout-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      z-index: 3000;
+      text-align: center;
+    }
+    #signout-popup img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+    }
+    #signout-popup .signout-button {
+      margin-top: 1rem;
+    }
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2999;
+    }
 
   </style>
 </head>
@@ -151,7 +182,13 @@
         <a href="#testimonials">Testimonials</a>
         <a href="#contact" class="btn small">Contact</a>
       </nav>
-      <div class="profile-info" id="profile-info"></div>
+      $1
+      <div id="popup-overlay"></div>
+      <div id="signout-popup">
+        <img id="popup-pic" src="" alt="Profile Picture">
+        <div id="popup-name"></div>
+        <button class="signout-button" id="signout-btn">Sign Out</button>
+      </div></div>
       <button class="theme-toggle" aria-label="Toggle theme" aria-expanded="false">
         <i class="bx bx-moon"></i>
       </button>
@@ -423,12 +460,22 @@
       profileDiv.style.display = 'flex';
     }
 
+    // Fill popup
+    document.getElementById('popup-name').textContent = data.name;
+    document.getElementById('popup-pic').src = data.picture;
+
     document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
     document.getElementById('signout-btn').style.display = 'inline-block';
   }
 
   document.getElementById('signout-btn').addEventListener('click', () => {
     sessionStorage.removeItem('user');
+
+    // Hide popup
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
+
+    // Reset UI
     document.getElementById('main-content').style.display = 'none';
     document.getElementById('main-header').style.display = 'none';
     document.getElementById('profile-info').style.display = 'none';
@@ -436,6 +483,23 @@
     document.querySelector('.g_id_signin').style.display = 'block';
     document.getElementById('welcome-message').textContent = '';
     document.getElementById('signout-btn').style.display = 'none';
+  });
+
+  // Click profile to open signout popup
+  document.getElementById('profile-info').addEventListener('click', () => {
+    const data = JSON.parse(sessionStorage.getItem('user'));
+    if (data) {
+      document.getElementById('popup-name').textContent = data.name;
+      document.getElementById('popup-pic').src = data.picture;
+      document.getElementById('popup-overlay').style.display = 'block';
+      document.getElementById('signout-popup').style.display = 'block';
+    }
+  });
+
+  // Click outside to close popup
+  document.getElementById('popup-overlay').addEventListener('click', () => {
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
   });
 
   // Preloader and session check
@@ -454,6 +518,7 @@
     }
   });
 </script>
+
 
 
   <!-- External Scripts -->
