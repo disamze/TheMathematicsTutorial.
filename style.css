@@ -240,11 +240,10 @@ ul { list-style: none; }
 
 /*———————— TESTIMONIALS ————————*/
 .testimonial-grid {
-  display: flex;
-  flex-wrap: nowrap;
+  display: block;
+  white-space: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  gap: 1rem;
   padding: 1rem 0;
   width: 100%;
   cursor: grab;
@@ -252,10 +251,14 @@ ul { list-style: none; }
   -webkit-overflow-scrolling: touch;
   user-select: none;
 }
-
+.testimonial-grid:active {
+  cursor: grabbing;
+}
 .testimonial-card {
-  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: top;
   width: 280px;
+  margin-right: 1rem;
   scroll-snap-align: start;
   background: var(--card-bg);
   padding: 1.5rem;
@@ -268,9 +271,7 @@ ul { list-style: none; }
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-.testimonial-grid:active {
-  cursor: grabbing;
-}
+
 
 
 
