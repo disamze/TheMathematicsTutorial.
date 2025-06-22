@@ -170,7 +170,7 @@
   </div>
 
   <!-- Header / Navbar -->
-  <header class="header" id="main-header" style="display: none;">
+   <header class="header" id="main-header" style="display: none;">
     <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
       <img src="logo.png" alt="Logo" class="logo" />
       <nav class="nav">
@@ -182,13 +182,13 @@
         <a href="#testimonials">Testimonials</a>
         <a href="#contact" class="btn small">Contact</a>
       </nav>
-      $1
+      <div class="profile-info" id="profile-info"></div>
       <div id="popup-overlay"></div>
       <div id="signout-popup">
         <img id="popup-pic" src="" alt="Profile Picture">
         <div id="popup-name"></div>
         <button class="signout-button" id="signout-btn">Sign Out</button>
-      </div></div>
+      </div>
       <button class="theme-toggle" aria-label="Toggle theme" aria-expanded="false">
         <i class="bx bx-moon"></i>
       </button>
@@ -204,13 +204,10 @@
       <div id="g_id_onload"
         data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
         data-callback="handleCredentialResponse"
-        data-auto_prompt="false">
-      </div>
+        data-auto_prompt="false"></div>
       <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
-        data-text="signin_with" data-size="large">
-      </div>
+        data-text="signin_with" data-size="large"></div>
       <div class="welcome-message" id="welcome-message"></div>
-      <button class="signout-button" id="signout-btn" style="display:none;">Sign Out</button>
     </div>
   </section>
 
@@ -423,101 +420,57 @@
   </div>
 
   <!-- Inline Login Logic -->
-  <script>
-  // Global Google login callback
-  window.handleCredentialResponse = function (response) {
-    const data = parseJwt(response.credential);
-    if (!data || !data.name || !data.picture) return;
+ <script>
+    window.handleCredentialResponse = function (response) {
+      const data = parseJwt(response.credential);
+      if (!data || !data.name || !data.picture) return;
+      sessionStorage.setItem('user', JSON.stringify(data));
+      showMainUI(data);
+    };
 
-    // Save session
-    sessionStorage.setItem('user', JSON.stringify(data));
-    showMainUI(data);
-  };
-
-  function parseJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  }
-
-  function showMainUI(data) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-    document.getElementById('main-header').style.display = 'block';
-
-    const profileDiv = document.getElementById('profile-info');
-    if (data.picture && data.name) {
-      profileDiv.innerHTML = `
-        <img src="${data.picture}" alt="Profile Picture">
-        <span>${data.name}</span>
-      `;
-      profileDiv.style.display = 'flex';
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+      );
+      return JSON.parse(jsonPayload);
     }
 
-    // Fill popup
-    document.getElementById('popup-name').textContent = data.name;
-    document.getElementById('popup-pic').src = data.picture;
+    function showMainUI(data) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('main-header').style.display = 'block';
 
-    document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
-    document.getElementById('signout-btn').style.display = 'inline-block';
-  }
+      const profileDiv = document.getElementById('profile-info');
+      if (profileDiv && data.picture && data.name) {
+        profileDiv.innerHTML = `
+          <img src="${data.picture}" alt="Profile Picture">
+          <span>${data.name}</span>
+        `;
+        profileDiv.style.display = 'flex';
+      }
 
-  document.getElementById('signout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem('user');
-
-    // Hide popup
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
-
-    // Reset UI
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
-    document.getElementById('profile-info').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
-    document.querySelector('.g_id_signin').style.display = 'block';
-    document.getElementById('welcome-message').textContent = '';
-    document.getElementById('signout-btn').style.display = 'none';
-  });
-
-  // Click profile to open signout popup
-  document.getElementById('profile-info').addEventListener('click', () => {
-    const data = JSON.parse(sessionStorage.getItem('user'));
-    if (data) {
       document.getElementById('popup-name').textContent = data.name;
       document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('popup-overlay').style.display = 'block';
-      document.getElementById('signout-popup').style.display = 'block';
-    }
-  });
-
-  // Click outside to close popup
-  document.getElementById('popup-overlay').addEventListener('click', () => {
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
-  });
-
-  // Preloader and session check
-  window.addEventListener('load', () => {
-    const pre = document.getElementById('preloader');
-    if (pre) {
-      pre.classList.add('fade-out');
-      setTimeout(() => pre.remove(), 900);
+      document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
+      document.getElementById('signout-btn').style.display = 'inline-block';
     }
 
-    // Restore session
-    const userData = sessionStorage.getItem('user');
-    if (userData) {
-      const data = JSON.parse(userData);
-      showMainUI(data);
-    }
-  });
-</script>
+    document.getElementById('signout-btn').addEventListener('click', () => {
+      sessionStorage.removeItem('user');
+      document.getElementById('popup-overlay').style.display = 'none';
+      document.getElementById('signout-popup').style.display = 'none';
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('main-header').style.display = 'none';
+      document.getElementById('profile-info').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+      document.querySelector('.g_id_signin').style.display = 'block';
+      document.getElementById('welcome-message').textContent = '';
+      document.getElementById('signout-btn').style.display = 'none';
+    });
+
+  </script>
 
 
 
