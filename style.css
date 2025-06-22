@@ -235,10 +235,6 @@ ul { list-style: none; }
   user-select: none;
 }
 
-.testimonial-grid:active {
-  cursor: grabbing;
-}
-
 .testimonial-card {
   display: inline-block;
   vertical-align: top;
@@ -254,6 +250,11 @@ ul { list-style: none; }
   white-space: normal;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+
+.testimonial-grid:active {
+  cursor: grabbing;
 }
 
 
