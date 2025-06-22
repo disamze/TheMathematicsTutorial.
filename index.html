@@ -331,60 +331,74 @@
 
   <!-- Inline Login Logic -->
   <script>
-    function handleCredentialResponse(response) {
-  const data = parseJwt(response.credential);
+  // Global Google login callback
+  window.handleCredentialResponse = function (response) {
+    const data = parseJwt(response.credential);
+    if (!data || !data.name || !data.picture) return;
 
-  // Save user session in sessionStorage
-  sessionStorage.setItem('user', JSON.stringify(data));
+    // Save session
+    sessionStorage.setItem('user', JSON.stringify(data));
+    showMainUI(data);
+  };
 
-  showMainUI(data);
-}" alt="Profile">
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  }
+
+  function showMainUI(data) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('main-header').style.display = 'block';
+
+    const profileDiv = document.getElementById('profile-info');
+    if (data.picture && data.name) {
+      profileDiv.innerHTML = `
+        <img src="${data.picture}" alt="Profile Picture">
         <span>${data.name}</span>
       `;
-      document.getElementById('profile-info').style.display = 'flex';
-
-      // Optional welcome message
-      document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
-      document.getElementById('signout-btn').style.display = 'inline-block';
+      profileDiv.style.display = 'flex';
     }
 
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64)
-        .split('')
-        .map(c => '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-      );
-      return JSON.parse(jsonPayload);
-    }
-
-    document.getElementById('signout-btn').addEventListener('click', () => {
-      // Clear session and hide UI
-      sessionStorage.removeItem('user');
-      document.getElementById('main-content').style.display = 'none';
-      document.getElementById('main-header').style.display = 'none';
-      document.getElementById('profile-info').style.display = 'none';
-      document.getElementById('login-screen').style.display = 'flex';
-      document.querySelector('.g_id_signin').style.display = 'block';
-      document.getElementById('welcome-message').textContent = '';
-      document.getElementById('signout-btn').style.display = 'none';
-    });
-
-    // Preloader fade-out
-    window.addEventListener('load', () => {
-  // Check sessionStorage for user
-  const userData = sessionStorage.getItem('user');
-  if (userData) {
-    const data = JSON.parse(userData);
-    showMainUI(data);
+    document.getElementById('welcome-message').textContent = `Welcome, ${data.name}!`;
+    document.getElementById('signout-btn').style.display = 'inline-block';
   }
-      const pre = document.getElementById('preloader');
-      if (!pre) return;
+
+  document.getElementById('signout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('user');
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-header').style.display = 'none';
+    document.getElementById('profile-info').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.querySelector('.g_id_signin').style.display = 'block';
+    document.getElementById('welcome-message').textContent = '';
+    document.getElementById('signout-btn').style.display = 'none';
+  });
+
+  // Preloader and session check
+  window.addEventListener('load', () => {
+    const pre = document.getElementById('preloader');
+    if (pre) {
       pre.classList.add('fade-out');
       setTimeout(() => pre.remove(), 900);
-    });
-  </script>
+    }
+
+    // Restore session
+    const userData = sessionStorage.getItem('user');
+    if (userData) {
+      const data = JSON.parse(userData);
+      showMainUI(data);
+    }
+  });
+</script>
+
 
   <!-- External Scripts -->
   <script src="https://unpkg.com/scrollreveal"></script>
