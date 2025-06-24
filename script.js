@@ -2,7 +2,7 @@
 let scene, camera, renderer, particles;
 let preloaderCanvas;
 let animationFrameId; // To store the requestAnimationFrame ID
-let particleOrbitRadius = 0.5;
+let particleOrbitRadius = 0.8; // Slightly larger radius for spread
 let particleSpeed = 0.005;
 
 // Moved onLoaderCanvasResize function definition up to resolve ReferenceError
@@ -46,10 +46,12 @@ function initThreeJsLoader() {
   renderer.setClearColor(0x000000, 0); // Make background transparent
 
   // Particle System
-  const particleCount = 2000; // More particles for a denser effect
+  const particleCount = 3000; // Increased particle count for denser effect
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
   const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
+  const sizes = new Float32Array(particleCount); // Individual size for each particle
+  const opacities = new Float32Array(particleCount); // Individual opacity for each particle
 
   for (let i = 0; i < particleCount; i++) {
     // Random positions within a sphere
@@ -61,23 +63,51 @@ function initThreeJsLoader() {
     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta); // y
     positions[i * 3 + 2] = r * Math.cos(phi); // z
 
-    // Random colors (subtle variations)
-    colors[i * 3] = Math.random(); // r
-    colors[i * 3 + 1] = Math.random(); // g
-    colors[i * 3 + 2] = Math.random(); // b
+    // Brighter, more contrasting colors (e.g., blues, purples, whites)
+    colors[i * 3] = 0.5 + Math.random() * 0.5; // Red component (0.5 to 1.0)
+    colors[i * 3 + 1] = 0.5 + Math.random() * 0.5; // Green component (0.5 to 1.0)
+    colors[i * 3 + 2] = 0.8 + Math.random() * 0.2; // Blue component (0.8 to 1.0) - leaning towards blue/white
+
+    sizes[i] = 0.05 + Math.random() * 0.08; // Larger, more varied sizes
+    opacities[i] = 0.6 + Math.random() * 0.4; // Higher base opacity
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
+  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
 
-  // Using a basic PointsMaterial since you don't have a custom texture
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.05, // Default size for particles
-    vertexColors: true, // Use colors from geometry
-    transparent: true,
-    opacity: 0.8, // Base opacity for all particles
-    blending: THREE.AdditiveBlending, // For a glowing effect
-    depthWrite: false // Important for transparent particles to render correctly
+  // Re-introducing ShaderMaterial for better visual control without external texture
+  const particlesMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      // No texture needed, just a placeholder if you want to add one later
+    },
+    vertexShader: `
+      attribute float size;
+      attribute float opacity;
+      attribute vec3 color;
+      varying vec3 vColor;
+      varying float vOpacity;
+      void main() {
+        vColor = color;
+        vOpacity = opacity;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = size * (300.0 / -mvPosition.z); // Scale size based on distance
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      varying float vOpacity;
+      void main() {
+        float r = distance(gl_PointCoord, vec2(0.5)); // Distance from center of point
+        float alpha = 1.0 - r * 2.0; // Fade from center to edge (circular)
+        gl_FragColor = vec4(vColor, vOpacity * alpha); // Apply color and faded opacity
+      }
+    `,
+    blending: THREE.AdditiveBlending, // For a glowing, overlapping effect
+    depthTest: false, // Important for transparent particles to render correctly
+    transparent: true
   });
 
   particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -389,7 +419,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ———
-  const revealElements = document.querySelectorAll('.reveal-item');
+  // Select all elements that should be revealed
+  const revealElements = document.querySelectorAll(
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message'
+  );
 
   const observerOptions = {
     root: null, // Use the viewport as the root
@@ -407,8 +440,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }, observerOptions);
 
   revealElements.forEach(element => {
+    // Add 'reveal-item' class to all elements that should be observed
+    // This is important for the CSS to apply initial hidden state and transitions
+    element.classList.add('reveal-item');
     observer.observe(element);
   });
+
 
   // Close nav when a nav link is clicked
   const navLinks = document.querySelectorAll('.nav a');
