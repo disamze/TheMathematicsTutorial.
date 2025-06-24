@@ -69,15 +69,13 @@ ul {
   z-index: 2000;
 }
 
-/* Removed .loader-container, .loader, .loader-face styles as Three.js handles rendering */
 #preloader-canvas {
   display: block; /* Ensure canvas is block level */
-  width: 100px; /* Set a fixed size for the loader */
-  height: 100px;
+  width: 150px; /* Slightly larger for better animation visibility */
+  height: 150px;
   max-width: 80vw; /* Responsive sizing */
   max-height: 80vh;
 }
-
 
 #preloader.fade-out {
   opacity: 0;
@@ -307,40 +305,6 @@ section {
   box-shadow: 0 6px 16px var(--shadow);
 }
 
-/* Profile Info in Header (re-defined for clarity, but mostly same as above) */
-/* This block is redundant if defined above, but kept for context if you prefer it separate */
-/*
-.profile-info {
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-  margin-left: auto;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: var(--border-color);
-  transition: background 0.3s;
-}
-
-.profile-info:hover {
-  background: var(--primary);
-  color: var(--card-bg);
-}
-
-.profile-info img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary);
-}
-
-.profile-info span {
-  font-weight: 600;
-  font-family: 'Poppins', sans-serif;
-}
-*/
-
 /* Signout Popup */
 #popup-overlay {
   display: none;
@@ -516,7 +480,6 @@ section {
   width: 100%;
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
-  /* animation: fadeInUp 1s ease-out both; REMOVED FOR SCROLLREVEAL */
 }
 
 /*———————— ABOUT ————————*/
@@ -1178,4 +1141,51 @@ section {
     bottom: 15px;
     right: 15px;
   }
+}
+
+/* Locomotive Scroll specific styles */
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-dragging {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.has-scroll-smooth body {
+  overflow: hidden;
+}
+
+.c-scrollbar {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 11px;
+  height: 100%;
+  transform-origin: center right;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+.c-scrollbar:hover {
+  transform: scaleX(1.45);
+}
+.c-scrollbar:hover, .has-scroll-dragging .c-scrollbar, .has-scroll-scrolling .c-scrollbar {
+  opacity: 1;
+}
+.c-scrollbar_thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--primary);
+  opacity: 0.5;
+  width: 7px;
+  border-radius: 10px;
+  margin: 2px;
+  cursor: grab;
+}
+.has-scroll-dragging .c-scrollbar_thumb {
+  cursor: grabbing;
 }
