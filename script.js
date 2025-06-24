@@ -74,15 +74,16 @@ function initThreeJsLoader() {
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
-  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
+  // Removed custom attributes for size and opacity as they are not used by PointsMaterial directly
+  // If you want to use varying sizes/opacities per particle, you'd need a ShaderMaterial
+  // For simplicity without a custom texture, we'll stick to PointsMaterial and its global size/opacity.
 
   // Using a basic PointsMaterial since you don't have a custom texture
   const particlesMaterial = new THREE.PointsMaterial({
     size: 0.05, // Default size for particles
     vertexColors: true, // Use colors from geometry
     transparent: true,
-    opacity: 0.8, // Base opacity
+    opacity: 0.8, // Base opacity for all particles
     blending: THREE.AdditiveBlending, // For a glowing effect
     depthWrite: false // Important for transparent particles to render correctly
   });
