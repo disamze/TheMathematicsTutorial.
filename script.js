@@ -1,6 +1,7 @@
 // ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
 let scene, camera, renderer, object;
 let preloaderCanvas;
+let animationFrameId; // To store the requestAnimationFrame ID
 
 function initThreeJsLoader() {
   preloaderCanvas = document.getElementById('preloader-canvas');
@@ -9,16 +10,20 @@ function initThreeJsLoader() {
     return;
   }
 
+  // Set canvas dimensions explicitly for Three.js
+  preloaderCanvas.width = 100;
+  preloaderCanvas.height = 100;
+
   // Scene
   scene = new THREE.Scene();
 
   // Camera
-  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.clientWidth / preloaderCanvas.clientHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
   camera.position.z = 2;
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
-  renderer.setSize(preloaderCanvas.clientWidth, preloaderCanvas.clientHeight);
+  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   // Geometry (e.g., DodecahedronGeometry for a more complex shape)
@@ -44,38 +49,45 @@ function initThreeJsLoader() {
   directionalLight2.position.set(-1, -1, -1).normalize();
   scene.add(directionalLight2);
 
-  // Handle window resize
-  window.addEventListener('resize', onWindowResize, false);
+  // Handle window resize for the loader canvas
+  window.addEventListener('resize', onLoaderCanvasResize, false);
 }
 
-function onWindowResize() {
-  if (preloaderCanvas) {
-    camera.aspect = preloaderCanvas.clientWidth / preloaderCanvas.clientHeight;
+function onLoaderCanvasResize() {
+  if (preloaderCanvas && camera && renderer) {
+    // Update canvas dimensions based on its CSS size
+    const rect = preloaderCanvas.getBoundingClientRect();
+    preloaderCanvas.width = rect.width;
+    preloaderCanvas.height = rect.height;
+
+    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
     camera.updateProjectionMatrix();
-    renderer.setSize(preloaderCanvas.clientWidth, preloaderCanvas.clientHeight);
+    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
   }
 }
 
+
 function animateThreeJsLoader() {
-  requestAnimationFrame(animateThreeJsLoader);
+  animationFrameId = requestAnimationFrame(animateThreeJsLoader);
 
   if (object) {
     object.rotation.x += 0.005;
     object.rotation.y += 0.008;
   }
 
-  if (renderer) {
+  if (renderer && scene && camera) {
     renderer.render(scene, camera);
   }
 }
 
 window.addEventListener('load', () => {
   // Initialize Three.js loader
-  if (typeof THREE !== 'undefined') { // Check if Three.js is loaded
+  // Check if THREE is defined (meaning the script loaded)
+  if (typeof THREE !== 'undefined') {
     initThreeJsLoader();
-    animateThreeJsLoader();
+    animateThreeJsLoader(); // Start the animation loop
   } else {
-    console.warn("Three.js not loaded. Falling back to basic preloader fade-out.");
+    console.warn("Three.js not loaded. Preloader will not show 3D animation.");
   }
 
   const pre = document.getElementById('preloader');
@@ -83,6 +95,24 @@ window.addEventListener('load', () => {
     // Give a small delay for the Three.js animation to be visible
     setTimeout(() => {
       pre.classList.add('fade-out');
+      // Stop the Three.js animation when fading out
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      // Clean up Three.js resources (optional but good practice)
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+        renderer.domElement = null;
+        renderer = null;
+      }
+      scene = null;
+      camera = null;
+      object = null;
+      preloaderCanvas = null;
+      window.removeEventListener('resize', onLoaderCanvasResize);
+
+
       setTimeout(() => pre.remove(), 900);
     }, 1500); // Show loader for at least 1.5 seconds
   }
@@ -313,10 +343,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
       interval: 150,
       origin: 'bottom',
-      mobile: true
+      mobile: true,
+      // Crucial: Disable ScrollReveal's default transform/opacity management
+      // for elements that have their own CSS transitions/animations.
+      // This prevents conflicts.
+      beforeReveal: (el) => {
+        el.style.opacity = ''; // Clear opacity set by ScrollReveal
+        el.style.transform = ''; // Clear transform set by ScrollReveal
+      },
+      afterReveal: (el) => {
+        el.style.opacity = ''; // Ensure opacity is reset after reveal
+        el.style.transform = ''; // Ensure transform is reset after reveal
+      }
     };
 
-    // Elements that do NOT have conflicting CSS transforms/animations
+    // Apply ScrollReveal ONLY to elements that don't have conflicting CSS transforms/animations
+    // or where ScrollReveal's animation is desired as the primary entrance effect.
     ScrollReveal().reveal(
       [
         '.hero-info',
@@ -324,8 +366,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         '.logo',
         '.nav a',
         '.footer p',
-        // Removed: .info-cards .card, .item-list li, .testimonial-card, .contact-form, .theme-toggle, .back-top
-        // These have custom hover/animation effects that ScrollReveal would interfere with.
+        '.about-info', // Ensure about-info is revealed
+        '.hero-img img', // Re-added, assuming its CSS animation is simple or removed
+        '.about-grid img', // Re-added, assuming its CSS animation is simple or removed
+        '.login-box', // For the login screen entrance
+        '.welcome-message', // For the welcome message
       ],
       defaultRevealOptions
     );
@@ -337,31 +382,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       easing: 'ease-out',
       origin: 'top',
       interval: 0,
-      mobile: true
+      mobile: true,
+      beforeReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; },
+      afterReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; }
     });
 
-    // Specific reveal for hero image (re-added if it doesn't have conflicting CSS animation)
-    // If hero-img img has a CSS animation, remove it from here.
-    ScrollReveal().reveal('.hero-img img', {
-      distance: '80px',
-      duration: 1200,
-      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      origin: 'right',
-      mobile: true
-    });
-
-    // Specific reveal for about image (re-added if it doesn't have conflicting CSS animation)
-    // If about-grid img has a CSS animation, remove it from here.
-    ScrollReveal().reveal('.about-grid img', {
-      distance: '80px',
-      duration: 1200,
-      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      origin: 'left',
-      mobile: true
-    });
-
-    // Ensure about-info is revealed
-    ScrollReveal().reveal('.about-info', defaultRevealOptions);
+    // Elements with custom hover/animation effects that should NOT be managed by ScrollReveal:
+    // - .info-cards .card (has translateY and boxShadow on hover)
+    // - .item-list li (has rotateY, rotateX, translateY, boxShadow on hover)
+    // - .testimonial-card (has translateY and scale on hover)
+    // - .contact-form .btn (has translateY and boxShadow on hover)
+    // - .theme-toggle (has translateY and boxShadow on hover)
+    // - .back-top (has translateY on hover)
+    // - .hero-info .btn (has translateY and boxShadow on hover)
+    // These elements will rely solely on their CSS transitions for interactivity.
   }
 
   // Close nav when a nav link is clicked
