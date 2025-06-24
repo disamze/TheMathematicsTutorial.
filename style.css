@@ -23,8 +23,8 @@ body {
   background: var(--bg);
   color: var(--fg);
   line-height: 1.6;
-  overflow-x: hidden;
-  position: relative;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
 }
 
 a {
@@ -43,9 +43,8 @@ ul {
   --primary: #007bff; /* Vibrant blue for primary actions/elements */
   --accent: #28a745; /* Green for accents/success */
   --card-bg: #ffffff; /* White card background */
-  --shadow: rgba(0, 0, 0, 0.08); /* Softer shadow for minimalism */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
   --border-color: #e9ecef; /* Light border color */
-  --preloader-bg: #e0e0e0; /* NEW: Light grey for preloader background */
   transition: background 0.3s, color 0.3s;
 }
 
@@ -55,87 +54,28 @@ ul {
   --primary: #66b3ff; /* Lighter blue for primary */
   --accent: #20c997; /* Teal for accents */
   --card-bg: #343a40; /* Dark card background */
-  --shadow: rgba(0, 0, 0, 0.4); /* Darker shadow */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
   --border-color: #495057; /* Dark border color */
-  --preloader-bg: #333333; /* NEW: Dark grey for preloader background */
 }
 
 /*———————— PRELOADER ————————*/
 #preloader {
   position: fixed;
   inset: 0;
-  background: var(--preloader-bg); /* Changed to use the new variable */
+  /* Changed preloader background to a dark color for contrast */
+  background: #1a1a2e; /* Dark blue/purple for contrast */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
 }
 
-.loader-container {
-  perspective: 1000px; /* Increased perspective for better 3D effect */
-}
-
-.loader {
-  position: relative;
-  width: 80px; /* Larger loader */
-  height: 80px;
-  transform-style: preserve-3d;
-  animation: cubeRotateComplex 3s infinite ease-in-out; /* More complex animation */
-}
-
-.loader-face {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  background: var(--primary);
-  border: 2px solid var(--accent);
-  opacity: 0.8; /* Slightly more transparent */
-  box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); /* Subtle glow */
-}
-
-/* Outer cube faces */
-.front { transform: rotateY(0deg) translateZ(40px); }
-.back { transform: rotateY(180deg) translateZ(40px); }
-.right { transform: rotateY(90deg) translateZ(40px); }
-.left { transform: rotateY(-90deg) translateZ(40px); }
-.top { transform: rotateX(90deg) translateZ(40px); }
-.bottom { transform: rotateX(-90deg) translateZ(40px); }
-
-/* Inner cube faces (smaller, slightly different color/opacity) */
-.inner-front, .inner-back, .inner-right, .inner-left, .inner-top, .inner-bottom {
-  position: absolute;
-  width: 40px; /* Half size */
-  height: 40px;
-  background: var(--accent); /* Different color */
-  border: 1px solid var(--primary);
-  opacity: 0.7;
-  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
-}
-
-.inner-front { transform: rotateY(0deg) translateZ(20px); }
-.inner-back { transform: rotateY(180deg) translateZ(20px); }
-.inner-right { transform: rotateY(90deg) translateZ(20px); }
-.inner-left { transform: rotateY(-90deg) translateZ(20px); }
-.inner-top { transform: rotateX(90deg) translateZ(20px); }
-.inner-bottom { transform: rotateX(-90deg) translateZ(20px); }
-
-
-@keyframes cubeRotateComplex {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
-  }
-  25% {
-    transform: rotateX(90deg) rotateY(45deg) rotateZ(30deg) scale(1.05);
-  }
-  50% {
-    transform: rotateX(180deg) rotateY(90deg) rotateZ(60deg) scale(1);
-  }
-  75% {
-    transform: rotateX(270deg) rotateY(135deg) rotateZ(90deg) scale(0.95);
-  }
-  100% {
-    transform: rotateX(360deg) rotateY(180deg) rotateZ(120deg) scale(1);
-  }
+#preloader-canvas {
+  display: block; /* Ensure canvas is block level */
+  width: 200px; /* Increased size for more impact */
+  height: 200px;
+  max-width: 90vw; /* Responsive sizing */
+  max-height: 90vh;
 }
 
 #preloader.fade-out {
@@ -146,13 +86,14 @@ ul {
 
 /*———————— CONTAINERS & GRID ————————*/
 .container {
-  width: min(100% - 2rem, 1100px);
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
 }
 
+/* Ensure sections don't cause overflow */
 section {
-  padding: 0 1rem;
+  padding: 0 1rem; /* Add horizontal padding to sections */
 }
 
 .grid-3 {
@@ -162,70 +103,72 @@ section {
 }
 
 /*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
 .header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  background: var(--card-bg);
-  box-shadow: 0 2px 10px var(--shadow); /* Softer shadow */
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
   z-index: 1000;
-  padding: 0.8rem 0;
-  transition: background 0.3s, box-shadow 0.3s;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
 }
 
 .header .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1.5rem;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
 }
 
 .logo {
   height: 50px;
-  border-radius: 50%;
-  margin-right: 2rem;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
 }
 
 .nav {
   display: flex;
-  gap: 2rem;
+  gap: 2rem; /* Generous gap between nav links */
   align-items: center;
-  flex-grow: 1;
-  justify-content: flex-start;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
 }
 
 .nav a {
-  position: relative;
-  padding: 0.8rem 0;
-  color: var(--fg);
-  font-weight: 600;
-  font-family: 'Poppins', sans-serif;
-  transition: color 0.3s;
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
 }
 
 .nav a::after {
-  content: '';
+  content: ''; /* Pseudo-element for underline effect */
   position: absolute;
   left: 50%;
-  bottom: -5px;
+  bottom: -5px; /* Position below text */
   width: 0;
-  height: 3px;
-  background: var(--primary);
-  transition: width 0.3s ease, left 0.3s ease;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
 }
 
 .nav a:hover {
-  color: var(--primary);
+  color: var(--primary); /* Change text color on hover */
 }
 
 .nav a:hover::after {
-  width: 100%;
-  left: 0;
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
 }
 
+/* Profile Info and Nav Toggle (aligned to the right) */
 .profile-info {
-  display: none;
+  display: none; /* Hidden by default, shown by JS after login */
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
@@ -233,7 +176,7 @@ section {
   border-radius: 8px;
   background: var(--border-color);
   transition: background 0.3s;
-  margin-left: auto;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
 }
 
 .profile-info:hover {
@@ -255,74 +198,64 @@ section {
 }
 
 .nav-toggle {
-  display: none;
+  display: none; /* Hidden by default, shown on mobile */
   background: none;
   border: none;
-  font-size: 2rem;
-  color: var(--fg);
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
   cursor: pointer;
-  margin-left: 1rem;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
 }
 
-@media (max-width: 992px) {
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
   .header .container {
-    padding: 0 1rem;
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
   }
 
   .nav {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    top: 70px;
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
     right: 0;
-    background: var(--card-bg);
-    width: 280px;
-    height: calc(100% - 70px);
-    padding: 2rem 1rem;
-    box-shadow: -5px 0 15px var(--shadow);
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.4s ease-in-out;
-    align-items: flex-start;
-    gap: 1rem;
-    border-left: 1px solid var(--border-color);
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
   }
 
   .nav.open {
-    transform: translateX(0);
-  }
-
-  .nav a {
-    width: 100%;
-    text-align: left;
-    padding: 1rem 1.5rem;
-    border-radius: 6px;
-  }
-
-  .nav a::after {
-    display: none;
+    transform: translateX(0); /* Slide in when open */
   }
 
   .nav-toggle {
-    display: block;
+    display: block; /* Show hamburger icon */
   }
 
   .profile-info {
-    margin-left: 1rem;
+    margin-left: 1rem; /* Space between logo and profile info */
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) { /* Further adjustments for mobile */
   .header .container {
-    justify-content: space-between;
+    justify-content: space-between; /* Logo left, profile/toggle right */
   }
 
   .logo {
-    margin-right: 0;
+    margin-right: 0; /* Remove extra margin on small screens */
   }
 
   .profile-info {
-    margin-left: auto;
+    margin-left: auto; /* Ensure it pushes to the right */
   }
 }
 
@@ -345,6 +278,8 @@ section {
   }
 }
 
+
+/* Fixed Theme Toggle Button */
 .theme-toggle {
   position: fixed;
   bottom: 20px;
@@ -352,16 +287,16 @@ section {
   background: var(--primary);
   color: var(--card-bg);
   border: none;
-  border-radius: 50%;
-  width: 55px;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
   height: 55px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.8rem; /* Icon size */
   cursor: pointer;
   box-shadow: 0 4px 12px var(--shadow);
-  z-index: 100;
+  z-index: 100; /* Above most content, below popups */
   transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
 }
 
@@ -389,7 +324,7 @@ section {
   background: var(--card-bg);
   padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: 0 10px 30px var(--shadow); /* Softer shadow */
+  box-shadow: 0 15px 40px var(--shadow);
   z-index: 3000;
   text-align: center;
   max-width: 350px;
@@ -440,7 +375,7 @@ section {
 
 .login-box {
   background: var(--card-bg);
-  box-shadow: 0 10px 30px var(--shadow); /* Softer shadow */
+  box-shadow: 0 15px 40px var(--shadow);
   border-radius: 15px;
   padding: 3rem;
   max-width: 450px;
@@ -485,7 +420,7 @@ section {
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.98); /* Subtle scale */
+    transform: translateY(20px) scale(0.95);
   }
   to {
     opacity: 1;
@@ -529,7 +464,7 @@ section {
   color: var(--card-bg);
   padding: 0.8rem 2rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px var(--shadow); /* Softer shadow */
+  box-shadow: 0 6px 18px var(--shadow);
   transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
   font-weight: 600;
   font-size: 1.1rem;
@@ -537,17 +472,15 @@ section {
 }
 
 .hero-info .btn:hover {
-  transform: translateY(-2px); /* Softer lift */
-  box-shadow: 0 8px 20px var(--shadow); /* Softer shadow */
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
   background: var(--accent);
 }
 
 .hero-img img {
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 6px 18px var(--shadow); /* Softer shadow */
-  animation: fadeInUp 1s ease-out both;
-  transition: transform 0.2s ease-out; /* For JS interactivity */
+  box-shadow: 0 8px 24px var(--shadow);
 }
 
 /*———————— ABOUT ————————*/
@@ -563,8 +496,7 @@ section {
   height: auto;
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 6px 18px var(--shadow); /* Softer shadow */
-  transition: transform 0.2s ease-out; /* For JS interactivity */
+  box-shadow: 0 8px 24px var(--shadow);
 }
 
 .about-info h2 {
@@ -593,29 +525,15 @@ section {
   background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 4px 12px var(--shadow); /* Softer shadow */
+  box-shadow: 0 6px 18px var(--shadow);
   flex: 1;
   min-width: 220px;
-  transition: transform 0.3s, box-shadow 0.3s; /* For JS interactivity */
-  transform-style: preserve-3d; /* Enable 3D transforms */
-  perspective: 1000px; /* For 3D tilt */
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .info-cards .card:hover {
-  /* Transform handled by JS for interactive tilt */
-  /* box-shadow handled by JS for interactive tilt */
-}
-
-.info-cards .card h4 {
-  font-family: 'Poppins', sans-serif;
-  color: var(--primary);
-  margin-bottom: 0.75rem;
-  font-size: 1.2rem;
-}
-
-.info-cards .card p {
-  font-size: 0.95rem;
-  line-height: 1.5;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
 }
 
 /*———————— SKILLS ————————*/
@@ -625,7 +543,7 @@ section {
   padding: 2rem;
   background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 6px 18px var(--shadow); /* Softer shadow */
+  box-shadow: 0 8px 24px var(--shadow);
 }
 
 .skills h2 {
@@ -682,18 +600,18 @@ section {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px var(--shadow); /* Softer shadow */
+  box-shadow: 0 6px 18px var(--shadow);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  perspective: 1000px; /* Enable 3D transforms */
+  perspective: 800px;
   transform-style: preserve-3d;
-  transition: transform 0.3s, box-shadow 0.3s; /* For JS interactivity */
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .item-list li:hover {
-  /* Transform handled by JS for interactive tilt */
-  /* box-shadow handled by JS for interactive tilt */
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
 }
 
 .item-list li span {
@@ -719,6 +637,7 @@ section {
   background: var(--primary);
 }
 
+/* Style for the "More" cards */
 .item-list li.more-card {
   background: var(--primary);
   color: var(--card-bg);
@@ -726,7 +645,6 @@ section {
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 12px var(--shadow); /* Softer shadow */
 }
 
 .item-list li.more-card span {
@@ -737,8 +655,8 @@ section {
 
 .item-list li.more-card:hover {
   background: var(--accent);
-  transform: translateY(-4px); /* Softer lift */
-  box-shadow: 0 8px 20px var(--shadow); /* Softer shadow */
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
 }
 
 
@@ -754,7 +672,7 @@ section {
 .testimonial-grid {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: auto; /* Allow horizontal scroll */
   overflow-y: hidden;
   gap: 1.5rem;
   padding: 1rem 0;
@@ -763,7 +681,7 @@ section {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   user-select: none;
-  padding-bottom: 1.5rem;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
 }
 
 .testimonial-grid::-webkit-scrollbar {
@@ -786,21 +704,19 @@ section {
 
 .testimonial-card {
   flex: 0 0 auto;
-  width: 300px;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
   scroll-snap-align: start;
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 6px 18px var(--shadow); /* Softer shadow */
+  box-shadow: 0 8px 24px var(--shadow);
   font-style: italic;
   user-select: none;
-  transition: transform 0.3s, box-shadow 0.3s; /* For JS interactivity */
+  transition: transform 0.3s, box-shadow 0.3s;
   white-space: normal;
   word-wrap: break-word;
   overflow-wrap: break-word;
   border: 1px solid var(--border-color);
-  transform-style: preserve-3d; /* Enable 3D transforms */
-  perspective: 1000px; /* For 3D tilt */
 }
 
 .testimonial-grid:active {
@@ -808,8 +724,8 @@ section {
 }
 
 .testimonial-card:hover {
-  /* Transform handled by JS for interactive tilt */
-  /* box-shadow handled by JS for interactive tilt */
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
 }
 
 .testimonial-card p {
@@ -844,7 +760,7 @@ section {
   background: var(--card-bg);
   padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: 0 6px 18px var(--shadow); /* Softer shadow */
+  box-shadow: 0 8px 24px var(--shadow);
   border: 1px solid var(--border-color);
 }
 
@@ -869,7 +785,7 @@ section {
 .contact-form textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Softer focus shadow */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .contact-form textarea {
@@ -890,8 +806,8 @@ section {
 }
 
 .contact-form .btn:hover {
-  transform: translateY(-2px); /* Softer lift */
-  box-shadow: 0 8px 20px var(--shadow); /* Softer shadow */
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
   background: var(--accent);
 }
 
@@ -901,7 +817,7 @@ section {
   color: var(--fg);
   text-align: center;
   padding: 2rem 0;
-  box-shadow: 0 -1px 8px var(--shadow); /* Softer shadow */
+  box-shadow: 0 -2px 10px var(--shadow);
   position: relative;
 }
 
@@ -933,16 +849,32 @@ section {
 }
 
 /*———————— ANIMATIONS ————————*/
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px); /* Softer animation */
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
 
 /*———————— GLOBAL TRANSITIONS ————————*/
 * {
@@ -953,11 +885,8 @@ section {
 /* Full-screen overlay for "More Notes/Questions" */
 .full-screen-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* Slightly less opaque */
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -976,29 +905,41 @@ section {
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 10px 30px var(--shadow); /* Softer shadow */
+  box-shadow: 0 15px 40px var(--shadow);
   max-width: 90%;
   max-height: 90%;
   overflow-y: auto;
-  position: relative;
+  position: relative; /* Keep relative for h2 positioning */
   animation: fadeInScale 0.5s ease-out forwards;
 }
 
-.full-screen-content .close-btn {
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
   border: none;
-  font-size: 2rem;
-  color: var(--fg);
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
   cursor: pointer;
-  transition: color 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
 }
 
-.full-screen-content .close-btn:hover {
-  color: var(--primary);
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
+
 
 .full-screen-content h2 {
   text-align: center;
@@ -1022,6 +963,13 @@ section {
   .full-screen-content h2 {
     font-size: 1.8rem;
   }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1031,8 +979,12 @@ section {
   .full-screen-content h2 {
     font-size: 1.5rem;
   }
-  .full-screen-content .close-btn {
-    font-size: 1.8rem;
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
   }
 }
 
@@ -1076,8 +1028,9 @@ section {
     width: 50%;
   }
 
+  /* Mobile Nav Specifics */
   .nav {
-    display: none;
+    display: none; /* Hide nav on smaller screens by default */
     flex-direction: column;
     position: fixed;
     top: 70px;
@@ -1099,35 +1052,23 @@ section {
     transform: translateX(0);
   }
 
-  .nav a {
-    width: 100%;
-    text-align: left;
-    padding: 1rem 1.5rem;
-    border-radius: 6px;
-  }
-
-  .nav a::after {
-    display: none;
-  }
-
   .nav-toggle {
-    display: block;
-    margin-left: auto;
+    display: block; /* Show hamburger icon */
   }
 
   .profile-info {
-    margin-left: 1rem;
+    margin-left: 1rem; /* Space between logo and profile info */
   }
 }
 
 @media (max-width: 768px) {
   .container {
     width: min(100% - 2rem, 1100px);
-    padding: 2rem 0;
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
   }
 
   section {
-    padding: 0 1rem;
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
   }
 
   .hero-info h1 {
@@ -1215,6 +1156,7 @@ section {
     right: 1rem;
   }
 
+  /* Adjust fixed theme toggle for smaller screens */
   .theme-toggle {
     width: 50px;
     height: 50px;
