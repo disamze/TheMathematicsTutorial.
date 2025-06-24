@@ -14,21 +14,15 @@
   <link rel="stylesheet" href="style.css">
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Three.js CDN -->
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
 </head>
 
 <body data-theme="light">
   <!-- Preloader -->
   <div id="preloader">
-    <div class="loader-container">
-      <div class="loader">
-        <div class="loader-face front"></div>
-        <div class="loader-face back"></div>
-        <div class="loader-face right"></div>
-        <div class="loader-face left"></div>
-        <div class="loader-face top"></div>
-        <div class="loader-face bottom"></div>
-      </div>
-    </div>
+    <!-- Three.js will render here -->
+    <canvas id="preloader-canvas"></canvas>
   </div>
 
   <!-- Header / Navbar -->
