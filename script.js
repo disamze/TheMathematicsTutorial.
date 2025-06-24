@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
       nav.classList.toggle('open');
     });
   }
+});
+
 
   // ——— DYNAMIC NOTES & QUESTIONS ———
   const notes = [
