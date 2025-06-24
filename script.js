@@ -1,5 +1,5 @@
 // ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
-let scene, camera, renderer, object, wireframe;
+let scene, camera, renderer, particles;
 let preloaderCanvas;
 let animationFrameId; // To store the requestAnimationFrame ID
 
@@ -11,7 +11,6 @@ function initThreeJsLoader() {
   }
 
   // Set canvas dimensions explicitly for Three.js
-  // Use a larger internal resolution for better quality, then scale down with CSS
   const canvasSize = 200; // Internal resolution
   preloaderCanvas.width = canvasSize;
   preloaderCanvas.height = canvasSize;
@@ -29,40 +28,44 @@ function initThreeJsLoader() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 0); // Make background transparent
 
-  // Geometry (IcosahedronGeometry for a more complex, angular shape)
-  const geometry = new THREE.IcosahedronGeometry(1); // Radius 1
+  // Particle System
+  const particleCount = 1000;
+  const particlesGeometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
+  const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
 
-  // Main object material (MeshStandardMaterial for better lighting)
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x007bff, // Primary color
-    roughness: 0.5,
-    metalness: 0.8,
-    flatShading: true
-  });
-  object = new THREE.Mesh(geometry, material);
-  scene.add(object);
+  for (let i = 0; i < particleCount; i++) {
+    // Random positions
+    positions[i * 3] = (Math.random() - 0.5) * 2; // x
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 2; // y
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 2; // z
 
-  // Wireframe material
-  const wireframeMaterial = new THREE.MeshBasicMaterial({
-    color: 0x28a745, // Accent color
-    wireframe: true,
+    // Random colors
+    colors[i * 3] = Math.random(); // r
+    colors[i * 3 + 1] = Math.random(); // g
+    colors[i * 3 + 2] = Math.random(); // b
+  }
+
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.05,
+    vertexColors: true,
     transparent: true,
-    opacity: 0.7
+    opacity: 0.8,
   });
-  wireframe = new THREE.Mesh(geometry, wireframeMaterial);
-  object.add(wireframe); // Add wireframe as a child of the main object
+
+  particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
 
   // Lights
   const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
   scene.add(ambientLight);
 
-  const pointLight1 = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight1.position.set(5, 5, 5);
-  scene.add(pointLight1);
-
-  const pointLight2 = new THREE.PointLight(0xffffff, 0.7, 100);
-  pointLight2.position.set(-5, -5, -5);
-  scene.add(pointLight2);
+  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight.position.set(5, 5, 5);
+  scene.add(pointLight);
 
   // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
@@ -82,16 +85,17 @@ function onLoaderCanvasResize() {
   }
 }
 
-
 function animateThreeJsLoader() {
   animationFrameId = requestAnimationFrame(animateThreeJsLoader);
 
-  if (object) {
-    object.rotation.x += 0.005;
-    object.rotation.y += 0.008;
-    // Subtle scale animation
-    const scale = 1 + Math.sin(Date.now() * 0.001) * 0.05; // Oscillate between 0.95 and 1.05
-    object.scale.set(scale, scale, scale);
+  if (particles) {
+    // Animate particles
+    const positions = particles.geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      positions[i + 1] += 0.01 * (Math.random() - 0.5); // Random vertical movement
+      if (positions[i + 1] > 1) positions[i + 1] = -1; // Reset position
+    }
+    particles.geometry.attributes.position.needsUpdate = true; // Notify Three.js to update the positions
   }
 
   if (renderer && scene && camera) {
@@ -127,11 +131,9 @@ window.addEventListener('load', () => {
       }
       scene = null;
       camera = null;
-      object = null;
-      wireframe = null;
+      particles = null;
       preloaderCanvas = null;
       window.removeEventListener('resize', onLoaderCanvasResize);
-
 
       setTimeout(() => pre.remove(), 900);
     }, 1500); // Show loader for at least 1.5 seconds
