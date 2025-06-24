@@ -20,7 +20,7 @@ window.addEventListener('load', () => {
 });
 
 // ——— MOBILE MENU TOGGLE ———
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // Added async here
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
   if (nav && navToggle) {
@@ -32,14 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ——— DYNAMIC NOTES & QUESTIONS ———
-  const notes = [
+  // Initial static lists (these will be augmented by fetched files)
+  const initialNotes = [
     { title: 'SST', file: 'SST99days.pdf' },
     { title: 'Algebra Basics', file: 'algebra_basics.pdf' },
     { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
     { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
     { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
   ];
-  const questions = [
+  const initialQuestions = [
     { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
     { title: 'Advanced Algebra Problems', file: 'advanced_algebra.pdf' },
     { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
@@ -47,11 +48,58 @@ document.addEventListener('DOMContentLoaded', () => {
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
   ];
 
-  function renderList(items, containerId) {
+  let allNotes = [...initialNotes];
+  let allQuestions = [...initialQuestions];
+
+  // Function to fetch files from a directory (client-side limitation)
+  // IMPORTANT: JavaScript in a browser cannot directly list files in a directory
+  // for security reasons. To make this truly "automatic," you would need:
+  // 1. A server-side script that lists files in a directory and serves them as JSON.
+  // 2. A build process that generates a JSON file containing file names.
+  // For this example, we'll simulate it or assume files are manually added to the arrays.
+  async function fetchFiles(directoryPath, type) {
+    // Placeholder: In a real scenario, you'd make an AJAX request here
+    // e.g., const response = await fetch(`/api/list-files?dir=${directoryPath}`);
+    // const files = await response.json();
+    // return files.map(file => ({ title: file.replace('.pdf', '').replace(/_/g, ' '), file: file }));
+
+    // For demonstration, we'll just return an empty array or add some dummy files
+    // You would replace this with actual logic to get file names from your server/build
+    console.warn(`Client-side JavaScript cannot directly list files from '${directoryPath}'.
+                  You need a server-side solution or a pre-generated list of files.`);
+    
+    // Example of how you might manually add new files if you don't have a server
+    if (type === 'notes') {
+      return [
+        { title: 'New Note 1', file: 'new_note_1.pdf' },
+        { title: 'New Note 2', file: 'new_note_2.pdf' },
+      ];
+    } else if (type === 'questions') {
+      return [
+        { title: 'New Question 1', file: 'new_question_1.pdf' },
+        { title: 'New Question 2', file: 'new_question_2.pdf' },
+      ];
+    }
+    return [];
+  }
+
+  // Fetch additional files and combine with initial lists
+  const fetchedNotes = await fetchFiles('notes_directory', 'notes'); // Replace 'notes_directory' with actual path if using server
+  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
+
+  const fetchedQuestions = await fetchFiles('questions_directory', 'questions'); // Replace 'questions_directory' with actual path if using server
+  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
+
+
+  function renderList(items, containerId, showMoreCard = false) {
     const ul = document.getElementById(containerId);
     if (!ul) return;
-    ul.innerHTML = ''; // Clear existing content to prevent duplicates on re-render
-    items.forEach(({ title, file }) => {
+    ul.innerHTML = ''; // Clear existing content
+
+    // Display a limited number of items on the main page
+    const displayItems = showMoreCard ? items.slice(0, 5) : items; // Show first 5 or all if not main section
+
+    displayItems.forEach(({ title, file }) => {
       const li = document.createElement('li');
       li.innerHTML = `
         <span>${title}</span>
@@ -59,9 +107,68 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       ul.appendChild(li);
     });
+
+    // Add "More" card if applicable
+    if (showMoreCard && items.length > displayItems.length) {
+      const moreCard = document.createElement('li');
+      moreCard.classList.add('more-card');
+      moreCard.innerHTML = `<span>More ${containerId === 'notes-list' ? 'Notes' : 'Questions'}</span>`;
+      moreCard.addEventListener('click', () => openFullScreenOverlay(containerId));
+      ul.appendChild(moreCard);
+    }
   }
-  renderList(notes, 'notes-list');
-  renderList(questions, 'questions-list');
+
+  // Initial render for main sections with "More" cards
+  renderList(allNotes, 'notes-list', true);
+  renderList(allQuestions, 'questions-list', true);
+
+  // Full-screen overlay logic
+  const fullScreenOverlay = document.getElementById('full-screen-overlay');
+  const overlayTitle = document.getElementById('overlay-title');
+  const overlayList = document.getElementById('overlay-list');
+  const closeBtn = fullScreenOverlay.querySelector('.close-btn');
+
+  function openFullScreenOverlay(listType) {
+    let itemsToDisplay = [];
+    let title = '';
+
+    if (listType === 'notes-list') {
+      itemsToDisplay = allNotes;
+      title = 'All Downloadable Notes';
+    } else if (listType === 'questions-list') {
+      itemsToDisplay = allQuestions;
+      title = 'All Practice Questions';
+    }
+
+    overlayTitle.textContent = title;
+    overlayList.innerHTML = ''; // Clear previous content
+
+    itemsToDisplay.forEach(({ title, file }) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span>${title}</span>
+        <a href="${file}" target="_blank" rel="noopener">Download</a>
+      `;
+      overlayList.appendChild(li);
+    });
+
+    fullScreenOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling body when overlay is open
+  }
+
+  closeBtn.addEventListener('click', () => {
+    fullScreenOverlay.classList.remove('active');
+    document.body.style.overflow = ''; // Restore body scrolling
+  });
+
+  // Close overlay if clicked outside content (on the overlay itself)
+  fullScreenOverlay.addEventListener('click', (e) => {
+    if (e.target === fullScreenOverlay) {
+      fullScreenOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
 
   // ——— THEME TOGGLE ———
   const themeBtn = document.querySelector('.theme-toggle');
