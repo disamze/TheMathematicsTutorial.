@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
     { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
     { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
+    { title: 'Advanced Calculus', file: 'advanced_calculus.pdf' }, // Added for testing 'More'
   ];
   const initialQuestions = [
     { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
@@ -46,11 +47,15 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
     { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
+    { title: 'Geometry Problems', file: 'geometry_problems.pdf' }, // Added for testing 'More'
   ];
   const initialBooks = [ // New array for books
     { title: 'NCERT Maths Class 10', file: 'ncert_maths_class10.pdf' },
     { title: 'RD Sharma Class 11', file: 'rd_sharma_class11.pdf' },
     { title: 'Concepts of Physics Vol 1', file: 'hc_verma_physics_vol1.pdf' },
+    { title: 'Advanced Math for Engineers', file: 'advanced_math_engineers.pdf' }, // Added for testing 'More'
+    { title: 'Calculus by Spivak', file: 'calculus_spivak.pdf' },
+    { title: 'Linear Algebra Done Right', file: 'linear_algebra_done_right.pdf' }, // Added for testing 'More'
   ];
 
   let allNotes = [...initialNotes];
@@ -77,18 +82,18 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     // Example of how you might manually add new files if you don't have a server
     if (type === 'notes') {
       return [
-        { title: 'New Note 1', file: 'new_note_1.pdf' },
-        { title: 'New Note 2', file: 'new_note_2.pdf' },
+        { title: 'New Fetched Note 1', file: 'new_fetched_note_1.pdf' },
+        { title: 'New Fetched Note 2', file: 'new_fetched_note_2.pdf' },
       ];
     } else if (type === 'questions') {
       return [
-        { title: 'New Question 1', file: 'new_question_1.pdf' },
-        { title: 'New Question 2', file: 'new_question_2.pdf' },
+        { title: 'New Fetched Question 1', file: 'new_fetched_question_1.pdf' },
+        { title: 'New Fetched Question 2', file: 'new_fetched_question_2.pdf' },
       ];
     } else if (type === 'books') { // New type for books
       return [
-        { title: 'New Book 1', file: 'new_book_1.pdf' },
-        { title: 'New Book 2', file: 'new_book_2.pdf' },
+        { title: 'New Fetched Book 1', file: 'new_fetched_book_1.pdf' },
+        { title: 'New Fetched Book 2', file: 'new_fetched_book_2.pdf' },
       ];
     }
     return [];
@@ -110,10 +115,12 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     if (!ul) return;
     ul.innerHTML = ''; // Clear existing content
 
-    // Display a limited number of items on the main page
-    const displayItems = showMoreCard ? items.slice(0, 5) : items; // Show first 5 or all if not main section
+    const initialDisplayLimit = 5; // Number of items to show initially
 
-    displayItems.forEach(({ title, file }) => {
+    // Determine which items to display
+    const itemsToRender = showMoreCard ? items.slice(0, initialDisplayLimit) : items;
+
+    itemsToRender.forEach(({ title, file }) => {
       const li = document.createElement('li');
       li.innerHTML = `
         <span>${title}</span>
@@ -122,8 +129,8 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
       ul.appendChild(li);
     });
 
-    // Add "More" card if applicable
-    if (showMoreCard && items.length > displayItems.length) {
+    // Add "More" card if applicable AND there are more items than the initial limit
+    if (showMoreCard && items.length > initialDisplayLimit) {
       const moreCard = document.createElement('li');
       moreCard.classList.add('more-card');
       let cardText = '';
@@ -131,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
         cardText = 'More Notes';
       } else if (containerId === 'questions-list') {
         cardText = 'More Questions';
-      } else if (containerId === 'books-list') { // New condition for books
+      } else if (containerId === 'books-list') {
         cardText = 'More Books';
       }
       moreCard.innerHTML = `<span>${cardText}</span>`;
@@ -143,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
   // Initial render for main sections with "More" cards
   renderList(allNotes, 'notes-list', true);
   renderList(allQuestions, 'questions-list', true);
-  renderList(allBooks, 'books-list', true); // Render books section
+  renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
 
   // Full-screen overlay logic
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
@@ -161,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     } else if (listType === 'questions-list') {
       itemsToDisplay = allQuestions;
       title = 'All Practice Questions';
-    } else if (listType === 'books-list') { // New condition for books
+    } else if (listType === 'books-list') {
       itemsToDisplay = allBooks;
       title = 'All Recommended Books';
     }
