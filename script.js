@@ -1,5 +1,5 @@
 // ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
-let scene, camera, renderer, object;
+let scene, camera, renderer, object, wireframe;
 let preloaderCanvas;
 let animationFrameId; // To store the requestAnimationFrame ID
 
@@ -11,8 +11,10 @@ function initThreeJsLoader() {
   }
 
   // Set canvas dimensions explicitly for Three.js
-  preloaderCanvas.width = 100;
-  preloaderCanvas.height = 100;
+  // Use a larger internal resolution for better quality, then scale down with CSS
+  const canvasSize = 200; // Internal resolution
+  preloaderCanvas.width = canvasSize;
+  preloaderCanvas.height = canvasSize;
 
   // Scene
   scene = new THREE.Scene();
@@ -25,29 +27,42 @@ function initThreeJsLoader() {
   renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
   renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 0); // Make background transparent
 
-  // Geometry (e.g., DodecahedronGeometry for a more complex shape)
-  const geometry = new THREE.DodecahedronGeometry(1); // Radius 1
-  const material = new THREE.MeshPhongMaterial({
-    color: 0x007bff, // Primary color from CSS variable
-    specular: 0x28a745, // Accent color for highlights
-    shininess: 50,
+  // Geometry (IcosahedronGeometry for a more complex, angular shape)
+  const geometry = new THREE.IcosahedronGeometry(1); // Radius 1
+
+  // Main object material (MeshStandardMaterial for better lighting)
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x007bff, // Primary color
+    roughness: 0.5,
+    metalness: 0.8,
     flatShading: true
   });
   object = new THREE.Mesh(geometry, material);
   scene.add(object);
 
+  // Wireframe material
+  const wireframeMaterial = new THREE.MeshBasicMaterial({
+    color: 0x28a745, // Accent color
+    wireframe: true,
+    transparent: true,
+    opacity: 0.7
+  });
+  wireframe = new THREE.Mesh(geometry, wireframeMaterial);
+  object.add(wireframe); // Add wireframe as a child of the main object
+
   // Lights
   const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
   scene.add(ambientLight);
 
-  const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-  directionalLight1.position.set(1, 1, 1).normalize();
-  scene.add(directionalLight1);
+  const pointLight1 = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight1.position.set(5, 5, 5);
+  scene.add(pointLight1);
 
-  const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
-  directionalLight2.position.set(-1, -1, -1).normalize();
-  scene.add(directionalLight2);
+  const pointLight2 = new THREE.PointLight(0xffffff, 0.7, 100);
+  pointLight2.position.set(-5, -5, -5);
+  scene.add(pointLight2);
 
   // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
@@ -57,6 +72,7 @@ function onLoaderCanvasResize() {
   if (preloaderCanvas && camera && renderer) {
     // Update canvas dimensions based on its CSS size
     const rect = preloaderCanvas.getBoundingClientRect();
+    // Set internal canvas resolution to match CSS size for sharp rendering
     preloaderCanvas.width = rect.width;
     preloaderCanvas.height = rect.height;
 
@@ -73,6 +89,9 @@ function animateThreeJsLoader() {
   if (object) {
     object.rotation.x += 0.005;
     object.rotation.y += 0.008;
+    // Subtle scale animation
+    const scale = 1 + Math.sin(Date.now() * 0.001) * 0.05; // Oscillate between 0.95 and 1.05
+    object.scale.set(scale, scale, scale);
   }
 
   if (renderer && scene && camera) {
@@ -109,6 +128,7 @@ window.addEventListener('load', () => {
       scene = null;
       camera = null;
       object = null;
+      wireframe = null;
       preloaderCanvas = null;
       window.removeEventListener('resize', onLoaderCanvasResize);
 
@@ -309,7 +329,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Close overlay if clicked outside content (on the overlay itself)
   fullScreenOverlay.addEventListener('click', (e) => {
-    if (e.target === fullScreenOverlay) {
+    // Check if the click target is the overlay itself, not its children
+    if (e.target === fullScreenOverlay || e.target === closeBtn) {
       fullScreenOverlay.classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -539,8 +560,11 @@ document.addEventListener('click', (e) => {
 // Hide popup on outside click
 const popupOverlay = document.getElementById('popup-overlay');
 if (popupOverlay) {
-  popupOverlay.addEventListener('click', () => {
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
+  popupOverlay.addEventListener('click', (e) => {
+    // Only close if the click is directly on the overlay, not its children
+    if (e.target === popupOverlay) {
+      document.getElementById('popup-overlay').style.display = 'none';
+      document.getElementById('signout-popup').style.display = 'none';
+    }
   });
 };
