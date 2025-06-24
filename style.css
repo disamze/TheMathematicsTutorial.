@@ -69,54 +69,14 @@ ul {
   z-index: 2000;
 }
 
-.loader-container {
-  perspective: 800px;
+#preloader-canvas {
+  display: block; /* Ensure canvas is block level */
+  width: 100px; /* Set a fixed size for the loader */
+  height: 100px;
+  max-width: 80vw; /* Responsive sizing */
+  max-height: 80vh;
 }
 
-.loader {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  transform-style: preserve-3d;
-  animation: cubeRotate 1.5s infinite linear;
-}
-
-.loader-face {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  background: var(--primary);
-  border: 2px solid var(--accent);
-  opacity: 0.9;
-}
-
-.front {
-  transform: rotateY(0deg) translateZ(30px);
-}
-.back {
-  transform: rotateY(180deg) translateZ(30px);
-}
-.right {
-  transform: rotateY(90deg) translateZ(30px);
-}
-.left {
-  transform: rotateY(-90deg) translateZ(30px);
-}
-.top {
-  transform: rotateX(90deg) translateZ(30px);
-}
-.bottom {
-  transform: rotateX(-90deg) translateZ(30px);
-}
-
-@keyframes cubeRotate {
-  from {
-    transform: rotateX(0deg) rotateY(0deg);
-  }
-  to {
-    transform: rotateX(360deg) rotateY(360deg);
-  }
-}
 
 #preloader.fade-out {
   opacity: 0;
@@ -566,7 +526,7 @@ section {
   width: 100%;
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
-  animation: fadeInUp 1s ease-out both;
+  /* animation: fadeInUp 1s ease-out both; REMOVED FOR SCROLLREVEAL */
 }
 
 /*———————— ABOUT ————————*/
@@ -620,18 +580,6 @@ section {
 .info-cards .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 28px var(--shadow);
-}
-
-.info-cards .card h4 {
-  font-family: 'Poppins', sans-serif;
-  color: var(--primary);
-  margin-bottom: 0.75rem;
-  font-size: 1.2rem;
-}
-
-.info-cards .card p {
-  font-size: 0.95rem;
-  line-height: 1.5;
 }
 
 /*———————— SKILLS ————————*/
