@@ -15,9 +15,9 @@
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Three.js CDN -->
-  <script type="module" src="dist/bundle.js"></script>
-  <!-- Locomotive Scroll CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+  <!-- ScrollReveal CDN (Re-added) -->
+  <script src="https://unpkg.com/scrollreveal"></script>
 </head>
 
 <body data-theme="light">
@@ -32,14 +32,14 @@
     <div class="container">
       <img src="logo.png" alt="Logo" class="logo" />
       <nav class="nav">
-        <a href="#home" data-scroll-to>Home</a>
-        <a href="#about" data-scroll-to>About</a>
-        <a href="#skills" data-scroll-to>Skills</a>
-        <a href="#notes" data-scroll-to>Notes</a>
-        <a href="#questions" data-scroll-to>Questions</a>
-        <a href="#books" data-scroll-to>Books</a> <!-- New Nav Link -->
-        <a href="#testimonials" data-scroll-to>Testimonials</a>
-        <a href="#contact" class="btn small" data-scroll-to>Contact</a>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#notes">Notes</a>
+        <a href="#questions">Questions</a>
+        <a href="#books">Books</a> <!-- New Nav Link -->
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact" class="btn small">Contact</a>
       </nav>
       <div class="profile-info" id="profile-info"></div>
       <!-- Theme toggle moved outside header -->
@@ -68,12 +68,12 @@
   </section>
 
   <!-- Main Content: hidden until login -->
-  <div id="main-content" style="display: none;" data-scroll-container>
+  <div id="main-content" style="display: none;">
     <main>
       <!-- Hero -->
-      <section id="home" class="hero" data-scroll-section>
+      <section id="home" class="hero">
         <div class="container hero-grid">
-          <div class="hero-info" data-scroll data-scroll-speed="1">
+          <div class="hero-info">
             <h1>Hi, I’m <span>Shashi Kant</span></h1>
             <p>
               Mathematics & Science tutor with 8+ years’ experience, helping
@@ -81,19 +81,19 @@
             </p>
             <a href="#" class="btn">Download CV</a>
           </div>
-          <div class="hero-img" data-scroll data-scroll-speed="1.2">
+          <div class="hero-img">
             <img src="shashi.png" alt="Shashi Kant" />
           </div>
         </div>
       </section>
 
       <!-- About -->
-      <section id="about" class="about" data-scroll-section>
+      <section id="about" class="about">
         <div class="container about-grid">
-          <div class="about-img" data-scroll data-scroll-speed="1.1">
+          <div class="about-img">
             <img src="shashi.png" alt="Tutor portrait" />
           </div>
-          <div class="about-info" data-scroll data-scroll-speed="1">
+          <div class="about-info">
             <h2>About Me</h2>
             <p>
               I’m <strong>Shashi Kant</strong>, a dedicated educator holding a
@@ -128,10 +128,10 @@
       </section>
 
       <!-- Skills -->
-      <section id="skills" class="skills" data-scroll-section>
+      <section id="skills" class="skills">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Core Competencies</h2>
-          <ul class="skills-list" data-scroll data-scroll-speed="0.9">
+          <h2>Core Competencies</h2>
+          <ul class="skills-list">
             <li>
               <span>Algebra & Trigonometry</span>
               <div class="progress">
@@ -161,34 +161,34 @@
       </section>
 
       <!-- NOTES -->
-      <section id="notes" class="list-section" data-scroll-section>
+      <section id="notes" class="list-section">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Downloadable Notes</h2>
-          <ul id="notes-list" class="item-list" data-scroll data-scroll-speed="0.9"></ul>
+          <h2>Downloadable Notes</h2>
+          <ul id="notes-list" class="item-list"></ul>
         </div>
       </section>
 
       <!-- QUESTIONS -->
-      <section id="questions" class="list-section" data-scroll-section>
+      <section id="questions" class="list-section">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Practice Questions</h2>
-          <ul id="questions-list" class="item-list" data-scroll data-scroll-speed="0.9"></ul>
+          <h2>Practice Questions</h2>
+          <ul id="questions-list" class="item-list"></ul>
         </div>
       </section>
 
       <!-- BOOKS -->
-      <section id="books" class="list-section" data-scroll-section>
+      <section id="books" class="list-section">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Recommended Books</h2>
-          <ul id="books-list" class="item-list" data-scroll data-scroll-speed="0.9"></ul>
+          <h2>Recommended Books</h2>
+          <ul id="books-list" class="item-list"></ul>
         </div>
       </section>
 
       <!-- TESTIMONIALS -->
-      <section id="testimonials" class="testimonials" data-scroll-section>
+      <section id="testimonials" class="testimonials">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Student Feedback</h2>
-          <div class="testimonial-grid" data-scroll data-scroll-speed="0.9">
+          <h2>Student Feedback</h2>
+          <div class="testimonial-grid">
             <div class="testimonial-card">
               <p>
                 “Shashi Sir’s classes transformed my problem-solving—I jumped from 65% to 88% in boards!”
@@ -254,10 +254,10 @@
       </section>
 
       <!-- CONTACT -->
-      <section id="contact" class="contact" data-scroll-section>
+      <section id="contact" class="contact">
         <div class="container">
-          <h2 data-scroll data-scroll-speed="0.8">Get in Touch</h2>
-          <form action="https://formsubmit.co/disamaze@gmail.com" method="POST" class="contact-form" data-scroll data-scroll-speed="0.9">
+          <h2>Get in Touch</h2>
+          <form action="https://formsubmit.co/disamaze@gmail.com" method="POST" class="contact-form">
             <input type="hidden" name="_captcha" value="false" />
             <div class="form-row">
               <input type="text" name="name" placeholder="Full Name" required />
@@ -274,10 +274,10 @@
       </section>
     </main>
 
-    <footer class="footer" data-scroll-section>
+    <footer class="footer">
       <div class="container">
         <p>© 2025 Shashi Kant • The Mathematics Tutorial</p>
-        <a href="#home" class="back-top" data-scroll-to><i class="bx bx-up-arrow-alt"></i></a>
+        <a href="#home" class="back-top"><i class="bx bx-up-arrow-alt"></i></a>
       </div>
     </footer>
   </div>
@@ -304,8 +304,7 @@
     <button class="close-btn">&times;</button>
   </div>
 
-  <!-- External Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+  <!-- Custom Script -->
   <script src="script.js"></script>
 </body>
 
