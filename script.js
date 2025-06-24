@@ -2,6 +2,8 @@
 let scene, camera, renderer, particles;
 let preloaderCanvas;
 let animationFrameId; // To store the requestAnimationFrame ID
+let particleOrbitRadius = 0.5;
+let particleSpeed = 0.005;
 
 function initThreeJsLoader() {
   preloaderCanvas = document.getElementById('preloader-canvas');
@@ -29,73 +31,112 @@ function initThreeJsLoader() {
   renderer.setClearColor(0x000000, 0); // Make background transparent
 
   // Particle System
-  const particleCount = 1000;
+  const particleCount = 2000; // More particles for a denser effect
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
   const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
+  const sizes = new Float32Array(particleCount); // Size for each particle
+  const opacities = new Float32Array(particleCount); // Opacity for each particle
 
   for (let i = 0; i < particleCount; i++) {
-    // Random positions
-    positions[i * 3] = (Math.random() - 0.5) * 2; // x
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 2; // y
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 2; // z
+    // Random positions within a sphere
+    const r = particleOrbitRadius * Math.sqrt(Math.random()); // Distribute more evenly
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((2 * Math.random()) - 1);
 
-    // Random colors
-    colors[i * 3] = Math.random(); // r
-    colors[i * 3 + 1] = Math.random(); // g
-    colors[i * 3 + 2] = Math.random(); // b
+    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta); // x
+    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta); // y
+    positions[i * 3 + 2] = r * Math.cos(phi); // z
+
+    // Random colors (subtle variations)
+    colors[i * 3] = 0.5 + Math.random() * 0.5; // r
+    colors[i * 3 + 1] = 0.5 + Math.random() * 0.5; // g
+    colors[i * 3 + 2] = 0.5 + Math.random() * 0.5; // b
+
+    sizes[i] = 0.02 + Math.random() * 0.03; // Varying sizes
+    opacities[i] = 0.4 + Math.random() * 0.6; // Varying opacities
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
+  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
 
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.05,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.8,
+  const particlesMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      pointTexture: { value: new THREE.TextureLoader().load('spark.png') } // Optional: use a custom texture for particles
+    },
+    vertexShader: `
+      attribute float size;
+      attribute float opacity;
+      attribute vec3 color;
+      varying vec3 vColor;
+      varying float vOpacity;
+      void main() {
+        vColor = color;
+        vOpacity = opacity;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = size * (300.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      varying float vOpacity;
+      uniform sampler2D pointTexture;
+      void main() {
+        gl_FragColor = vec4(vColor, vOpacity * (1.0 - length(gl_PointCoord - vec2(0.5)))); // Fade towards edges
+      }
+    `,
+    blending: THREE.AdditiveBlending,
+    depthTest: false,
+    transparent: true
   });
 
   particles = new THREE.Points(particlesGeometry, particlesMaterial);
   scene.add(particles);
 
-  // Lights
-  const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+  // Lights (less critical for particle system, but good practice)
+  const ambientLight = new THREE.AmbientLight(0x404040);
   scene.add(ambientLight);
 
   const pointLight = new THREE.PointLight(0xffffff, 1, 100);
   pointLight.position.set(5, 5, 5);
   scene.add(pointLight);
 
-  // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
-}
-
-function onLoaderCanvasResize() {
-  if (preloaderCanvas && camera && renderer) {
-    // Update canvas dimensions based on its CSS size
-    const rect = preloaderCanvas.getBoundingClientRect();
-    // Set internal canvas resolution to match CSS size for sharp rendering
-    preloaderCanvas.width = rect.width;
-    preloaderCanvas.height = rect.height;
-
-    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-  }
 }
 
 function animateThreeJsLoader() {
   animationFrameId = requestAnimationFrame(animateThreeJsLoader);
 
   if (particles) {
-    // Animate particles
+    // Animate particles: subtle rotation and movement
+    particles.rotation.x += 0.001;
+    particles.rotation.y += 0.002;
+
     const positions = particles.geometry.attributes.position.array;
+    const opacities = particles.geometry.attributes.opacity.array;
+    const time = Date.now() * 0.0005;
+
     for (let i = 0; i < positions.length; i += 3) {
-      positions[i + 1] += 0.01 * (Math.random() - 0.5); // Random vertical movement
-      if (positions[i + 1] > 1) positions[i + 1] = -1; // Reset position
+      // Simple sine wave movement for a "breathing" effect
+      positions[i] += Math.sin(time + i) * 0.0001;
+      positions[i + 1] += Math.cos(time + i) * 0.0001;
+      positions[i + 2] += Math.sin(time + i * 2) * 0.0001;
+
+      // Fade in/out effect based on distance from center or time
+      // This is more complex with shaders, but for simple material, we can adjust opacity directly
+      // For the custom shader, opacity is handled in the fragment shader based on vOpacity
+      // We can still subtly animate the base opacity if needed, or just rely on the shader's fade
     }
-    particles.geometry.attributes.position.needsUpdate = true; // Notify Three.js to update the positions
+    particles.geometry.attributes.position.needsUpdate = true;
+    // particles.geometry.attributes.opacity.needsUpdate = true; // If animating opacity in JS
+
+    // Camera subtle movement
+    camera.position.x = Math.sin(time * 0.5) * 0.1;
+    camera.position.y = Math.cos(time * 0.5) * 0.1;
+    camera.lookAt(scene.position);
   }
 
   if (renderer && scene && camera) {
@@ -105,7 +146,6 @@ function animateThreeJsLoader() {
 
 window.addEventListener('load', () => {
   // Initialize Three.js loader
-  // Check if THREE is defined (meaning the script loaded)
   if (typeof THREE !== 'undefined') {
     initThreeJsLoader();
     animateThreeJsLoader(); // Start the animation loop
@@ -136,7 +176,7 @@ window.addEventListener('load', () => {
       window.removeEventListener('resize', onLoaderCanvasResize);
 
       setTimeout(() => pre.remove(), 900);
-    }, 1500); // Show loader for at least 1.5 seconds
+    }, 2500); // Show loader for at least 2.5 seconds for better animation
   }
 
   // Check for user session on load
@@ -218,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // You would replace this with actual logic to get file names from your server/build
     console.warn(`Client-side JavaScript cannot directly list files from '${directoryPath}'.
                   You need a server-side solution or a pre-generated list of files.`);
-    
+
     // Example of how you might manually add new files if you don't have a server
     if (type === 'notes') {
       return [
@@ -364,77 +404,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— SCROLLREVEAL ———
-  if (window.ScrollReveal) {
-    // Default reveal options for most elements
-    const defaultRevealOptions = {
-      distance: '50px',
-      duration: 1000,
-      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      interval: 150,
-      origin: 'bottom',
-      mobile: true,
-      // Crucial: Disable ScrollReveal's default transform/opacity management
-      // for elements that have their own CSS transitions/animations.
-      // This prevents conflicts.
-      beforeReveal: (el) => {
-        el.style.opacity = ''; // Clear opacity set by ScrollReveal
-        el.style.transform = ''; // Clear transform set by ScrollReveal
-      },
-      afterReveal: (el) => {
-        el.style.opacity = ''; // Ensure opacity is reset after reveal
-        el.style.transform = ''; // Ensure transform is reset after reveal
-      }
-    };
+  // ——— LOCOMOTIVE SCROLL ———
+  // Initialize Locomotive Scroll after DOM is loaded
+  const scroll = new LocomotiveScroll({
+    el: document.querySelector('[data-scroll-container]'),
+    smooth: true,
+    multiplier: 1, // Adjust scroll speed
+    class: 'is-reveal', // Class added to elements when they enter viewport
+    getDirection: true,
+    getSpeed: true,
+    // Add any other options you need
+  });
 
-    // Apply ScrollReveal ONLY to elements that don't have conflicting CSS transforms/animations
-    // or where ScrollReveal's animation is desired as the primary entrance effect.
-    ScrollReveal().reveal(
-      [
-        '.hero-info',
-        '.skills-list li',
-        '.logo',
-        '.nav a',
-        '.footer p',
-        '.about-info', // Ensure about-info is revealed
-        '.hero-img img', // Re-added, assuming its CSS animation is simple or removed
-        '.about-grid img', // Re-added, assuming its CSS animation is simple or removed
-        '.login-box', // For the login screen entrance
-        '.welcome-message', // For the welcome message
-      ],
-      defaultRevealOptions
-    );
+  // Update Locomotive Scroll on window resize
+  window.addEventListener('resize', () => {
+    scroll.update();
+  });
 
-    // Specific reveal for section headings (h2)
-    // This is where the fix for headings comes in.
-    // We ensure that h2 elements are revealed.
-    ScrollReveal().reveal('h2', {
-      distance: '30px',
-      duration: 900,
-      easing: 'ease-out',
-      origin: 'top',
-      interval: 0,
-      mobile: true,
-      // Important: Ensure these are cleared if ScrollReveal applies them
-      beforeReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; },
-      afterReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; }
-    });
+  // Update Locomotive Scroll on scroll to ensure elements are correctly positioned
+  window.addEventListener('scroll', () => {
+    scroll.update();
+  });
 
-    // Elements with custom hover/animation effects that should NOT be managed by ScrollReveal:
-    // - .info-cards .card (has translateY and boxShadow on hover)
-    // - .item-list li (has rotateY, rotateX, translateY, boxShadow on hover)
-    // - .testimonial-card (has translateY and scale on hover)
-    // - .contact-form .btn (has translateY and boxShadow on hover)
-    // - .theme-toggle (has translateY and boxShadow on hover)
-    // - .back-top (has translateY on hover)
-    // - .hero-info .btn (has translateY and boxShadow on hover)
-    // These elements will rely solely on their CSS transitions for interactivity.
-  }
-
-  // Close nav when a nav link is clicked
+  // Close nav when a nav link is clicked and scroll to section
   const navLinks = document.querySelectorAll('.nav a');
   navLinks.forEach(link => {
-    link.addEventListener('click', () => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default anchor jump
+      const targetId = link.getAttribute('href');
+      if (targetId && scroll) {
+        scroll.scrollTo(targetId, {
+          duration: 1000, // Smooth scroll duration
+          easing: [0.645, 0.045, 0.355, 1] // Ease-in-out
+        });
+      }
+
       if (nav.classList.contains('open')) {
         nav.classList.remove('open');
         navToggle.setAttribute('aria-expanded', 'false');
@@ -442,7 +446,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Testimonial Slider (Drag functionality)
+  // Testimonial Slider (Drag functionality) - This will still work independently of Locomotive Scroll
   const slider = document.querySelector('.testimonial-grid');
   let isDown = false;
   let startX;
