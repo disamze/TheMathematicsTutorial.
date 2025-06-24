@@ -848,7 +848,32 @@ section {
 }
 
 /*———————— ANIMATIONS ————————*/
-/* Removed @keyframes fadeInUp as it's no longer used by ScrollReveal for hero/about images */
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
 
 /*———————— GLOBAL TRANSITIONS ————————*/
 * {
@@ -859,10 +884,7 @@ section {
 /* Full-screen overlay for "More Notes/Questions" */
 .full-screen-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
