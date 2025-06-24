@@ -5,6 +5,21 @@ let animationFrameId; // To store the requestAnimationFrame ID
 let particleOrbitRadius = 0.5;
 let particleSpeed = 0.005;
 
+// Moved onLoaderCanvasResize function definition up to resolve ReferenceError
+function onLoaderCanvasResize() {
+  if (preloaderCanvas && camera && renderer) {
+    // Update canvas dimensions based on its CSS size
+    const rect = preloaderCanvas.getBoundingClientRect();
+    // Set internal canvas resolution to match CSS size for sharp rendering
+    preloaderCanvas.width = rect.width;
+    preloaderCanvas.height = rect.height;
+
+    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+  }
+}
+
 function initThreeJsLoader() {
   preloaderCanvas = document.getElementById('preloader-canvas');
   if (!preloaderCanvas) {
@@ -62,35 +77,14 @@ function initThreeJsLoader() {
   particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
   particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
 
-  const particlesMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      pointTexture: { value: new THREE.TextureLoader().load('spark.png') } // Optional: use a custom texture for particles
-    },
-    vertexShader: `
-      attribute float size;
-      attribute float opacity;
-      attribute vec3 color;
-      varying vec3 vColor;
-      varying float vOpacity;
-      void main() {
-        vColor = color;
-        vOpacity = opacity;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (300.0 / -mvPosition.z);
-        gl_Position = projectionMatrix * mvPosition;
-      }
-    `,
-    fragmentShader: `
-      varying vec3 vColor;
-      varying float vOpacity;
-      uniform sampler2D pointTexture;
-      void main() {
-        gl_FragColor = vec4(vColor, vOpacity * (1.0 - length(gl_PointCoord - vec2(0.5)))); // Fade towards edges
-      }
-    `,
-    blending: THREE.AdditiveBlending,
-    depthTest: false,
-    transparent: true
+  // Using a basic PointsMaterial since you don't have a custom texture
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.05, // Default size for particles
+    vertexColors: true, // Use colors from geometry
+    transparent: true,
+    opacity: 0.8, // Base opacity
+    blending: THREE.AdditiveBlending, // For a glowing effect
+    depthWrite: false // Important for transparent particles to render correctly
   });
 
   particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -104,6 +98,7 @@ function initThreeJsLoader() {
   pointLight.position.set(5, 5, 5);
   scene.add(pointLight);
 
+  // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
 }
 
@@ -116,7 +111,6 @@ function animateThreeJsLoader() {
     particles.rotation.y += 0.002;
 
     const positions = particles.geometry.attributes.position.array;
-    const opacities = particles.geometry.attributes.opacity.array;
     const time = Date.now() * 0.0005;
 
     for (let i = 0; i < positions.length; i += 3) {
@@ -124,14 +118,8 @@ function animateThreeJsLoader() {
       positions[i] += Math.sin(time + i) * 0.0001;
       positions[i + 1] += Math.cos(time + i) * 0.0001;
       positions[i + 2] += Math.sin(time + i * 2) * 0.0001;
-
-      // Fade in/out effect based on distance from center or time
-      // This is more complex with shaders, but for simple material, we can adjust opacity directly
-      // For the custom shader, opacity is handled in the fragment shader based on vOpacity
-      // We can still subtly animate the base opacity if needed, or just rely on the shader's fade
     }
     particles.geometry.attributes.position.needsUpdate = true;
-    // particles.geometry.attributes.opacity.needsUpdate = true; // If animating opacity in JS
 
     // Camera subtle movement
     camera.position.x = Math.sin(time * 0.5) * 0.1;
