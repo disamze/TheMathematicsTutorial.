@@ -69,6 +69,7 @@ ul {
   z-index: 2000;
 }
 
+/* Removed .loader-container, .loader, .loader-face styles as Three.js handles rendering */
 #preloader-canvas {
   display: block; /* Ensure canvas is block level */
   width: 100px; /* Set a fixed size for the loader */
@@ -895,16 +896,7 @@ section {
 }
 
 /*———————— ANIMATIONS ————————*/
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Removed @keyframes fadeInUp as it's no longer used by ScrollReveal for hero/about images */
 
 /*———————— GLOBAL TRANSITIONS ————————*/
 * {
