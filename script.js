@@ -50,9 +50,6 @@ function initThreeJsLoader() {
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
   const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
-  // Removed custom attributes for size and opacity as they are not used by PointsMaterial directly
-  // If you want to use varying sizes/opacities per particle, you'd need a ShaderMaterial
-  // For simplicity without a custom texture, we'll stick to PointsMaterial and its global size/opacity.
 
   for (let i = 0; i < particleCount; i++) {
     // Random positions within a sphere
@@ -65,9 +62,9 @@ function initThreeJsLoader() {
     positions[i * 3 + 2] = r * Math.cos(phi); // z
 
     // Random colors (subtle variations)
-    colors[i * 3] = 0.5 + Math.random() * 0.5; // r
-    colors[i * 3 + 1] = 0.5 + Math.random() * 0.5; // g
-    colors[i * 3 + 2] = 0.5 + Math.random() * 0.5; // b
+    colors[i * 3] = Math.random(); // r
+    colors[i * 3 + 1] = Math.random(); // g
+    colors[i * 3 + 2] = Math.random(); // b
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -286,8 +283,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Otherwise, display all items (for the full-screen overlay)
     const itemsToRender = showMoreCard ? items.slice(0, initialDisplayLimit) : items;
 
-    itemsToRender.forEach(({ title, file }) => {
+    itemsToRender.forEach(({ title, file }, index) => {
       const li = document.createElement('li');
+      li.classList.add('reveal-item'); // Add reveal class
+      li.style.setProperty('--item-index', index); // Set custom property for staggered delay
       li.innerHTML = `
         <span>${title}</span>
         <a href="${file}" target="_blank" rel="noopener">Download</a>
@@ -298,7 +297,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Add "More" card if applicable AND there are more items than the initial limit
     if (showMoreCard && items.length > initialDisplayLimit) {
       const moreCard = document.createElement('li');
-      moreCard.classList.add('more-card');
+      moreCard.classList.add('more-card', 'reveal-item'); // Add reveal class to more card
+      moreCard.style.setProperty('--item-index', initialDisplayLimit); // Set index for delay
       let cardText = '';
       if (containerId === 'notes-list') {
         cardText = 'More Notes';
@@ -388,72 +388,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— SCROLLREVEAL ———
-  if (window.ScrollReveal) {
-    // Default reveal options for most elements
-    const defaultRevealOptions = {
-      distance: '50px',
-      duration: 1000,
-      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      interval: 150,
-      origin: 'bottom',
-      mobile: true,
-      // Crucial: Disable ScrollReveal's default transform/opacity management
-      // for elements that have their own CSS transitions/animations.
-      // This prevents conflicts.
-      beforeReveal: (el) => {
-        el.style.opacity = ''; // Clear opacity set by ScrollReveal
-        el.style.transform = ''; // Clear transform set by ScrollReveal
-      },
-      afterReveal: (el) => {
-        el.style.opacity = ''; // Ensure opacity is reset after reveal
-        el.style.transform = ''; // Ensure transform is reset after reveal
+  // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ———
+  const revealElements = document.querySelectorAll('.reveal-item');
+
+  const observerOptions = {
+    root: null, // Use the viewport as the root
+    rootMargin: '0px',
+    threshold: 0.1 // Trigger when 10% of the item is visible
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target); // Stop observing once visible
       }
-    };
-
-    // Apply ScrollReveal ONLY to elements that don't have conflicting CSS transforms/animations
-    // or where ScrollReveal's animation is desired as the primary entrance effect.
-    ScrollReveal().reveal(
-      [
-        '.hero-info',
-        '.skills-list li',
-        '.logo',
-        '.nav a',
-        '.footer p',
-        '.about-info', // Ensure about-info is revealed
-        '.hero-img img', // Re-added, assuming its CSS animation is simple or removed
-        '.about-grid img', // Re-added, assuming its CSS animation is simple or removed
-        '.login-box', // For the login screen entrance
-        '.welcome-message', // For the welcome message
-      ],
-      defaultRevealOptions
-    );
-
-    // Specific reveal for section headings (h2)
-    // This is where the fix for headings comes in.
-    // We ensure that h2 elements are revealed.
-    ScrollReveal().reveal('h2', {
-      distance: '30px',
-      duration: 900,
-      easing: 'ease-out',
-      origin: 'top',
-      interval: 0,
-      mobile: true,
-      // Important: Ensure these are cleared if ScrollReveal applies them
-      beforeReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; },
-      afterReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; }
     });
+  }, observerOptions);
 
-    // Elements with custom hover/animation effects that should NOT be managed by ScrollReveal:
-    // - .info-cards .card (has translateY and boxShadow on hover)
-    // - .item-list li (has rotateY, rotateX, translateY, boxShadow on hover)
-    // - .testimonial-card (has translateY and scale on hover)
-    // - .contact-form .btn (has translateY and boxShadow on hover)
-    // - .theme-toggle (has translateY and boxShadow on hover)
-    // - .back-top (has translateY on hover)
-    // - .hero-info .btn (has translateY and boxShadow on hover)
-    // These elements will rely solely on their CSS transitions for interactivity.
-  }
+  revealElements.forEach(element => {
+    observer.observe(element);
+  });
 
   // Close nav when a nav link is clicked
   const navLinks = document.querySelectorAll('.nav a');
