@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     });
   }
 
-  // ——— DYNAMIC NOTES & QUESTIONS ———
+  // ——— DYNAMIC NOTES & QUESTIONS & BOOKS ———
   // Initial static lists (these will be augmented by fetched files)
   const initialNotes = [
     { title: 'SST', file: 'SST99days.pdf' },
@@ -47,9 +47,15 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
   ];
+  const initialBooks = [ // New array for books
+    { title: 'NCERT Maths Class 10', file: 'ncert_maths_class10.pdf' },
+    { title: 'RD Sharma Class 11', file: 'rd_sharma_class11.pdf' },
+    { title: 'Concepts of Physics Vol 1', file: 'hc_verma_physics_vol1.pdf' },
+  ];
 
   let allNotes = [...initialNotes];
   let allQuestions = [...initialQuestions];
+  let allBooks = [...initialBooks]; // New variable for all books
 
   // Function to fetch files from a directory (client-side limitation)
   // IMPORTANT: JavaScript in a browser cannot directly list files in a directory
@@ -79,6 +85,11 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
         { title: 'New Question 1', file: 'new_question_1.pdf' },
         { title: 'New Question 2', file: 'new_question_2.pdf' },
       ];
+    } else if (type === 'books') { // New type for books
+      return [
+        { title: 'New Book 1', file: 'new_book_1.pdf' },
+        { title: 'New Book 2', file: 'new_book_2.pdf' },
+      ];
     }
     return [];
   }
@@ -89,6 +100,9 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
 
   const fetchedQuestions = await fetchFiles('questions_directory', 'questions'); // Replace 'questions_directory' with actual path if using server
   allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
+
+  const fetchedBooks = await fetchFiles('books_directory', 'books'); // New fetch for books
+  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
 
 
   function renderList(items, containerId, showMoreCard = false) {
@@ -112,7 +126,15 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     if (showMoreCard && items.length > displayItems.length) {
       const moreCard = document.createElement('li');
       moreCard.classList.add('more-card');
-      moreCard.innerHTML = `<span>More ${containerId === 'notes-list' ? 'Notes' : 'Questions'}</span>`;
+      let cardText = '';
+      if (containerId === 'notes-list') {
+        cardText = 'More Notes';
+      } else if (containerId === 'questions-list') {
+        cardText = 'More Questions';
+      } else if (containerId === 'books-list') { // New condition for books
+        cardText = 'More Books';
+      }
+      moreCard.innerHTML = `<span>${cardText}</span>`;
       moreCard.addEventListener('click', () => openFullScreenOverlay(containerId));
       ul.appendChild(moreCard);
     }
@@ -121,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
   // Initial render for main sections with "More" cards
   renderList(allNotes, 'notes-list', true);
   renderList(allQuestions, 'questions-list', true);
+  renderList(allBooks, 'books-list', true); // Render books section
 
   // Full-screen overlay logic
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
@@ -138,6 +161,9 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
     } else if (listType === 'questions-list') {
       itemsToDisplay = allQuestions;
       title = 'All Practice Questions';
+    } else if (listType === 'books-list') { // New condition for books
+      itemsToDisplay = allBooks;
+      title = 'All Recommended Books';
     }
 
     overlayTitle.textContent = title;
