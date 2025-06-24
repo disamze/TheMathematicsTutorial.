@@ -237,17 +237,6 @@ section {
     transform: translateX(0); /* Slide in when open */
   }
 
-  .nav a {
-    width: 100%; /* Full width links */
-    text-align: left; /* Align text to left */
-    padding: 1rem 1.5rem; /* More padding for mobile links */
-    border-radius: 6px; /* Rounded corners for mobile links */
-  }
-
-  .nav a::after { /* Remove underline effect for mobile links */
-    display: none;
-  }
-
   .nav-toggle {
     display: block; /* Show hamburger icon */
   }
@@ -1055,7 +1044,7 @@ section {
 
   /* Mobile Nav Specifics */
   .nav {
-    display: none; /* Hidden by default */
+    display: none; /* Hide nav on smaller screens by default */
     flex-direction: column;
     position: fixed;
     top: 70px;
@@ -1077,28 +1066,12 @@ section {
     transform: translateX(0);
   }
 
-  .nav a {
-    width: 100%;
-    text-align: left;
-    padding: 1rem 1.5rem;
-    border-radius: 6px;
-  }
-
-  .nav a::after {
-    display: none; /* Hide underline on mobile */
-  }
-
   .nav-toggle {
     display: block; /* Show hamburger icon */
-    margin-left: auto; /* Push toggle to the right */
-  }
-
-  .header .container {
-    justify-content: space-between; /* Logo left, toggle/profile right */
   }
 
   .profile-info {
-    margin-left: 1rem; /* Space between profile and toggle */
+    margin-left: 1rem; /* Space between logo and profile info */
   }
 }
 
