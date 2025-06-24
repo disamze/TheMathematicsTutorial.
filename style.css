@@ -143,15 +143,17 @@ section {
 }
 
 /*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES ———————— */
 .header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  background: var(--card-bg);
-  box-shadow: 0 2px 10px var(--shadow);
+  background: linear-gradient(135deg, #007bff, #28a745); /* Gradient background */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
   z-index: 1000;
-  padding: 0.75rem 0;
+  padding: 1rem 0; /* Padding for the navbar */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
 }
 
 .header .container {
@@ -162,27 +164,88 @@ section {
 }
 
 .logo {
-  height: 50px;
+  height: 50px; /* Logo size */
 }
 
 .nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem; /* Increased gap for better spacing */
   align-items: center;
 }
 
 .nav a {
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  transition: background 0.3s, color 0.3s;
-  font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  position: relative; /* Position for pseudo-element */
+  padding: 0.6rem 1rem; /* Padding for links */
+  border-radius: 6px; /* Rounded corners */
+  color: #ffffff; /* White text */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: #ffffff; /* Underline color */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
 }
 
 .nav a:hover {
-  background: var(--primary);
-  color: var(--card-bg);
+  color: var(--accent); /* Change text color on hover */
 }
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 1.8rem; /* Larger icon */
+  color: #ffffff; /* White icon */
+  cursor: pointer;
+}
+
+/* ———————— RESPONSIVE NAVBAR ———————— */
+@media (max-width: 768px) {
+  .nav {
+    display: none; /* Hide nav on smaller screens */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .header .container {
+    justify-content: space-between;
+  }
+
+  .nav.open {
+    display: flex; /* Show nav when open */
+    flex-direction: column; /* Stack links vertically */
+    position: absolute; /* Position it absolutely */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--primary); /* Background color for mobile */
+    width: 100%; /* Full width */
+    padding: 1rem; /* Padding for mobile nav */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+  }
+
+  .nav a {
+    padding: 1rem; /* More padding for mobile */
+    text-align: center; /* Center text */
+    width: 100%; /* Full width links */
+  }
+}
+
 
 /* Fixed Theme Toggle Button */
 .theme-toggle {
