@@ -23,7 +23,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   line-height: 1.6;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
 }
 
 a {
@@ -125,9 +125,9 @@ ul {
 
 /*———————— CONTAINERS & GRID ————————*/
 .container {
-  width: min(90%, 1100px); /* Slightly wider container */
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
-  padding: 3rem 1rem; /* More vertical padding */
+  padding: 3rem 1rem; /* Consistent padding */
 }
 
 .grid-3 {
@@ -152,7 +152,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem; /* Remove vertical padding here */
+  padding: 0 1rem; /* Remove vertical padding here, use horizontal */
 }
 
 .logo {
@@ -588,7 +588,7 @@ ul {
 .testimonial-grid {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: auto; /* Allow horizontal scroll */
   overflow-y: hidden;
   gap: 1.5rem; /* Increased gap */
   padding: 1rem 0;
@@ -620,7 +620,7 @@ ul {
 
 .testimonial-card {
   flex: 0 0 auto;
-  width: 300px; /* Slightly wider cards */
+  width: 300px; /* Fixed width for cards in the scrollable grid */
   scroll-snap-align: start;
   background: var(--card-bg);
   padding: 2rem; /* More padding */
@@ -868,6 +868,7 @@ ul {
 
 @media (max-width: 768px) {
   .container {
+    width: min(100% - 2rem, 1100px); /* Ensure container respects padding on smaller screens */
     padding: 2rem 1rem;
   }
 
@@ -887,8 +888,14 @@ ul {
     font-size: 1.8rem;
   }
 
+  .info-cards {
+    flex-direction: column; /* Stack cards fully */
+    align-items: center; /* Center stacked cards */
+  }
+
   .info-cards .card {
-    min-width: 100%; /* Stack cards fully */
+    min-width: unset; /* Remove min-width constraint */
+    width: 100%; /* Take full width */
   }
 
   .skills-list li {
@@ -909,8 +916,9 @@ ul {
     padding: 2rem;
   }
 
+  /* Ensure testimonial cards don't cause overflow */
   .testimonial-card {
-    width: 260px; /* Adjust testimonial card width */
+    width: 280px; /* Keep a fixed width for scrollable cards */
   }
 }
 
@@ -940,13 +948,9 @@ ul {
     font-size: 0.95rem;
   }
 
+  /* Ensure testimonial cards don't cause overflow */
   .testimonial-card {
-    width: 90%; /* Almost full width on very small screens */
-    margin: 0 auto; /* Center them */
-  }
-
-  .testimonial-grid {
-    justify-content: flex-start; /* Align to start for better scrolling */
+    width: 260px; /* Slightly smaller fixed width for very small screens */
   }
 
   .back-top {
