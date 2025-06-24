@@ -282,4 +282,4 @@ if (popupOverlay) {
     document.getElementById('popup-overlay').style.display = 'none';
     document.getElementById('signout-popup').style.display = 'none';
   });
-});
+};
