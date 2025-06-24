@@ -143,42 +143,44 @@ section {
 }
 
 /*———————— HEADER & NAV ————————*/
-/* ———————— NAVBAR STYLES ———————— */
+/* ———————— NAVBAR STYLES (NEW) ———————— */
 .header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, #007bff, #28a745); /* Gradient background */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
   z-index: 1000;
-  padding: 1rem 0; /* Padding for the navbar */
+  padding: 0.8rem 0; /* Vertical padding */
   transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
 }
 
 .header .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem; /* Horizontal padding for header content */
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
 }
 
 .logo {
-  height: 50px; 
-  border-radius: 50%;/* Logo size */
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
 }
 
 .nav {
   display: flex;
-  gap: 2rem; /* Increased gap for better spacing */
+  gap: 2rem; /* Generous gap between nav links */
   align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
 }
 
 .nav a {
   position: relative; /* Position for pseudo-element */
-  padding: 0.6rem 1rem; /* Padding for links */
-  border-radius: 6px; /* Rounded corners */
-  color: #ffffff; /* White text */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
   font-weight: 600; /* Bolder font */
   font-family: 'Poppins', sans-serif; /* Poppins for nav links */
   transition: color 0.3s; /* Smooth color transition */
@@ -188,15 +190,15 @@ section {
   content: ''; /* Pseudo-element for underline effect */
   position: absolute;
   left: 50%;
-  bottom: 0;
+  bottom: -5px; /* Position below text */
   width: 0;
   height: 3px; /* Height of the underline */
-  background: #ffffff; /* Underline color */
+  background: var(--primary); /* Underline color from primary variable */
   transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
 }
 
 .nav a:hover {
-  color: var(--accent); /* Change text color on hover */
+  color: var(--primary); /* Change text color on hover */
 }
 
 .nav a:hover::after {
@@ -204,42 +206,126 @@ section {
   left: 0; /* Align to the left */
 }
 
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
 .nav-toggle {
   display: none; /* Hidden by default, shown on mobile */
   background: none;
   border: none;
-  font-size: 1.8rem; /* Larger icon */
-  color: #ffffff; /* White icon */
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
   cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
 }
 
-/* ———————— RESPONSIVE NAVBAR ———————— */
-@media (max-width: 768px) {
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
   .nav {
-    display: none; /* Hide nav on smaller screens */
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav a {
+    width: 100%; /* Full width links */
+    text-align: left; /* Align text to left */
+    padding: 1rem 1.5rem; /* More padding for mobile links */
+    border-radius: 6px; /* Rounded corners for mobile links */
+  }
+
+  .nav a::after { /* Remove underline effect for mobile links */
+    display: none;
   }
 
   .nav-toggle {
     display: block; /* Show hamburger icon */
   }
 
-  .nav.open {
-    display: flex; /* Show nav when open */
-    flex-direction: column; /* Stack links vertically */
-    position: absolute; /* Position it absolutely */
-    top: 70px; /* Below header */
-    right: 0;
-    background: var(--primary); /* Background color for mobile */
-    width: 100%; /* Full width */
-    padding: 1rem; /* Padding for mobile nav */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
-    z-index: 1000; /* Ensure it appears above other content */
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
   }
 
-  .nav a {
-    padding: 1rem; /* More padding for mobile */
-    text-align: center; /* Center text */
-    width: 100%; /* Full width links */
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
   }
 }
 
@@ -271,16 +357,9 @@ section {
   box-shadow: 0 6px 16px var(--shadow);
 }
 
-.nav-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: var(--fg);
-  cursor: pointer;
-}
-
-/* Profile Info in Header */
+/* Profile Info in Header (re-defined for clarity, but mostly same as above) */
+/* This block is redundant if defined above, but kept for context if you prefer it separate */
+/*
 .profile-info {
   display: none;
   align-items: center;
@@ -310,6 +389,7 @@ section {
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
 }
+*/
 
 /* Signout Popup */
 #popup-overlay {
@@ -1010,30 +1090,21 @@ section {
     width: 50%;
   }
 
+  /* Mobile Nav Specifics */
   .nav {
-    display: none;
-  }
-
-  .nav-toggle {
-    display: block;
-  }
-
-  .header .container {
-    justify-content: space-between;
-  }
-
-  .nav {
+    display: none; /* Hidden by default */
+    flex-direction: column;
     position: fixed;
     top: 70px;
     right: 0;
     background: var(--card-bg);
-    flex-direction: column;
     width: 280px;
-    transform: translateX(100%);
-    transition: transform 0.4s ease-in-out;
+    height: calc(100% - 70px);
     padding: 2rem 1rem;
     box-shadow: -5px 0 15px var(--shadow);
-    height: calc(100% - 70px);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
     align-items: flex-start;
     gap: 1rem;
     border-left: 1px solid var(--border-color);
@@ -1047,10 +1118,24 @@ section {
     width: 100%;
     text-align: left;
     padding: 1rem 1.5rem;
+    border-radius: 6px;
+  }
+
+  .nav a::after {
+    display: none; /* Hide underline on mobile */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+    margin-left: auto; /* Push toggle to the right */
+  }
+
+  .header .container {
+    justify-content: space-between; /* Logo left, toggle/profile right */
   }
 
   .profile-info {
-    margin-left: 1rem;
+    margin-left: 1rem; /* Space between profile and toggle */
   }
 }
 
