@@ -50,8 +50,9 @@ function initThreeJsLoader() {
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
   const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
-  const sizes = new Float32Array(particleCount); // Size for each particle
-  const opacities = new Float32Array(particleCount); // Opacity for each particle
+  // Removed custom attributes for size and opacity as they are not used by PointsMaterial directly
+  // If you want to use varying sizes/opacities per particle, you'd need a ShaderMaterial
+  // For simplicity without a custom texture, we'll stick to PointsMaterial and its global size/opacity.
 
   for (let i = 0; i < particleCount; i++) {
     // Random positions within a sphere
@@ -67,16 +68,10 @@ function initThreeJsLoader() {
     colors[i * 3] = 0.5 + Math.random() * 0.5; // r
     colors[i * 3 + 1] = 0.5 + Math.random() * 0.5; // g
     colors[i * 3 + 2] = 0.5 + Math.random() * 0.5; // b
-
-    sizes[i] = 0.02 + Math.random() * 0.03; // Varying sizes
-    opacities[i] = 0.4 + Math.random() * 0.6; // Varying opacities
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  // Removed custom attributes for size and opacity as they are not used by PointsMaterial directly
-  // If you want to use varying sizes/opacities per particle, you'd need a ShaderMaterial
-  // For simplicity without a custom texture, we'll stick to PointsMaterial and its global size/opacity.
 
   // Using a basic PointsMaterial since you don't have a custom texture
   const particlesMaterial = new THREE.PointsMaterial({
@@ -393,41 +388,77 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— LOCOMOTIVE SCROLL ———
-  // Initialize Locomotive Scroll after DOM is loaded
-  const scroll = new LocomotiveScroll({
-    el: document.querySelector('[data-scroll-container]'),
-    smooth: true,
-    multiplier: 1, // Adjust scroll speed
-    class: 'is-reveal', // Class added to elements when they enter viewport
-    getDirection: true,
-    getSpeed: true,
-    // Add any other options you need
-  });
+  // ——— SCROLLREVEAL ———
+  if (window.ScrollReveal) {
+    // Default reveal options for most elements
+    const defaultRevealOptions = {
+      distance: '50px',
+      duration: 1000,
+      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+      interval: 150,
+      origin: 'bottom',
+      mobile: true,
+      // Crucial: Disable ScrollReveal's default transform/opacity management
+      // for elements that have their own CSS transitions/animations.
+      // This prevents conflicts.
+      beforeReveal: (el) => {
+        el.style.opacity = ''; // Clear opacity set by ScrollReveal
+        el.style.transform = ''; // Clear transform set by ScrollReveal
+      },
+      afterReveal: (el) => {
+        el.style.opacity = ''; // Ensure opacity is reset after reveal
+        el.style.transform = ''; // Ensure transform is reset after reveal
+      }
+    };
 
-  // Update Locomotive Scroll on window resize
-  window.addEventListener('resize', () => {
-    scroll.update();
-  });
+    // Apply ScrollReveal ONLY to elements that don't have conflicting CSS transforms/animations
+    // or where ScrollReveal's animation is desired as the primary entrance effect.
+    ScrollReveal().reveal(
+      [
+        '.hero-info',
+        '.skills-list li',
+        '.logo',
+        '.nav a',
+        '.footer p',
+        '.about-info', // Ensure about-info is revealed
+        '.hero-img img', // Re-added, assuming its CSS animation is simple or removed
+        '.about-grid img', // Re-added, assuming its CSS animation is simple or removed
+        '.login-box', // For the login screen entrance
+        '.welcome-message', // For the welcome message
+      ],
+      defaultRevealOptions
+    );
 
-  // Update Locomotive Scroll on scroll to ensure elements are correctly positioned
-  window.addEventListener('scroll', () => {
-    scroll.update();
-  });
+    // Specific reveal for section headings (h2)
+    // This is where the fix for headings comes in.
+    // We ensure that h2 elements are revealed.
+    ScrollReveal().reveal('h2', {
+      distance: '30px',
+      duration: 900,
+      easing: 'ease-out',
+      origin: 'top',
+      interval: 0,
+      mobile: true,
+      // Important: Ensure these are cleared if ScrollReveal applies them
+      beforeReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; },
+      afterReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; }
+    });
 
-  // Close nav when a nav link is clicked and scroll to section
+    // Elements with custom hover/animation effects that should NOT be managed by ScrollReveal:
+    // - .info-cards .card (has translateY and boxShadow on hover)
+    // - .item-list li (has rotateY, rotateX, translateY, boxShadow on hover)
+    // - .testimonial-card (has translateY and scale on hover)
+    // - .contact-form .btn (has translateY and boxShadow on hover)
+    // - .theme-toggle (has translateY and boxShadow on hover)
+    // - .back-top (has translateY on hover)
+    // - .hero-info .btn (has translateY and boxShadow on hover)
+    // These elements will rely solely on their CSS transitions for interactivity.
+  }
+
+  // Close nav when a nav link is clicked
   const navLinks = document.querySelectorAll('.nav a');
   navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default anchor jump
-      const targetId = link.getAttribute('href');
-      if (targetId && scroll) {
-        scroll.scrollTo(targetId, {
-          duration: 1000, // Smooth scroll duration
-          easing: [0.645, 0.045, 0.355, 1] // Ease-in-out
-        });
-      }
-
+    link.addEventListener('click', () => {
       if (nav.classList.contains('open')) {
         nav.classList.remove('open');
         navToggle.setAttribute('aria-expanded', 'false');
@@ -435,7 +466,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Testimonial Slider (Drag functionality) - This will still work independently of Locomotive Scroll
+  // Testimonial Slider (Drag functionality)
   const slider = document.querySelector('.testimonial-grid');
   let isDown = false;
   let startX;
