@@ -222,10 +222,6 @@ section {
     display: block; /* Show hamburger icon */
   }
 
-  .header .container {
-    justify-content: space-between;
-  }
-
   .nav.open {
     display: flex; /* Show nav when open */
     flex-direction: column; /* Stack links vertically */
