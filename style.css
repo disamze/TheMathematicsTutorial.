@@ -8,7 +8,7 @@
 }
 
 html {
-  font-family: 'Lato', sans-serif; /* Changed to Lato for body text */
+  font-family: 'Lato', sans-serif;
   scroll-behavior: smooth;
   scrollbar-width: none; /* hide scrollbar */
   -ms-overflow-style: none;
@@ -24,6 +24,7 @@ body {
   color: var(--fg);
   line-height: 1.6;
   overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
 }
 
 a {
@@ -84,8 +85,8 @@ ul {
   position: absolute;
   width: 60px;
   height: 60px;
-  background: var(--primary); /* Loader color matches primary */
-  border: 2px solid var(--accent); /* Border color matches accent */
+  background: var(--primary);
+  border: 2px solid var(--accent);
   opacity: 0.9;
 }
 
@@ -127,13 +128,18 @@ ul {
 .container {
   width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
-  padding: 3rem 1rem; /* Consistent padding */
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
 }
 
 .grid-3 {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Larger min-width */
-  gap: 1.5rem; /* Increased gap */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 /*———————— HEADER & NAV ————————*/
@@ -143,67 +149,80 @@ ul {
   left: 0;
   right: 0;
   background: var(--card-bg);
-  box-shadow: 0 2px 10px var(--shadow); /* Stronger shadow */
+  box-shadow: 0 2px 10px var(--shadow);
   z-index: 1000;
-  padding: 0.75rem 0; /* Reduced padding */
+  padding: 0.75rem 0;
 }
 
 .header .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem; /* Remove vertical padding here, use horizontal */
+  padding: 0 1rem; /* Horizontal padding for header content */
 }
 
 .logo {
-  height: 50px; /* Slightly larger logo */
+  height: 50px;
 }
 
 .nav {
   display: flex;
-  gap: 1.5rem; /* Increased gap */
+  gap: 1.5rem;
   align-items: center;
 }
 
 .nav a {
-  padding: 0.6rem 1rem; /* Larger padding */
-  border-radius: 6px; /* More rounded corners */
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
   transition: background 0.3s, color 0.3s;
-  font-weight: 600; /* Bolder font */
-  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
 }
 
 .nav a:hover {
-  background: var(--primary); /* Primary color on hover */
-  color: var(--card-bg); /* White text on hover */
+  background: var(--primary);
+  color: var(--card-bg);
 }
 
+/* Fixed Theme Toggle Button */
 .theme-toggle {
-  background: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
   border: none;
-  font-size: 1.6rem; /* Larger icon */
-  color: var(--fg);
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
   cursor: pointer;
-  margin-left: 1.5rem; /* Increased margin */
-  transition: color 0.3s;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
 }
 
 .theme-toggle:hover {
-  color: var(--primary);
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
 }
 
 .nav-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.8rem; /* Larger icon */
+  font-size: 1.8rem;
   color: var(--fg);
   cursor: pointer;
 }
 
 /* Profile Info in Header */
 .profile-info {
-  display: none; /* Hidden by default, shown by JS */
+  display: none;
   align-items: center;
   gap: 0.75rem;
   margin-left: auto;
@@ -237,7 +256,7 @@ ul {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6); /* Darker overlay */
+  background: rgba(0, 0, 0, 0.6);
   z-index: 2999;
 }
 
@@ -248,9 +267,9 @@ ul {
   left: 50%;
   transform: translate(-50%, -50%);
   background: var(--card-bg);
-  padding: 2.5rem; /* More padding */
+  padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: 0 15px 40px var(--shadow); /* Stronger shadow */
+  box-shadow: 0 15px 40px var(--shadow);
   z-index: 3000;
   text-align: center;
   max-width: 350px;
@@ -258,7 +277,7 @@ ul {
 }
 
 #signout-popup img {
-  width: 80px; /* Larger image */
+  width: 80px;
   height: 80px;
   border-radius: 50%;
   margin-bottom: 1.5rem;
@@ -275,7 +294,7 @@ ul {
 .signout-button {
   background: var(--accent);
   color: var(--card-bg);
-  padding: 0.8rem 1.8rem; /* Larger button */
+  padding: 0.8rem 1.8rem;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -291,7 +310,7 @@ ul {
 
 /*———————— LOGIN SCREEN ————————*/
 .login-container {
-  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Gradient using theme colors */
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -301,13 +320,13 @@ ul {
 
 .login-box {
   background: var(--card-bg);
-  box-shadow: 0 15px 40px var(--shadow); /* Stronger shadow */
-  border-radius: 15px; /* More rounded corners */
-  padding: 3rem; /* More padding */
-  max-width: 450px; /* Slightly wider */
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
   width: 100%;
   text-align: center;
-  animation: fadeInScale 0.8s ease-out forwards; /* New animation */
+  animation: fadeInScale 0.8s ease-out forwards;
 }
 
 .login-header {
@@ -315,13 +334,13 @@ ul {
 }
 
 .login-logo {
-  height: 80px; /* Larger logo */
+  height: 80px;
   margin-bottom: 1rem;
 }
 
 .login-box h2 {
   font-family: 'Poppins', sans-serif;
-  font-size: 2rem; /* Larger heading */
+  font-size: 2rem;
   color: var(--primary);
   margin-bottom: 0.75rem;
 }
@@ -333,7 +352,7 @@ ul {
 }
 
 .g_id_signin {
-  margin-top: 2rem; /* Space above Google button */
+  margin-top: 2rem;
 }
 
 .welcome-message {
@@ -356,31 +375,31 @@ ul {
 
 /*———————— HERO ————————*/
 .hero {
-  padding-top: 6rem; /* Adjusted padding */
+  padding-top: 6rem;
   background: var(--bg);
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem; /* Increased gap */
+  gap: 3rem;
   align-items: center;
 }
 
 .hero-info h1 {
   font-family: 'Poppins', sans-serif;
-  font-size: 3.5rem; /* Larger font size */
+  font-size: 3.5rem;
   color: var(--primary);
   line-height: 1.2;
 }
 
 .hero-info h1 span {
-  color: var(--accent); /* Accent color for name */
+  color: var(--accent);
 }
 
 .hero-info p {
-  margin: 1.5rem 0; /* More margin */
-  font-size: 1.15rem; /* Larger text */
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
   font-weight: 400;
   color: var(--fg);
 }
@@ -388,25 +407,25 @@ ul {
 .hero-info .btn {
   background: var(--primary);
   color: var(--card-bg);
-  padding: 0.8rem 2rem; /* Larger button */
-  border-radius: 8px; /* More rounded */
-  box-shadow: 0 6px 18px var(--shadow); /* Stronger shadow */
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
   transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
   font-weight: 600;
   font-size: 1.1rem;
-  display: inline-block; /* For padding to work */
+  display: inline-block;
 }
 
 .hero-info .btn:hover {
-  transform: translateY(-4px); /* More pronounced lift */
+  transform: translateY(-4px);
   box-shadow: 0 12px 28px var(--shadow);
-  background: var(--accent); /* Accent color on hover */
+  background: var(--accent);
 }
 
 .hero-img img {
   width: 100%;
-  border-radius: 12px; /* More rounded */
-  box-shadow: 0 8px 24px var(--shadow); /* Stronger shadow */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
   animation: fadeInUp 1s ease-out both;
 }
 
@@ -414,7 +433,7 @@ ul {
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 3rem; /* Increased gap */
+  gap: 3rem;
   align-items: center;
 }
 
@@ -444,17 +463,17 @@ ul {
 
 .info-cards {
   display: flex;
-  gap: 1.5rem; /* Increased gap */
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .info-cards .card {
   background: var(--card-bg);
-  padding: 1.5rem; /* More padding */
-  border-radius: 10px; /* More rounded */
+  padding: 1.5rem;
+  border-radius: 10px;
   box-shadow: 0 6px 18px var(--shadow);
   flex: 1;
-  min-width: 220px; /* Ensure cards don't get too small */
+  min-width: 220px;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -477,7 +496,7 @@ ul {
 
 /*———————— SKILLS ————————*/
 .skills-list {
-  max-width: 700px; /* Wider list */
+  max-width: 700px;
   margin: 0 auto;
   padding: 2rem;
   background: var(--card-bg);
@@ -497,25 +516,25 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 0; /* More margin */
+  margin: 1rem 0;
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--fg);
 }
 
 .progress {
-  background: var(--border-color); /* Lighter background for progress bar */
-  width: 65%; /* Slightly wider progress bar */
-  height: 10px; /* Thicker bar */
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
   border-radius: 5px;
   overflow: hidden;
 }
 
 .progress > div {
   height: 100%;
-  background: var(--accent); /* Accent color for progress fill */
+  background: var(--accent);
   border-radius: 5px;
-  transition: width 0.8s ease-out; /* Smooth animation for progress */
+  transition: width 0.8s ease-out;
 }
 
 /*———————— DOWNLOAD CARDS ————————*/
@@ -530,15 +549,15 @@ ul {
 .list-section .item-list {
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Larger min-width */
-  gap: 1.5rem; /* Increased gap */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
 
 .item-list li {
   background: var(--card-bg);
-  border: 1px solid var(--border-color); /* Subtle border */
-  border-radius: 10px; /* More rounded */
-  padding: 1.5rem; /* More padding */
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
   box-shadow: 0 6px 18px var(--shadow);
   display: flex;
   flex-direction: column;
@@ -549,12 +568,12 @@ ul {
 }
 
 .item-list li:hover {
-  transform: rotateY(5deg) rotateX(2deg) translateY(-8px); /* More subtle 3D effect, more lift */
-  box-shadow: 0 15px 35px var(--shadow); /* Stronger shadow */
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
 }
 
 .item-list li span {
-  margin-bottom: 1rem; /* More margin */
+  margin-bottom: 1rem;
   font-weight: 600;
   color: var(--primary);
   font-size: 1.1rem;
@@ -565,7 +584,7 @@ ul {
   align-self: flex-end;
   background: var(--accent);
   color: var(--card-bg);
-  padding: 0.6rem 1.2rem; /* Larger button */
+  padding: 0.6rem 1.2rem;
   border-radius: 6px;
   font-size: 1rem;
   transition: background 0.3s;
@@ -590,7 +609,7 @@ ul {
   flex-wrap: nowrap;
   overflow-x: auto; /* Allow horizontal scroll */
   overflow-y: hidden;
-  gap: 1.5rem; /* Increased gap */
+  gap: 1.5rem;
   padding: 1rem 0;
   width: 100%;
   cursor: grab;
@@ -601,7 +620,7 @@ ul {
 }
 
 .testimonial-grid::-webkit-scrollbar {
-  height: 8px; /* Make scrollbar visible */
+  height: 8px;
 }
 
 .testimonial-grid::-webkit-scrollbar-track {
@@ -623,7 +642,7 @@ ul {
   width: 300px; /* Fixed width for cards in the scrollable grid */
   scroll-snap-align: start;
   background: var(--card-bg);
-  padding: 2rem; /* More padding */
+  padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 8px 24px var(--shadow);
   font-style: italic;
@@ -640,7 +659,7 @@ ul {
 }
 
 .testimonial-card:hover {
-  transform: translateY(-8px) scale(1.01); /* More lift, subtle scale */
+  transform: translateY(-8px) scale(1.01);
   box-shadow: 0 15px 35px var(--shadow);
 }
 
@@ -669,12 +688,12 @@ ul {
 }
 
 .contact-form {
-  max-width: 600px; /* Wider form */
+  max-width: 600px;
   margin: 0 auto;
   display: grid;
-  gap: 1.5rem; /* Increased gap */
+  gap: 1.5rem;
   background: var(--card-bg);
-  padding: 2.5rem; /* More padding */
+  padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
   border: 1px solid var(--border-color);
@@ -688,12 +707,12 @@ ul {
 
 .contact-form input,
 .contact-form textarea {
-  padding: 1rem; /* More padding */
-  border: 1px solid var(--border-color); /* Subtle border */
-  border-radius: 8px; /* More rounded */
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   font-size: 1rem;
   color: var(--fg);
-  background: var(--bg); /* Input background matches body bg */
+  background: var(--bg);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -701,18 +720,18 @@ ul {
 .contact-form textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Focus ring */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .contact-form textarea {
-  resize: vertical; /* Allow vertical resize */
+  resize: vertical;
   min-height: 120px;
 }
 
 .contact-form .btn {
   background: var(--primary);
   color: var(--card-bg);
-  padding: 0.8rem 2rem; /* Larger button */
+  padding: 0.8rem 2rem;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -732,9 +751,9 @@ ul {
   background: var(--card-bg);
   color: var(--fg);
   text-align: center;
-  padding: 2rem 0; /* More padding */
+  padding: 2rem 0;
   box-shadow: 0 -2px 10px var(--shadow);
-  position: relative; /* For back-top positioning */
+  position: relative;
 }
 
 .footer .container {
@@ -751,7 +770,7 @@ ul {
 }
 
 .back-top {
-  font-size: 1.8rem; /* Larger icon */
+  font-size: 1.8rem;
   color: var(--fg);
   position: absolute;
   bottom: 1.5rem;
@@ -768,7 +787,7 @@ ul {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(40px); /* More pronounced effect */
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -777,7 +796,6 @@ ul {
 }
 
 /*———————— GLOBAL TRANSITIONS ————————*/
-/* Apply transitions to all elements for smooth theme changes */
 * {
   transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
     transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
@@ -787,13 +805,13 @@ ul {
 @media (max-width: 992px) {
   .hero-grid,
   .about-grid {
-    grid-template-columns: 1fr; /* Stack columns */
+    grid-template-columns: 1fr;
     text-align: center;
   }
 
   .hero-info,
   .about-info {
-    order: 2; /* Text below image on mobile */
+    order: 2;
   }
 
   .hero-img,
@@ -815,19 +833,19 @@ ul {
   }
 
   .info-cards {
-    justify-content: center; /* Center cards */
+    justify-content: center;
   }
 
   .skills-list .progress {
-    width: 50%; /* Adjust progress bar width */
+    width: 50%;
   }
 
   .nav {
-    display: none; /* Hide nav on smaller screens */
+    display: none;
   }
 
   .nav-toggle {
-    display: block; /* Show hamburger icon */
+    display: block;
   }
 
   .header .container {
@@ -836,17 +854,17 @@ ul {
 
   .nav {
     position: fixed;
-    top: 70px; /* Below header */
+    top: 70px;
     right: 0;
     background: var(--card-bg);
     flex-direction: column;
-    width: 280px; /* Wider mobile nav */
+    width: 280px;
     transform: translateX(100%);
     transition: transform 0.4s ease-in-out;
     padding: 2rem 1rem;
     box-shadow: -5px 0 15px var(--shadow);
     height: calc(100% - 70px);
-    align-items: flex-start; /* Align items to start */
+    align-items: flex-start;
     gap: 1rem;
     border-left: 1px solid var(--border-color);
   }
@@ -856,20 +874,24 @@ ul {
   }
 
   .nav a {
-    width: 100%; /* Full width links */
+    width: 100%;
     text-align: left;
     padding: 1rem 1.5rem;
   }
 
   .profile-info {
-    margin-left: 1rem; /* Adjust margin for mobile */
+    margin-left: 1rem;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    width: min(100% - 2rem, 1100px); /* Ensure container respects padding on smaller screens */
-    padding: 2rem 1rem;
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
   }
 
   .hero-info h1 {
@@ -889,36 +911,35 @@ ul {
   }
 
   .info-cards {
-    flex-direction: column; /* Stack cards fully */
-    align-items: center; /* Center stacked cards */
+    flex-direction: column;
+    align-items: center;
   }
 
   .info-cards .card {
-    min-width: unset; /* Remove min-width constraint */
-    width: 100%; /* Take full width */
+    min-width: unset;
+    width: 100%;
   }
 
   .skills-list li {
-    flex-direction: column; /* Stack skill name and progress */
+    flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
   .skills-list .progress {
-    width: 100%; /* Full width progress bar */
+    width: 100%;
   }
 
   .form-row {
-    grid-template-columns: 1fr; /* Stack form inputs */
+    grid-template-columns: 1fr;
   }
 
   .contact-form {
     padding: 2rem;
   }
 
-  /* Ensure testimonial cards don't cause overflow */
   .testimonial-card {
-    width: 280px; /* Keep a fixed width for scrollable cards */
+    width: 280px;
   }
 }
 
@@ -948,14 +969,22 @@ ul {
     font-size: 0.95rem;
   }
 
-  /* Ensure testimonial cards don't cause overflow */
   .testimonial-card {
-    width: 260px; /* Slightly smaller fixed width for very small screens */
+    width: 260px;
   }
 
   .back-top {
     font-size: 1.5rem;
     bottom: 1rem;
     right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
   }
 }
