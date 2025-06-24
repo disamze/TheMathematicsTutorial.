@@ -117,7 +117,9 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
 
     const initialDisplayLimit = 5; // Number of items to show initially
 
-    // Determine which items to display
+    // Determine which items to display for the initial view
+    // If showMoreCard is true, display only up to initialDisplayLimit
+    // Otherwise, display all items (for the full-screen overlay)
     const itemsToRender = showMoreCard ? items.slice(0, initialDisplayLimit) : items;
 
     itemsToRender.forEach(({ title, file }) => {
@@ -223,10 +225,19 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
 
   // ——— SCROLLREVEAL ———
   if (window.ScrollReveal) {
+    // Default reveal options for most elements
+    const defaultRevealOptions = {
+      distance: '50px',
+      duration: 1000,
+      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+      interval: 150,
+      origin: 'bottom',
+      mobile: true
+    };
+
     ScrollReveal().reveal(
       [
         '.hero-info',
-        '.about-info',
         '.info-cards .card',
         '.skills-list li',
         '.item-list li',
@@ -238,14 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
         '.footer p',
         '.back-top'
       ],
-      {
-        distance: '50px',
-        duration: 1000,
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-        interval: 150,
-        origin: 'bottom',
-        mobile: true
-      }
+      defaultRevealOptions
     );
 
     // Specific reveal for hero image
@@ -266,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
       mobile: true
     });
 
-    // Reveal for section headings
+    // Reveal for section headings (h2)
     ScrollReveal().reveal('h2', {
       distance: '30px',
       duration: 900,
@@ -275,6 +279,9 @@ document.addEventListener('DOMContentLoaded', async () => { // Added async here
       interval: 0,
       mobile: true
     });
+
+    // Ensure about-info is revealed
+    ScrollReveal().reveal('.about-info', defaultRevealOptions);
   }
 
   // Close nav when a nav link is clicked
