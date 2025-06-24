@@ -1,13 +1,26 @@
 // ——— PRELOADER FADE-OUT ———
 window.addEventListener('load', () => {
   const pre = document.getElementById('preloader');
-  if (!pre) return;
-  pre.classList.add('fade-out');
-  setTimeout(() => pre.remove(), 900);
+  if (pre) {
+    pre.classList.add('fade-out');
+    setTimeout(() => pre.remove(), 900);
+  }
+
+  // Check for user session on load
+  const userData = sessionStorage.getItem('user');
+  if (userData) {
+    const data = JSON.parse(userData);
+    showMainUI(data);
+  } else {
+    // If no user data, ensure login screen is visible
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-header').style.display = 'none';
+  }
 });
 
+// ——— MOBILE MENU TOGGLE ———
 document.addEventListener('DOMContentLoaded', () => {
-  // ——— MOBILE MENU TOGGLE ———
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
   if (nav && navToggle) {
@@ -17,8 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
       nav.classList.toggle('open');
     });
   }
-});
-
 
   // ——— DYNAMIC NOTES & QUESTIONS ———
   const notes = [
@@ -27,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
     { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
     { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
-    // → add your own here
   ];
   const questions = [
     { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
@@ -35,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
     { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
-    // → add yours here
   ];
 
   function renderList(items, containerId) {
@@ -58,11 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) {
     // Set initial icon based on current theme
-    if (document.documentElement.dataset.theme === 'dark') {
-      themeBtn.innerHTML = '<i class="bx bx-sun"></i>';
-    } else {
-      themeBtn.innerHTML = '<i class="bx bx-moon"></i>';
-    }
+    themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+      ? '<i class="bx bx-sun"></i>'
+      : '<i class="bx bx-moon"></i>';
 
     themeBtn.addEventListener('click', () => {
       const isDark = document.documentElement.dataset.theme === 'dark';
@@ -92,12 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
         '.back-top'
       ],
       {
-        distance: '50px', // Increased distance
-        duration: 1000, // Longer duration
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)', // Smoother easing
-        interval: 150, // Slightly faster interval
-        origin: 'bottom', // Default origin from bottom
-        mobile: true // Ensure animations work on mobile
+        distance: '50px',
+        duration: 1000,
+        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        interval: 150,
+        origin: 'bottom',
+        mobile: true
       }
     );
 
@@ -129,70 +136,66 @@ document.addEventListener('DOMContentLoaded', () => {
       mobile: true
     });
   }
+
+  // Close nav when a nav link is clicked
+  const navLinks = document.querySelectorAll('.nav a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (nav.classList.contains('open')) {
+        nav.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Testimonial Slider (Drag functionality)
+  const slider = document.querySelector('.testimonial-grid');
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  if (slider) {
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2; // scroll speed
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // Touch events for mobile
+    slider.addEventListener('touchstart', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.touches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e) => {
+      if (!isDown) return;
+      const x = e.touches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  }
 });
-
-// Close nav when a nav link is clicked
-const nav = document.querySelector('.nav');
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelectorAll('.nav a');
-
-navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    if (nav.classList.contains('open')) {
-      nav.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', 'false');
-    }
-  });
-});
-
-// Testimonial Slider (Drag functionality)
-const slider = document.querySelector('.testimonial-grid');
-let isDown = false;
-let startX;
-let scrollLeft;
-
-if (slider) {
-  slider.addEventListener('mousedown', (e) => {
-    isDown = true;
-    slider.classList.add('active');
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-  });
-  slider.addEventListener('mouseleave', () => {
-    isDown = false;
-    slider.classList.remove('active');
-  });
-  slider.addEventListener('mouseup', () => {
-    isDown = false;
-    slider.classList.remove('active');
-  });
-  slider.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2; // scroll speed
-    slider.scrollLeft = scrollLeft - walk;
-  });
-
-  // Touch events for mobile
-  slider.addEventListener('touchstart', (e) => {
-    isDown = true;
-    slider.classList.add('active');
-    startX = e.touches[0].pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-  });
-  slider.addEventListener('touchend', () => {
-    isDown = false;
-    slider.classList.remove('active');
-  });
-  slider.addEventListener('touchmove', (e) => {
-    if (!isDown) return;
-    const x = e.touches[0].pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2;
-    slider.scrollLeft = scrollLeft - walk;
-  });
-}
-
 
 // ——— GOOGLE SIGN-IN LOGIC ———
 // Google Sign-In callback must be globally accessible
@@ -258,7 +261,6 @@ if (signoutBtn) {
   });
 }
 
-
 // Handle profile click to show popup
 document.addEventListener('click', (e) => {
   const profileInfo = e.target.closest('#profile-info');
@@ -280,25 +282,4 @@ if (popupOverlay) {
     document.getElementById('popup-overlay').style.display = 'none';
     document.getElementById('signout-popup').style.display = 'none';
   });
-}
-
-
-// Preloader and session restore on initial load
-window.addEventListener('load', () => {
-  const pre = document.getElementById('preloader');
-  if (pre) {
-    pre.classList.add('fade-out');
-    setTimeout(() => pre.remove(), 900);
-  }
-
-  const userData = sessionStorage.getItem('user');
-  if (userData) {
-    const data = JSON.parse(userData);
-    showMainUI(data);
-  } else {
-    // If no user data, ensure login screen is visible
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
-  }
 });
