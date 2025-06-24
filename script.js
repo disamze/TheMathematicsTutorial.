@@ -154,11 +154,18 @@ window.addEventListener('load', () => {
 document.addEventListener('DOMContentLoaded', async () => {
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
-  if (nav && navToggle) {
+  const header = document.getElementById('main-header'); // Get the header to calculate top offset
+
+  if (nav && navToggle && header) {
     navToggle.addEventListener('click', () => {
       const expanded = navToggle.getAttribute('aria-expanded') === 'true';
       navToggle.setAttribute('aria-expanded', String(!expanded));
       nav.classList.toggle('open');
+
+      // Dynamically set top position based on header height
+      const headerHeight = header.offsetHeight;
+      nav.style.top = `${headerHeight}px`;
+      nav.style.height = `calc(100vh - ${headerHeight}px)`; // Use 100vh for full viewport height
     });
   }
 
@@ -329,7 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Close overlay if clicked outside content (on the overlay itself)
   fullScreenOverlay.addEventListener('click', (e) => {
-    // Check if the click target is the overlay itself, not its children
+    // Check if the click target is the overlay itself or the close button
     if (e.target === fullScreenOverlay || e.target === closeBtn) {
       fullScreenOverlay.classList.remove('active');
       document.body.style.overflow = '';
@@ -397,6 +404,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     // Specific reveal for section headings (h2)
+    // This is where the fix for headings comes in.
+    // We ensure that h2 elements are revealed.
     ScrollReveal().reveal('h2', {
       distance: '30px',
       duration: 900,
@@ -404,6 +413,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       origin: 'top',
       interval: 0,
       mobile: true,
+      // Important: Ensure these are cleared if ScrollReveal applies them
       beforeReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; },
       afterReveal: (el) => { el.style.opacity = ''; el.style.transform = ''; }
     });
