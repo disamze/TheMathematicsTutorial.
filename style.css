@@ -164,7 +164,8 @@ section {
 }
 
 .logo {
-  height: 50px; /* Logo size */
+  height: 50px; 
+  border-radius: 50%;/* Logo size */
 }
 
 .nav {
