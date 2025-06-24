@@ -655,6 +655,29 @@ section {
   background: var(--primary);
 }
 
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
 /*———————— TESTIMONIALS ————————*/
 .testimonials h2 {
   font-family: 'Poppins', sans-serif;
@@ -860,6 +883,93 @@ section {
   transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
     transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
 }
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.full-screen-content .close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--fg);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.full-screen-content .close-btn:hover {
+  color: var(--primary);
+}
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-content .close-btn {
+    font-size: 1.8rem;
+  }
+}
+
 
 /*———————— RESPONSIVE ————————*/
 @media (max-width: 992px) {
