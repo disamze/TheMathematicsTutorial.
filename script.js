@@ -256,49 +256,7 @@ window.addEventListener('load', () => {
     console.warn("Three.js not loaded. Preloader will not show 3D animation.");
   }
 
-  const pre = document.getElementById('preloader');
-  if (pre) {
-    // Give a small delay for the Three.js animation to be visible
-    setTimeout(() => {
-      pre.classList.add('fade-out');
-      // Stop the Three.js animation when fading out
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-      // Clean up Three.js resources (optional but good practice)
-      if (renderer) {
-        renderer.dispose();
-        renderer.forceContextLoss();
-        renderer.domElement = null;
-        renderer = null;
-      }
-      scene = null;
-      camera = null;
-      particles = null;
-      preloaderCanvas = null;
-      window.removeEventListener('resize', onLoaderCanvasResize);
-      document.removeEventListener('mousemove', onDocumentMouseMove);
-      document.removeEventListener('touchstart', onDocumentTouchStart);
-      document.removeEventListener('touchmove', onDocumentTouchMove);
-
-
-      setTimeout(() => pre.remove(), 900);
-    }, 3000); // Show loader for at least 3 seconds for better animation
-  }
-  // ... (existing Three.js preloader variables and functions) ...
-
-window.addEventListener('load', () => {
-  // Initialize Three.js loader
-  if (typeof THREE !== 'undefined') {
-    initThreeJsLoader();
-    animateThreeJsLoader(); // Start the animation loop
-  } else {
-    console.warn("Three.js not loaded. Preloader will not show 3D animation.");
-  }
-
   const mainPreloader = document.getElementById('preloader');
-  const lottiePreloader = document.getElementById('lottie-preloader'); // Get the new Lottie preloader
-
   if (mainPreloader) {
     // Give a small delay for the Three.js animation to be visible
     setTimeout(() => {
@@ -323,50 +281,16 @@ window.addEventListener('load', () => {
       document.removeEventListener('touchstart', onDocumentTouchStart);
       document.removeEventListener('touchmove', onDocumentTouchMove);
 
-      // After main preloader fades out, remove it and then show Lottie preloader
-      setTimeout(() => {
-        mainPreloader.remove();
 
-        // Check for user session on load
-        const userData = sessionStorage.getItem('user');
-        if (userData) {
-          const data = JSON.parse(userData);
-          showMainUI(data); // Show main UI
-
-          // NEW: Show Lottie preloader briefly after main UI is shown
-          if (lottiePreloader) {
-            lottiePreloader.style.opacity = '1';
-            lottiePreloader.style.visibility = 'visible';
-
-            setTimeout(() => {
-              lottiePreloader.style.opacity = '0';
-              lottiePreloader.style.visibility = 'hidden';
-              setTimeout(() => lottiePreloader.remove(), 900); // Remove after transition
-            }, 2000); // Lottie preloader visible for 2 seconds
-          }
-
-        } else {
-          // If no user data, ensure login screen is visible
-          document.getElementById('login-screen').style.display = 'flex';
-          document.getElementById('main-content').style.display = 'none';
-          document.getElementById('main-header').style.display = 'none';
-          // If login screen is shown, no need for Lottie preloader
-          if (lottiePreloader) {
-            lottiePreloader.remove();
-          }
-        }
-      }, 900); // This timeout matches the CSS fade-out transition of the main preloader
+      setTimeout(() => mainPreloader.remove(), 900); // Remove after transition
     }, 3000); // Show main (Three.js) loader for at least 3 seconds
   }
-});
-
-// ... (rest of your script.js code remains the same) ...
-
 
   // Check for user session on load
   const userData = sessionStorage.getItem('user');
   if (userData) {
     const data = JSON.parse(userData);
+    // If user data exists, show main UI and then the Lottie preloader
     showMainUI(data);
   } else {
     // If no user data, ensure login screen is visible
@@ -375,9 +299,6 @@ window.addEventListener('load', () => {
     document.getElementById('main-header').style.display = 'none';
   }
 });
-
-// ... (rest of your script.js code remains the same) ...
-
 
 // ——— MOBILE MENU TOGGLE ———
 document.addEventListener('DOMContentLoaded', async () => {
@@ -691,7 +612,7 @@ window.handleCredentialResponse = function (response) {
 
   // Save user data in sessionStorage
   sessionStorage.setItem('user', JSON.stringify(data));
-  showMainUI(data);
+  showMainUI(data); // Call showMainUI after successful login
 };
 
 // Parse JWT token to extract user info
@@ -725,6 +646,19 @@ function showMainUI(data) {
   // Set data for signout popup
   document.getElementById('popup-name').textContent = data.name;
   document.getElementById('popup-pic').src = data.picture;
+
+  // NEW: Show Lottie preloader briefly after main UI is shown
+  const lottiePreloader = document.getElementById('lottie-preloader');
+  if (lottiePreloader) {
+    lottiePreloader.style.opacity = '1';
+    lottiePreloader.style.visibility = 'visible';
+
+    setTimeout(() => {
+      lottiePreloader.style.opacity = '0';
+      lottiePreloader.style.visibility = 'hidden';
+      setTimeout(() => lottiePreloader.remove(), 900); // Remove after transition
+    }, 2000); // Lottie preloader visible for 2 seconds
+  }
 }
 
 // Handle sign out
@@ -744,6 +678,12 @@ if (signoutBtn) {
     document.getElementById('main-header').style.display = 'none';
     document.getElementById('profile-info').style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex'; // Show login screen
+
+    // If signing out, ensure Lottie preloader is removed if it somehow still exists
+    const lottiePreloader = document.getElementById('lottie-preloader');
+    if (lottiePreloader) {
+      lottiePreloader.remove();
+    }
   });
 }
 
