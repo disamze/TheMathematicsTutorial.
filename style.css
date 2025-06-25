@@ -63,7 +63,7 @@ ul {
   position: fixed;
   inset: 0;
   /* Changed preloader background to a dark color for contrast */
-  background: #1a1a2e; /* Dark blue/purple for contrast */
+  background: #fff; /* Dark blue/purple for contrast */
   display: flex;
   align-items: center;
   justify-content: center;
