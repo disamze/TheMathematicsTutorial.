@@ -17,10 +17,26 @@
 </head>
 
 <body data-theme="light">
-  <!-- Preloader -->
+  <!-- Main Preloader (Three.js) -->
   <div id="preloader">
-    <!-- Three.js will render here -->
     <canvas id="preloader-canvas"></canvas>
+  </div>
+
+  <!-- NEW: Second Loader (Lottie Animation) - Hidden by default -->
+  <div id="lottie-preloader" style="
+    position: fixed;
+    inset: 0;
+    background: var(--bg); /* Use your theme's background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2500; /* Higher than main content, lower than signout popup */
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Start hidden */
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  ">
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <dotlottie-player src="https://lottie.host/4a8df680-d2c3-4b76-aaec-41bdf43a2e23/JuKZ97wech.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
   </div>
 
   <!-- Header / Navbar -->
@@ -38,7 +54,6 @@
         <a href="#contact" class="btn small">Contact</a>
       </nav>
       <div class="profile-info" id="profile-info"></div>
-      <!-- Theme toggle moved outside header -->
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <i class="bx bx-menu"></i>
       </button>
@@ -65,8 +80,6 @@
 
   <!-- Main Content: hidden until login -->
   <div id="main-content" style="display: none;">
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player src="https://lottie.host/4a8df680-d2c3-4b76-aaec-41bdf43a2e23/JuKZ97wech.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
     <main>
       <!-- Hero -->
       <section id="home" class="hero">
@@ -122,8 +135,7 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       <!-- Skills -->
       <section id="skills" class="skills">
@@ -301,10 +313,6 @@
     <button class="close-btn">&times;</button>
   </div>
   <!-- Custom Script -->
-  <script
-  src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-  type="module"
-></script>
   <script src="script.js"></script>
 </body>
 </html>
