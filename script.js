@@ -51,8 +51,8 @@ function onLoaderCanvasResize() {
     preloaderCanvas.height = rect.height;
 
     camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
-    camera.updateProjectionMatrix();
     renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+    camera.updateProjectionMatrix();
   }
 }
 
@@ -82,12 +82,13 @@ function initThreeJsLoader() {
   renderer.setClearColor(0x000000, 0); // Make background transparent
 
   // Particle System
-  const particleCount = 5000; // Significantly increased particle count for a dense, impressive look
+  const particleCount = 8000; // Increased particle count for a denser, more impressive look
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
   const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
   const sizes = new Float32Array(particleCount); // Individual size for each particle
   const opacities = new Float32Array(particleCount); // Individual opacity for each particle
+  const initialAngles = new Float32Array(particleCount); // For orbital motion
 
   for (let i = 0; i < particleCount; i++) {
     // Random positions within a sphere
@@ -100,9 +101,10 @@ function initThreeJsLoader() {
     positions[i * 3 + 2] = r * Math.cos(phi); // z
 
     // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
-    const hue = Math.random() * 0.3 + 0.6; // Hue from blue (0.6) to purple (0.9)
-    const saturation = 0.7 + Math.random() * 0.3; // High saturation
-    const lightness = 0.5 + Math.random() * 0.3; // Medium to high lightness
+    // Wider hue range for more color variation
+    const hue = Math.random() * 0.5 + 0.5; // Hue from green-blue (0.5) to purple (1.0)
+    const saturation = 0.8 + Math.random() * 0.2; // High saturation
+    const lightness = 0.6 + Math.random() * 0.2; // Medium to high lightness
 
     const color = new THREE.Color();
     color.setHSL(hue, saturation, lightness);
@@ -110,47 +112,64 @@ function initThreeJsLoader() {
     colors[i * 3 + 1] = color.g;
     colors[i * 3 + 2] = color.b;
 
-    sizes[i] = 0.06 + Math.random() * 0.1; // Larger, more varied sizes
-    opacities[i] = 0.7 + Math.random() * 0.3; // Higher base opacity
+    sizes[i] = 0.08 + Math.random() * 0.12; // Larger, more varied sizes
+    opacities[i] = 0.8 + Math.random() * 0.2; // Higher base opacity
+    initialAngles[i] = Math.random() * Math.PI * 2; // Random initial angle for orbit
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
   particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
+  particlesGeometry.setAttribute('initialAngle', new THREE.BufferAttribute(initialAngles, 1)); // Custom attribute for initial angle
 
   // ShaderMaterial for glowing, circular particles
   const particlesMaterial = new THREE.ShaderMaterial({
     uniforms: {
       time: { value: 0.0 }, // For animating colors and movement
-      mousePos: { value: new THREE.Vector2(0, 0) } // For mouse interaction
+      mousePos: { value: new THREE.Vector2(0, 0) }, // For mouse interaction
+      cameraNear: { value: camera.near }, // Pass camera near/far for depth-based scaling
+      cameraFar: { value: camera.far }
     },
     vertexShader: `
       attribute float size;
       attribute float opacity;
       attribute vec3 color;
+      attribute float initialAngle; // New attribute for orbital motion
       varying vec3 vColor;
       varying float vOpacity;
       uniform float time;
       uniform vec2 mousePos;
+      uniform float cameraNear;
+      uniform float cameraFar;
 
       void main() {
         vColor = color;
         vOpacity = opacity;
 
-        // Add subtle movement based on time and initial position
         vec3 animatedPosition = position;
-        animatedPosition.x += sin(position.y * 5.0 + time * 0.5) * 0.05;
-        animatedPosition.y += cos(position.x * 5.0 + time * 0.5) * 0.05;
-        animatedPosition.z += sin(position.z * 5.0 + time * 0.5) * 0.05;
+
+        // Orbital motion around the center
+        float orbitSpeed = 0.5; // Adjust speed of orbit
+        float angle = initialAngle + time * orbitSpeed;
+        float orbitRadius = length(position.xy); // Use distance from center for orbit radius
+        animatedPosition.x = orbitRadius * cos(angle);
+        animatedPosition.y = orbitRadius * sin(angle);
+
+        // Add subtle vertical bobbing
+        animatedPosition.z += sin(time * 2.0 + position.x * 10.0) * 0.02;
 
         // Add a subtle pull towards mouse position (scaled down)
         vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
         animatedPosition += mouseInfluence;
 
-
         vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
-        gl_PointSize = size * (300.0 / -mvPosition.z); // Scale size based on distance
+
+        // Scale size based on distance from camera, with a minimum size
+        float distanceFactor = smoothstep(cameraNear, cameraFar, -mvPosition.z);
+        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time * 3.0 + initialAngle) * 0.1); // Add subtle size pulse
+        gl_PointSize = max(gl_PointSize, 5.0); // Ensure a minimum visible size
+
         gl_Position = projectionMatrix * mvPosition;
       }
     `,
@@ -163,12 +182,16 @@ function initThreeJsLoader() {
         float r = distance(gl_PointCoord, vec2(0.5)); // Distance from center of point
         float alpha = 1.0 - r * 2.0; // Fade from center to edge (circular)
 
-        // Add a subtle color shift over time
+        // Add a more pronounced and varied color shift over time
         vec3 animatedColor = vColor;
-        animatedColor.r = vColor.r + sin(time * 0.5 + vColor.g * 10.0) * 0.1;
-        animatedColor.g = vColor.g + cos(time * 0.5 + vColor.b * 10.0) * 0.1;
-        animatedColor.b = vColor.b + sin(time * 0.5 + vColor.r * 10.0) * 0.1;
+        animatedColor.r = vColor.r + sin(time * 1.0 + vColor.g * 15.0) * 0.15;
+        animatedColor.g = vColor.g + cos(time * 1.0 + vColor.b * 15.0) * 0.15;
+        animatedColor.b = vColor.b + sin(time * 1.0 + vColor.r * 15.0) * 0.15;
         animatedColor = clamp(animatedColor, 0.0, 1.0); // Keep colors within valid range
+
+        // Add a subtle flicker/glow effect
+        float glow = sin(time * 5.0 + r * 10.0) * 0.1 + 0.9;
+        animatedColor *= glow;
 
         gl_FragColor = vec4(animatedColor, vOpacity * alpha); // Apply color and faded opacity
       }
@@ -211,9 +234,11 @@ function animateThreeJsLoader() {
     particles.rotation.x += 0.0005;
     particles.rotation.y += 0.001;
 
-    // Camera subtle movement based on mouse position
-    camera.position.x = 2 * Math.sin(targetX * 0.00005);
-    camera.position.y = 2 * Math.cos(targetY * 0.00005);
+    // Camera subtle movement based on mouse position AND continuous oscillation
+    const cameraOscillationSpeed = 0.0005;
+    const cameraOscillationAmount = 0.05;
+    camera.position.x = 2 * Math.sin(targetX * 0.00005) + Math.sin(Date.now() * cameraOscillationSpeed) * cameraOscillationAmount;
+    camera.position.y = 2 * Math.cos(targetY * 0.00005) + Math.cos(Date.now() * cameraOscillationSpeed * 1.2) * cameraOscillationAmount;
     camera.lookAt(scene.position); // Always look at the center of the particle system
   }
 
@@ -273,6 +298,9 @@ window.addEventListener('load', () => {
     document.getElementById('main-header').style.display = 'none';
   }
 });
+
+// ... (rest of your script.js code remains the same) ...
+
 
 // ——— MOBILE MENU TOGGLE ———
 document.addEventListener('DOMContentLoaded', async () => {
