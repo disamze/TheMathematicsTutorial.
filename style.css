@@ -362,8 +362,6 @@ section {
   transform: translateY(-2px);
 }
 
-/* ... (previous CSS code) ... */
-
 /*———————— LOGIN SCREEN ————————*/
 .login-container {
   background: linear-gradient(135deg, var(--primary), var(--accent)); /* This will be covered by the canvas */
@@ -399,8 +397,27 @@ section {
   z-index: 1; /* Ensure it's above the canvas */
 }
 
-/* ... (rest of CSS code) ... */
+.login-header {
+  margin-bottom: 2rem;
+}
 
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
 
 .g_id_signin {
   margin-top: 2rem;
