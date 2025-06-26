@@ -86,7 +86,7 @@ function initThreeJsLoader() {
 
   // --- NEW: Load logo image and process it for particle placement ---
   const img = new Image();
-  img.src = 'your_logo.png'; // Path to your logo image
+  img.src = 'logo.png'; // Path to your logo image
   img.onload = () => {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -340,7 +340,7 @@ function initThreeJsLogo() {
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('your_logo.png', // Path to your logo image
+  textureLoader.load('logo.png', // Path to your logo image
     function (texture) {
       // Create a plane geometry for the logo
       const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
@@ -359,7 +359,7 @@ function initThreeJsLogo() {
       console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'your_logo.png';
+      staticLogo.src = 'logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
