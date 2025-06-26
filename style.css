@@ -362,25 +362,16 @@ section {
 
 /*———————— LOGIN SCREEN ————————*/
 .login-container {
-  background: linear-gradient(135deg, var(--primary), var(--accent)); /* This will be covered by the canvas */
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  position: relative; /* Needed for absolute positioning of canvas and login-box */
-  overflow: hidden; /* Hide any overflow from particles */
+  /* Removed: position: relative; and overflow: hidden; */
 }
 
-#login-background-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0; /* Ensure it's behind the login-box */
-  display: block; /* Ensure it's visible by default */
-}
+/* Removed: #login-background-canvas styles */
 
 .login-box {
   background: var(--card-bg);
@@ -392,7 +383,5852 @@ section {
   text-align: center;
   animation: fadeInScale 0.8s ease-out forwards;
   position: relative; /* Needed for z-index to work */
-  z-index: 1; /* Ensure it's above the canvas */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.g_id_signin {
+  margin-top: 2rem;
+}
+
+.welcome-message {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*———————— HERO ————————*/
+.hero {
+  padding-top: 6rem;
+  background: var(--bg);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.hero-info h1 span {
+  color: var(--accent);
+}
+
+.hero-info p {
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.hero-info .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.hero-info .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+.hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/*———————— ABOUT ————————*/
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-grid img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.about-info h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info strong {
+  color: var(--primary);
+}
+
+.info-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards .card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--shadow);
+  flex: 1;
+  min-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/*———————— SKILLS ————————*/
+.skills-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.skills h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skills-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.progress {
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 5px;
+  transition: width 0.8s ease-out;
+}
+
+/*———————— DOWNLOAD CARDS ————————*/
+.list-section h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list-section .item-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.item-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-list li:hover {
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.item-list li span {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.item-list li a {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s;
+  font-weight: 500;
+}
+
+.item-list li a:hover {
+  background: var(--primary);
+}
+
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/*———————— TESTIMONIALS ————————*/
+.testimonials h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-y: hidden;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+  cursor: grab;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
+}
+
+.testimonial-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-grid::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-style: italic;
+  user-select: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.testimonial-grid:active {
+  cursor: grabbing;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.testimonial-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.testimonial-card h5 {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*———————— CONTACT FORM ————————*/
+.contact h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-form .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.contact-form .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+/*———————— FOOTER ————————*/
+.footer {
+  background: var(--card-bg);
+  color: var(--fg);
+  text-align: center;
+  padding: 2rem 0;
+  box-shadow: 0 -2px 10px var(--shadow);
+  position: relative;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.footer p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.back-top {
+  font-size: 1.8rem;
+  color: var(--fg);
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.back-top:hover {
+  color: var(--primary);
+  transform: translateY(-5px);
+}
+
+/*———————— ANIMATIONS ————————*/
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
+
+/*———————— GLOBAL TRANSITIONS ————————*/
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative; /* Keep relative for h2 positioning */
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
+  position: absolute;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
+}
+
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+}
+
+
+/*———————— RESPONSIVE ————————*/
+@media (max-width: 992px) {
+  .hero-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-info,
+  .about-info {
+    order: 2;
+  }
+
+  .hero-img,
+  .about-img {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 2rem;
+  }
+
+  .info-cards {
+    justify-content: center;
+  }
+
+  .skills-list .progress {
+    width: 50%;
+  }
+
+  /* Mobile Nav Specifics */
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    right: 0;
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+  }
+
+  .nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
+  }
+
+  .hero-info h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-info p {
+    font-size: 1rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-cards .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .skills-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .skills-list .progress {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .testimonial-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+
+  .hero-info .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .login-box {
+    padding: 2rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-box p {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+  }
+
+  .back-top {
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+/*———————— RESET & BASE ————————*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Lato', sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* hide scrollbar */
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/*———————— VARIABLES & THEME ————————*/
+:root {
+  --bg: #f8f9fa; /* Light background */
+  --fg: #343a40; /* Darker foreground */
+  --primary: #007bff; /* Vibrant blue for primary actions/elements */
+  --accent: #28a745; /* Green for accents/success */
+  --card-bg: #ffffff; /* White card background */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
+  --border-color: #e9ecef; /* Light border color */
+  transition: background 0.3s, color 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg: #212529; /* Dark background */
+  --fg: #e9ecef; /* Light foreground */
+  --primary: #66b3ff; /* Lighter blue for primary */
+  --accent: #20c997; /* Teal for accents */
+  --card-bg: #343a40; /* Dark card background */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
+  --border-color: #495057; /* Dark border color */
+}
+
+/*———————— PRELOADER (Now Lottie) ————————*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg); /* Use theme's background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* No #preloader-canvas specific styles needed anymore */
+
+
+/*———————— CONTAINERS & GRID ————————*/
+.container {
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
+  margin: 0 auto;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
+  z-index: 1000;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
+}
+
+.nav {
+  display: flex;
+  gap: 2rem; /* Generous gap between nav links */
+  align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
+}
+
+.nav a {
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: -5px; /* Position below text */
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+  color: var(--primary); /* Change text color on hover */
+}
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
+  cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
+}
+
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Fixed Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Signout Popup */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2999;
+}
+
+#signout-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  z-index: 3000;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+#signout-popup img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--primary);
+}
+
+#signout-popup #popup-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.signout-button {
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.signout-button:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+/*———————— LOGIN SCREEN ————————*/
+.login-container {
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* Removed: position: relative; and overflow: hidden; */
+}
+
+/* Removed: #login-background-canvas styles */
+
+.login-box {
+  background: var(--card-bg);
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.8s ease-out forwards;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.g_id_signin {
+  margin-top: 2rem;
+}
+
+.welcome-message {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*———————— HERO ————————*/
+.hero {
+  padding-top: 6rem;
+  background: var(--bg);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.hero-info h1 span {
+  color: var(--accent);
+}
+
+.hero-info p {
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.hero-info .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.hero-info .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+.hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/*———————— ABOUT ————————*/
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-grid img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.about-info h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info strong {
+  color: var(--primary);
+}
+
+.info-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards .card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--shadow);
+  flex: 1;
+  min-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/*———————— SKILLS ————————*/
+.skills-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.skills h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skills-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.progress {
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 5px;
+  transition: width 0.8s ease-out;
+}
+
+/*———————— DOWNLOAD CARDS ————————*/
+.list-section h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list-section .item-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.item-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-list li:hover {
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.item-list li span {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.item-list li a {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s;
+  font-weight: 500;
+}
+
+.item-list li a:hover {
+  background: var(--primary);
+}
+
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/*———————— TESTIMONIALS ————————*/
+.testimonials h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-y: hidden;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+  cursor: grab;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
+}
+
+.testimonial-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-grid::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-style: italic;
+  user-select: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.testimonial-grid:active {
+  cursor: grabbing;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.testimonial-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.testimonial-card h5 {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*———————— CONTACT FORM ————————*/
+.contact h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-form .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.contact-form .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+/*———————— FOOTER ————————*/
+.footer {
+  background: var(--card-bg);
+  color: var(--fg);
+  text-align: center;
+  padding: 2rem 0;
+  box-shadow: 0 -2px 10px var(--shadow);
+  position: relative;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.footer p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.back-top {
+  font-size: 1.8rem;
+  color: var(--fg);
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.back-top:hover {
+  color: var(--primary);
+  transform: translateY(-5px);
+}
+
+/*———————— ANIMATIONS ————————*/
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
+
+/*———————— GLOBAL TRANSITIONS ————————*/
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative; /* Keep relative for h2 positioning */
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
+  position: absolute;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
+}
+
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+}
+
+
+/*———————— RESPONSIVE ————————*/
+@media (max-width: 992px) {
+  .hero-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-info,
+  .about-info {
+    order: 2;
+  }
+
+  .hero-img,
+  .about-img {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 2rem;
+  }
+
+  .info-cards {
+    justify-content: center;
+  }
+
+  .skills-list .progress {
+    width: 50%;
+  }
+
+  /* Mobile Nav Specifics */
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    right: 0;
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+  }
+
+  .nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
+  }
+
+  .hero-info h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-info p {
+    font-size: 1rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-cards .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .skills-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .skills-list .progress {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .testimonial-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+
+  .hero-info .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .login-box {
+    padding: 2rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-box p {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+  }
+
+  .back-top {
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+/*———————— RESET & BASE ————————*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Lato', sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* hide scrollbar */
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/*———————— VARIABLES & THEME ————————*/
+:root {
+  --bg: #f8f9fa; /* Light background */
+  --fg: #343a40; /* Darker foreground */
+  --primary: #007bff; /* Vibrant blue for primary actions/elements */
+  --accent: #28a745; /* Green for accents/success */
+  --card-bg: #ffffff; /* White card background */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
+  --border-color: #e9ecef; /* Light border color */
+  transition: background 0.3s, color 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg: #212529; /* Dark background */
+  --fg: #e9ecef; /* Light foreground */
+  --primary: #66b3ff; /* Lighter blue for primary */
+  --accent: #20c997; /* Teal for accents */
+  --card-bg: #343a40; /* Dark card background */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
+  --border-color: #495057; /* Dark border color */
+}
+
+/*———————— PRELOADER (Now Lottie) ————————*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg); /* Use theme's background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* No #preloader-canvas specific styles needed anymore */
+
+
+/*———————— CONTAINERS & GRID ————————*/
+.container {
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
+  margin: 0 auto;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
+  z-index: 1000;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
+}
+
+.nav {
+  display: flex;
+  gap: 2rem; /* Generous gap between nav links */
+  align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
+}
+
+.nav a {
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: -5px; /* Position below text */
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+  color: var(--primary); /* Change text color on hover */
+}
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
+  cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
+}
+
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Fixed Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Signout Popup */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2999;
+}
+
+#signout-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  z-index: 3000;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+#signout-popup img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--primary);
+}
+
+#signout-popup #popup-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.signout-button {
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.signout-button:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+/*———————— LOGIN SCREEN ————————*/
+.login-container {
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* Removed: position: relative; and overflow: hidden; */
+}
+
+/* Removed: #login-background-canvas styles */
+
+.login-box {
+  background: var(--card-bg);
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.8s ease-out forwards;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.g_id_signin {
+  margin-top: 2rem;
+}
+
+.welcome-message {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*———————— HERO ————————*/
+.hero {
+  padding-top: 6rem;
+  background: var(--bg);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.hero-info h1 span {
+  color: var(--accent);
+}
+
+.hero-info p {
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.hero-info .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.hero-info .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+.hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/*———————— ABOUT ————————*/
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-grid img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.about-info h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info strong {
+  color: var(--primary);
+}
+
+.info-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards .card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--shadow);
+  flex: 1;
+  min-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/*———————— SKILLS ————————*/
+.skills-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.skills h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skills-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.progress {
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 5px;
+  transition: width 0.8s ease-out;
+}
+
+/*———————— DOWNLOAD CARDS ————————*/
+.list-section h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list-section .item-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.item-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-list li:hover {
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.item-list li span {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.item-list li a {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s;
+  font-weight: 500;
+}
+
+.item-list li a:hover {
+  background: var(--primary);
+}
+
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/*———————— TESTIMONIALS ————————*/
+.testimonials h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-y: hidden;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+  cursor: grab;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
+}
+
+.testimonial-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-grid::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-style: italic;
+  user-select: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.testimonial-grid:active {
+  cursor: grabbing;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.testimonial-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.testimonial-card h5 {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*———————— CONTACT FORM ————————*/
+.contact h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-form .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.contact-form .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+/*———————— FOOTER ————————*/
+.footer {
+  background: var(--card-bg);
+  color: var(--fg);
+  text-align: center;
+  padding: 2rem 0;
+  box-shadow: 0 -2px 10px var(--shadow);
+  position: relative;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.footer p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.back-top {
+  font-size: 1.8rem;
+  color: var(--fg);
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.back-top:hover {
+  color: var(--primary);
+  transform: translateY(-5px);
+}
+
+/*———————— ANIMATIONS ————————*/
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
+
+/*———————— GLOBAL TRANSITIONS ————————*/
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative; /* Keep relative for h2 positioning */
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
+  position: absolute;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
+}
+
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+}
+
+
+/*———————— RESPONSIVE ————————*/
+@media (max-width: 992px) {
+  .hero-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-info,
+  .about-info {
+    order: 2;
+  }
+
+  .hero-img,
+  .about-img {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 2rem;
+  }
+
+  .info-cards {
+    justify-content: center;
+  }
+
+  .skills-list .progress {
+    width: 50%;
+  }
+
+  /* Mobile Nav Specifics */
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    right: 0;
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+  }
+
+  .nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
+  }
+
+  .hero-info h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-info p {
+    font-size: 1rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-cards .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .skills-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .skills-list .progress {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .testimonial-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+
+  .hero-info .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .login-box {
+    padding: 2rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-box p {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+  }
+
+  .back-top {
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+/*———————— RESET & BASE ————————*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Lato', sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* hide scrollbar */
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/*———————— VARIABLES & THEME ————————*/
+:root {
+  --bg: #f8f9fa; /* Light background */
+  --fg: #343a40; /* Darker foreground */
+  --primary: #007bff; /* Vibrant blue for primary actions/elements */
+  --accent: #28a745; /* Green for accents/success */
+  --card-bg: #ffffff; /* White card background */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
+  --border-color: #e9ecef; /* Light border color */
+  transition: background 0.3s, color 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg: #212529; /* Dark background */
+  --fg: #e9ecef; /* Light foreground */
+  --primary: #66b3ff; /* Lighter blue for primary */
+  --accent: #20c997; /* Teal for accents */
+  --card-bg: #343a40; /* Dark card background */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
+  --border-color: #495057; /* Dark border color */
+}
+
+/*———————— PRELOADER (Now Lottie) ————————*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg); /* Use theme's background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* No #preloader-canvas specific styles needed anymore */
+
+
+/*———————— CONTAINERS & GRID ————————*/
+.container {
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
+  margin: 0 auto;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
+  z-index: 1000;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
+}
+
+.nav {
+  display: flex;
+  gap: 2rem; /* Generous gap between nav links */
+  align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
+}
+
+.nav a {
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: -5px; /* Position below text */
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+  color: var(--primary); /* Change text color on hover */
+}
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
+  cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
+}
+
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Fixed Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Signout Popup */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2999;
+}
+
+#signout-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  z-index: 3000;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+#signout-popup img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--primary);
+}
+
+#signout-popup #popup-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.signout-button {
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.signout-button:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+/*———————— LOGIN SCREEN ————————*/
+.login-container {
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* Removed: position: relative; and overflow: hidden; */
+}
+
+/* Removed: #login-background-canvas styles */
+
+.login-box {
+  background: var(--card-bg);
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.8s ease-out forwards;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.g_id_signin {
+  margin-top: 2rem;
+}
+
+.welcome-message {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*———————— HERO ————————*/
+.hero {
+  padding-top: 6rem;
+  background: var(--bg);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.hero-info h1 span {
+  color: var(--accent);
+}
+
+.hero-info p {
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.hero-info .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.hero-info .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+.hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/*———————— ABOUT ————————*/
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-grid img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.about-info h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info strong {
+  color: var(--primary);
+}
+
+.info-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards .card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--shadow);
+  flex: 1;
+  min-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/*———————— SKILLS ————————*/
+.skills-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.skills h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skills-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.progress {
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 5px;
+  transition: width 0.8s ease-out;
+}
+
+/*———————— DOWNLOAD CARDS ————————*/
+.list-section h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list-section .item-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.item-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-list li:hover {
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.item-list li span {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.item-list li a {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s;
+  font-weight: 500;
+}
+
+.item-list li a:hover {
+  background: var(--primary);
+}
+
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/*———————— TESTIMONIALS ————————*/
+.testimonials h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-y: hidden;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+  cursor: grab;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
+}
+
+.testimonial-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-grid::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-style: italic;
+  user-select: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.testimonial-grid:active {
+  cursor: grabbing;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.testimonial-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.testimonial-card h5 {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*———————— CONTACT FORM ————————*/
+.contact h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-form .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.contact-form .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+/*———————— FOOTER ————————*/
+.footer {
+  background: var(--card-bg);
+  color: var(--fg);
+  text-align: center;
+  padding: 2rem 0;
+  box-shadow: 0 -2px 10px var(--shadow);
+  position: relative;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.footer p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.back-top {
+  font-size: 1.8rem;
+  color: var(--fg);
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.back-top:hover {
+  color: var(--primary);
+  transform: translateY(-5px);
+}
+
+/*———————— ANIMATIONS ————————*/
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
+
+/*———————— GLOBAL TRANSITIONS ————————*/
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative; /* Keep relative for h2 positioning */
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
+  position: absolute;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
+}
+
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+}
+
+
+/*———————— RESPONSIVE ————————*/
+@media (max-width: 992px) {
+  .hero-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-info,
+  .about-info {
+    order: 2;
+  }
+
+  .hero-img,
+  .about-img {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 2rem;
+  }
+
+  .info-cards {
+    justify-content: center;
+  }
+
+  .skills-list .progress {
+    width: 50%;
+  }
+
+  /* Mobile Nav Specifics */
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    right: 0;
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+  }
+
+  .nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
+  }
+
+  .hero-info h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-info p {
+    font-size: 1rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-cards .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .skills-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .skills-list .progress {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .testimonial-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+
+  .hero-info .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .login-box {
+    padding: 2rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-box p {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+  }
+
+  .back-top {
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+/*———————— RESET & BASE ————————*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Lato', sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* hide scrollbar */
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/*———————— VARIABLES & THEME ————————*/
+:root {
+  --bg: #f8f9fa; /* Light background */
+  --fg: #343a40; /* Darker foreground */
+  --primary: #007bff; /* Vibrant blue for primary actions/elements */
+  --accent: #28a745; /* Green for accents/success */
+  --card-bg: #ffffff; /* White card background */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
+  --border-color: #e9ecef; /* Light border color */
+  transition: background 0.3s, color 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg: #212529; /* Dark background */
+  --fg: #e9ecef; /* Light foreground */
+  --primary: #66b3ff; /* Lighter blue for primary */
+  --accent: #20c997; /* Teal for accents */
+  --card-bg: #343a40; /* Dark card background */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
+  --border-color: #495057; /* Dark border color */
+}
+
+/*———————— PRELOADER (Now Lottie) ————————*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg); /* Use theme's background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* No #preloader-canvas specific styles needed anymore */
+
+
+/*———————— CONTAINERS & GRID ————————*/
+.container {
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
+  margin: 0 auto;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
+  z-index: 1000;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
+}
+
+.nav {
+  display: flex;
+  gap: 2rem; /* Generous gap between nav links */
+  align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
+}
+
+.nav a {
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: -5px; /* Position below text */
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+  color: var(--primary); /* Change text color on hover */
+}
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
+  cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
+}
+
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Fixed Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Signout Popup */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2999;
+}
+
+#signout-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  z-index: 3000;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+#signout-popup img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--primary);
+}
+
+#signout-popup #popup-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.signout-button {
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.signout-button:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+/*———————— LOGIN SCREEN ————————*/
+.login-container {
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* Removed: position: relative; and overflow: hidden; */
+}
+
+/* Removed: #login-background-canvas styles */
+
+.login-box {
+  background: var(--card-bg);
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.8s ease-out forwards;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.login-box p {
+  color: var(--fg);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.g_id_signin {
+  margin-top: 2rem;
+}
+
+.welcome-message {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*———————— HERO ————————*/
+.hero {
+  padding-top: 6rem;
+  background: var(--bg);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.hero-info h1 span {
+  color: var(--accent);
+}
+
+.hero-info p {
+  margin: 1.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.hero-info .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.hero-info .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+.hero-img img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+/*———————— ABOUT ————————*/
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-grid img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.about-info h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info strong {
+  color: var(--primary);
+}
+
+.info-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.info-cards .card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--shadow);
+  flex: 1;
+  min-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/*———————— SKILLS ————————*/
+.skills-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.skills h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skills-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.progress {
+  background: var(--border-color);
+  width: 65%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 5px;
+  transition: width 0.8s ease-out;
+}
+
+/*———————— DOWNLOAD CARDS ————————*/
+.list-section h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list-section .item-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.item-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-list li:hover {
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.item-list li span {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.item-list li a {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s;
+  font-weight: 500;
+}
+
+.item-list li a:hover {
+  background: var(--primary);
+}
+
+/* Style for the "More" cards */
+.item-list li.more-card {
+  background: var(--primary);
+  color: var(--card-bg);
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-list li.more-card span {
+  color: var(--card-bg);
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
+
+.item-list li.more-card:hover {
+  background: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/*———————— TESTIMONIALS ————————*/
+.testimonials h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-y: hidden;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+  cursor: grab;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  padding-bottom: 1.5rem; /* Space for scrollbar */
+}
+
+.testimonial-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-grid::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.testimonial-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 300px; /* Fixed width for cards in the scrollable grid */
+  scroll-snap-align: start;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  font-style: italic;
+  user-select: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid var(--border-color);
+}
+
+.testimonial-grid:active {
+  cursor: grabbing;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+.testimonial-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.testimonial-card h5 {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*———————— CONTACT FORM ————————*/
+.contact h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-form .btn {
+  background: var(--primary);
+  color: var(--card-bg);
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.contact-form .btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px var(--shadow);
+  background: var(--accent);
+}
+
+/*———————— FOOTER ————————*/
+.footer {
+  background: var(--card-bg);
+  color: var(--fg);
+  text-align: center;
+  padding: 2rem 0;
+  box-shadow: 0 -2px 10px var(--shadow);
+  position: relative;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.footer p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.back-top {
+  font-size: 1.8rem;
+  color: var(--fg);
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.back-top:hover {
+  color: var(--primary);
+  transform: translateY(-5px);
+}
+
+/*———————— ANIMATIONS ————————*/
+/* CSS for Intersection Observer based reveals */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific delays for different elements if needed */
+.hero-info.reveal-item { transition-delay: 0.1s; }
+.hero-img img.reveal-item { transition-delay: 0.2s; }
+.about-info.reveal-item { transition-delay: 0.1s; }
+.about-grid img.reveal-item { transition-delay: 0.2s; }
+.skills h2.reveal-item,
+.list-section h2.reveal-item,
+.testimonials h2.reveal-item,
+.contact h2.reveal-item { transition-delay: 0s; } /* Headings can appear faster */
+.skills-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.1s); } /* Dynamic delay for list items */
+.item-list li.reveal-item { transition-delay: calc(var(--item-index) * 0.05s); } /* Dynamic delay for list items */
+.testimonial-card.reveal-item { transition-delay: calc(var(--item-index) * 0.08s); } /* Dynamic delay for cards */
+.contact-form.reveal-item { transition-delay: 0.1s; }
+
+
+/*———————— GLOBAL TRANSITIONS ————————*/
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+/* Full-screen overlay for "More Notes/Questions" */
+.full-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-screen-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.full-screen-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative; /* Keep relative for h2 positioning */
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* New styles for the close button, positioned relative to the overlay */
+.full-screen-overlay .close-btn {
+  position: absolute;
+  top: 1.5rem; /* Adjust as needed */
+  right: 1.5rem; /* Adjust as needed */
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Larger size */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem; /* Larger icon */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  z-index: 4001; /* Ensure it's above the content */
+}
+
+.full-screen-overlay .close-btn:hover {
+  background: var(--accent);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+
+.full-screen-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+}
+
+.full-screen-content .item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments for overlay */
+@media (max-width: 768px) {
+  .full-screen-content {
+    padding: 1.5rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.8rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .full-screen-content {
+    padding: 1rem;
+  }
+  .full-screen-content h2 {
+    font-size: 1.5rem;
+  }
+  .full-screen-overlay .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+}
+
+
+/*———————— RESPONSIVE ————————*/
+@media (max-width: 992px) {
+  .hero-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-info,
+  .about-info {
+    order: 2;
+  }
+
+  .hero-img,
+  .about-img {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 2rem;
+  }
+
+  .info-cards {
+    justify-content: center;
+  }
+
+  .skills-list .progress {
+    width: 50%;
+  }
+
+  /* Mobile Nav Specifics */
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    right: 0;
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
+  }
+
+  .nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 2rem, 1100px);
+    padding: 2rem 0; /* Removed horizontal padding here, handled by section padding */
+  }
+
+  section {
+    padding: 0 1rem; /* Ensure sections have horizontal padding */
+  }
+
+  .hero-info h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-info p {
+    font-size: 1rem;
+  }
+
+  .about-info h2,
+  .skills h2,
+  .list-section h2,
+  .testimonials h2,
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-cards .card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .skills-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .skills-list .progress {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .testimonial-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+
+  .hero-info .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .login-box {
+    padding: 2rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-box p {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+  }
+
+  .back-top {
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Adjust fixed theme toggle for smaller screens */
+  .theme-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+/*———————— RESET & BASE ————————*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Lato', sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* hide scrollbar */
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
+  position: relative; /* Needed for fixed elements within body */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/*———————— VARIABLES & THEME ————————*/
+:root {
+  --bg: #f8f9fa; /* Light background */
+  --fg: #343a40; /* Darker foreground */
+  --primary: #007bff; /* Vibrant blue for primary actions/elements */
+  --accent: #28a745; /* Green for accents/success */
+  --card-bg: #ffffff; /* White card background */
+  --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow */
+  --border-color: #e9ecef; /* Light border color */
+  transition: background 0.3s, color 0.3s;
+}
+
+[data-theme="dark"] {
+  --bg: #212529; /* Dark background */
+  --fg: #e9ecef; /* Light foreground */
+  --primary: #66b3ff; /* Lighter blue for primary */
+  --accent: #20c997; /* Teal for accents */
+  --card-bg: #343a40; /* Dark card background */
+  --shadow: rgba(0, 0, 0, 0.6); /* Darker shadow */
+  --border-color: #495057; /* Dark border color */
+}
+
+/*———————— PRELOADER (Now Lottie) ————————*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg); /* Use theme's background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* No #preloader-canvas specific styles needed anymore */
+
+
+/*———————— CONTAINERS & GRID ————————*/
+.container {
+  width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
+  margin: 0 auto;
+  padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+}
+
+/* Ensure sections don't cause overflow */
+section {
+  padding: 0 1rem; /* Add horizontal padding to sections */
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/*———————— HEADER & NAV ————————*/
+/* ———————— NAVBAR STYLES (NEW) ———————— */
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg); /* Use card background for a cleaner look */
+  box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
+  z-index: 1000;
+  padding: 0.8rem 0; /* Vertical padding */
+  transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute items */
+  padding: 0 1.5rem; /* More horizontal padding for content */
+}
+
+.logo {
+  height: 50px;
+  border-radius: 50%; /* Logo size */
+  margin-right: 2rem; /* Space after logo */
+}
+
+.nav {
+  display: flex;
+  gap: 2rem; /* Generous gap between nav links */
+  align-items: center;
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: flex-start; /* Align links to the start */
+}
+
+.nav a {
+  position: relative; /* Position for pseudo-element */
+  padding: 0.8rem 0; /* Vertical padding for links, no horizontal */
+  color: var(--fg); /* Text color from foreground variable */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Poppins', sans-serif; /* Poppins for nav links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav a::after {
+  content: ''; /* Pseudo-element for underline effect */
+  position: absolute;
+  left: 50%;
+  bottom: -5px; /* Position below text */
+  width: 0;
+  height: 3px; /* Height of the underline */
+  background: var(--primary); /* Underline color from primary variable */
+  transition: width 0.3s ease, left 0.3s ease; /* Smooth transition */
+}
+
+.nav a:hover {
+  color: var(--primary); /* Change text color on hover */
+}
+
+.nav a:hover::after {
+  width: 100%; /* Full width on hover */
+  left: 0; /* Align to the left */
+}
+
+/* Profile Info and Nav Toggle (aligned to the right) */
+.profile-info {
+  display: none; /* Hidden by default, shown by JS after login */
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--border-color);
+  transition: background 0.3s;
+  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+}
+
+.profile-info:hover {
+  background: var(--primary);
+  color: var(--card-bg);
+}
+
+.profile-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.profile-info span {
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-toggle {
+  display: none; /* Hidden by default, shown on mobile */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Larger icon */
+  color: var(--fg); /* Icon color from foreground variable */
+  cursor: pointer;
+  margin-left: 1rem; /* Space between profile info and toggle if both visible */
+}
+
+/* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
+  .nav {
+    display: none; /* Hide nav on smaller screens by default */
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
+    right: 0;
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+  }
+
+  .nav.open {
+    transform: translateX(0); /* Slide in when open */
+  }
+
+  .nav-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .profile-info {
+    margin-left: 1rem; /* Space between logo and profile info */
+  }
+}
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Fixed Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 50%; /* Make it round */
+  width: 55px; /* Size of the button */
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem; /* Icon size */
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 100; /* Above most content, below popups */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Signout Popup */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2999;
+}
+
+#signout-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  z-index: 3000;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+#signout-popup img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--primary);
+}
+
+#signout-popup #popup-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.signout-button {
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.signout-button:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+/*———————— LOGIN SCREEN ————————*/
+.login-container {
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Reverted to gradient */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* Removed: position: relative; and overflow: hidden; */
+}
+
+/* Removed: #login-background-canvas styles */
+
+.login-box {
+  background: var(--card-bg);
+  box-shadow: 0 15px 40px var(--shadow);
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.8s ease-out forwards;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure it's above the canvas (if it were there) */
 }
 
 .login-header {
