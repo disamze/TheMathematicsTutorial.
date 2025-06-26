@@ -19,7 +19,7 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <!-- NEW: Three.js ES Module Import -->
-  <!-- Making THREE globally available for script.js (still needed for 3D logo and login background) -->
+  <!-- Making THREE globally available for script.js (still needed for 3D logo) -->
   <script type="module">
     import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
     window.THREE = THREE;
@@ -77,7 +77,7 @@
 
       <!-- Login Screen -->
       <section class="login-container" id="login-screen">
-        <canvas id="login-background-canvas"></canvas>
+        <!-- Removed: <canvas id="login-background-canvas"></canvas> -->
         <div class="login-box" id="login-box">
           <div class="login-header">
             <img src="logo.png" alt="Logo" class="login-logo" width="80" height="80">
