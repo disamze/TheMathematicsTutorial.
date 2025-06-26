@@ -13,14 +13,16 @@
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Three.js CDN -->
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+  <!-- REMOVED: <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script> -->
+  <!-- Lottie Player CDN -->
+  <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 </head>
 
 <body data-theme="light">
   <!-- Preloader -->
   <div id="preloader">
-    <!-- Three.js will render here -->
-    <canvas id="preloader-canvas"></canvas>
+    <!-- Lottie Player will render here -->
+    <dotlottie-player src="https://lottie.host/4a8df680-d2c3-4b76-aaec-41bdf43a2e23/JuKZ97wech.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
   </div>
 
   <!-- Header / Navbar -->
@@ -65,8 +67,8 @@
 
   <!-- Main Content: hidden until login -->
   <div id="main-content" style="display: none;">
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player src="https://lottie.host/4a8df680-d2c3-4b76-aaec-41bdf43a2e23/JuKZ97wech.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
+    <!-- REMOVED: <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script> -->
+    <!-- REMOVED: <dotlottie-player src="https://lottie.host/4a8df680-d2c3-4b76-aaec-41bdf43a2e23/JuKZ97wech.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player> -->
     <main>
       <!-- Hero -->
       <section id="home" class="hero">
@@ -300,11 +302,8 @@
     </div>
     <button class="close-btn">&times;</button>
   </div>
+  <!-- REMOVED: <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script> -->
   <!-- Custom Script -->
-  <script
-  src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-  type="module"
-></script>
   <script src="script.js"></script>
 </body>
 </html>
