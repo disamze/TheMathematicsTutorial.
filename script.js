@@ -56,6 +56,9 @@ function onLoaderCanvasResize() {
   }
 }
 
+// --- NEW: Global variable for logo texture data ---
+let logoImageData = null;
+
 function initThreeJsLoader() {
   preloaderCanvas = document.getElementById('preloader-canvas');
   if (!preloaderCanvas) {
@@ -81,30 +84,92 @@ function initThreeJsLoader() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 0); // Make background transparent
 
-  // Particle System
-  const particleCount = 8000; // Increased particle count for a denser, more impressive look
+  // --- NEW: Load logo image and process it for particle placement ---
+  const img = new Image();
+  img.src = 'your_logo.png'; // Path to your logo image
+  img.onload = () => {
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    const logoSize = 100; // Size to scale logo for particle sampling
+    tempCanvas.width = logoSize;
+    tempCanvas.height = logoSize;
+    ctx.drawImage(img, 0, 0, logoSize, logoSize);
+    logoImageData = ctx.getImageData(0, 0, logoSize, logoSize);
+    createParticlesFromLogo(); // Call particle creation after image is loaded
+  };
+  img.onerror = (err) => {
+    console.error('Error loading logo for preloader:', err);
+    createParticlesFromLogo(true); // Create generic particles if logo fails to load
+  };
+
+  // Lights (less critical for particle system, but good practice)
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+
+  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight.position.set(5, 5, 5);
+  scene.add(pointLight);
+
+  // Handle window resize for the loader canvas
+  window.addEventListener('resize', onLoaderCanvasResize, false);
+}
+
+// --- NEW: Function to create particles based on logo data ---
+function createParticlesFromLogo(fallback = false) {
+  const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
   const particlesGeometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
-  const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
-  const sizes = new Float32Array(particleCount); // Individual size for each particle
-  const opacities = new Float32Array(particleCount); // Individual opacity for each particle
-  const initialAngles = new Float32Array(particleCount); // For orbital motion
+  const positions = new new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+  const opacities = new Float32Array(particleCount);
+  const initialAngles = new Float32Array(particleCount);
+
+  const logoWidth = logoImageData ? logoImageData.width : 1;
+  const logoHeight = logoImageData ? logoImageData.height : 1;
 
   for (let i = 0; i < particleCount; i++) {
-    // Random positions within a sphere
-    const r = particleOrbitRadius * Math.sqrt(Math.random()); // Distribute more evenly
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos((2 * Math.random()) - 1);
+    let x, y, z;
+    let validPixel = false;
+    let attempts = 0;
+    const maxAttempts = 100; // Prevent infinite loops for sparse logos
 
-    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta); // x
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta); // y
-    positions[i * 3 + 2] = r * Math.cos(phi); // z
+    if (!fallback && logoImageData) {
+      // Sample pixels from the logo image
+      while (!validPixel && attempts < maxAttempts) {
+        const px = Math.floor(Math.random() * logoWidth);
+        const py = Math.floor(Math.random() * logoHeight);
+        const index = (py * logoWidth + px) * 4; // RGBA
+
+        // Check alpha channel for non-transparent pixels
+        if (logoImageData.data[index + 3] > 128) { // If alpha is > 50%
+          // Map pixel coordinates to Three.js coordinates (-1 to 1)
+          x = (px / logoWidth - 0.5) * 1.5; // Scale to fit within view
+          y = (0.5 - py / logoHeight) * 1.5; // Invert Y for canvas vs Three.js
+          z = (Math.random() - 0.5) * 0.5; // Add some depth
+          validPixel = true;
+        }
+        attempts++;
+      }
+    }
+
+    if (fallback || !validPixel) {
+      // Fallback to random sphere if logo data is not available or pixel not found
+      const r = particleOrbitRadius * Math.sqrt(Math.random());
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos((2 * Math.random()) - 1);
+      x = r * Math.sin(phi) * Math.cos(theta);
+      y = r * Math.sin(phi) * Math.sin(theta);
+      z = r * Math.cos(phi);
+    }
+
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
 
     // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
-    // Wider hue range for more color variation
-    const hue = Math.random() * 0.5 + 0.5; // Hue from green-blue (0.5) to purple (1.0)
-    const saturation = 0.8 + Math.random() * 0.2; // High saturation
-    const lightness = 0.6 + Math.random() * 0.2; // Medium to high lightness
+    const hue = Math.random() * 0.5 + 0.5;
+    const saturation = 0.8 + Math.random() * 0.2;
+    const lightness = 0.6 + Math.random() * 0.2;
 
     const color = new THREE.Color();
     color.setHSL(hue, saturation, lightness);
@@ -112,30 +177,30 @@ function initThreeJsLoader() {
     colors[i * 3 + 1] = color.g;
     colors[i * 3 + 2] = color.b;
 
-    sizes[i] = 0.08 + Math.random() * 0.12; // Larger, more varied sizes
-    opacities[i] = 0.8 + Math.random() * 0.2; // Higher base opacity
-    initialAngles[i] = Math.random() * Math.PI * 2; // Random initial angle for orbit
+    sizes[i] = 0.08 + Math.random() * 0.12;
+    opacities[i] = 0.8 + Math.random() * 0.2;
+    initialAngles[i] = Math.random() * Math.PI * 2;
   }
 
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
-  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
-  particlesGeometry.setAttribute('initialAngle', new THREE.BufferAttribute(initialAngles, 1)); // Custom attribute for initial angle
+  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+  particlesGeometry.setAttribute('initialAngle', new THREE.BufferAttribute(initialAngles, 1));
 
   // ShaderMaterial for glowing, circular particles
   const particlesMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      time: { value: 0.0 }, // For animating colors and movement
-      mousePos: { value: new THREE.Vector2(0, 0) }, // For mouse interaction
-      cameraNear: { value: camera.near }, // Pass camera near/far for depth-based scaling
+      time: { value: 0.0 },
+      mousePos: { value: new THREE.Vector2(0, 0) },
+      cameraNear: { value: camera.near },
       cameraFar: { value: camera.far }
     },
     vertexShader: `
       attribute float size;
       attribute float opacity;
       attribute vec3 color;
-      attribute float initialAngle; // New attribute for orbital motion
+      attribute float initialAngle;
       varying vec3 vColor;
       varying float vOpacity;
       uniform float time;
@@ -149,12 +214,12 @@ function initThreeJsLoader() {
 
         vec3 animatedPosition = position;
 
-        // Orbital motion around the center
-        float orbitSpeed = 0.5; // Adjust speed of orbit
+        // Subtle orbital motion around the center of the logo
+        float orbitSpeed = 0.2; // Slower orbit for logo particles
         float angle = initialAngle + time * orbitSpeed;
-        float orbitRadius = length(position.xy); // Use distance from center for orbit radius
-        animatedPosition.x = orbitRadius * cos(angle);
-        animatedPosition.y = orbitRadius * sin(angle);
+        float orbitRadius = length(position.xy) * 0.1; // Smaller orbit radius
+        animatedPosition.x += orbitRadius * cos(angle);
+        animatedPosition.y += orbitRadius * sin(angle);
 
         // Add subtle vertical bobbing
         animatedPosition.z += sin(time * 2.0 + position.x * 10.0) * 0.02;
@@ -167,8 +232,8 @@ function initThreeJsLoader() {
 
         // Scale size based on distance from camera, with a minimum size
         float distanceFactor = smoothstep(cameraNear, cameraFar, -mvPosition.z);
-        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time * 3.0 + initialAngle) * 0.1); // Add subtle size pulse
-        gl_PointSize = max(gl_PointSize, 5.0); // Ensure a minimum visible size
+        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time * 3.0 + initialAngle) * 0.1);
+        gl_PointSize = max(gl_PointSize, 5.0);
 
         gl_Position = projectionMatrix * mvPosition;
       }
@@ -179,42 +244,39 @@ function initThreeJsLoader() {
       uniform float time;
 
       void main() {
-        float r = distance(gl_PointCoord, vec2(0.5)); // Distance from center of point
-        float alpha = 1.0 - r * 2.0; // Fade from center to edge (circular)
+        float r = distance(gl_PointCoord, vec2(0.5));
+        float alpha = 1.0 - r * 2.0;
 
         // Add a more pronounced and varied color shift over time
         vec3 animatedColor = vColor;
         animatedColor.r = vColor.r + sin(time * 1.0 + vColor.g * 15.0) * 0.15;
         animatedColor.g = vColor.g + cos(time * 1.0 + vColor.b * 15.0) * 0.15;
         animatedColor.b = vColor.b + sin(time * 1.0 + vColor.r * 15.0) * 0.15;
-        animatedColor = clamp(animatedColor, 0.0, 1.0); // Keep colors within valid range
+        animatedColor = clamp(animatedColor, 0.0, 1.0);
 
         // Add a subtle flicker/glow effect
         float glow = sin(time * 5.0 + r * 10.0) * 0.1 + 0.9;
         animatedColor *= glow;
 
-        gl_FragColor = vec4(animatedColor, vOpacity * alpha); // Apply color and faded opacity
+        gl_FragColor = vec4(animatedColor, vOpacity * alpha);
       }
     `,
-    blending: THREE.AdditiveBlending, // For a glowing, overlapping effect
-    depthTest: false, // Important for transparent particles to render correctly
+    blending: THREE.AdditiveBlending,
+    depthTest: false,
     transparent: true
   });
 
+  // Remove existing particles if any
+  if (particles) {
+    scene.remove(particles);
+    particles.geometry.dispose();
+    particles.material.dispose();
+  }
+
   particles = new THREE.Points(particlesGeometry, particlesMaterial);
   scene.add(particles);
-
-  // Lights (less critical for particle system, but good practice)
-  const ambientLight = new THREE.AmbientLight(0x404040);
-  scene.add(ambientLight);
-
-  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(5, 5, 5);
-  scene.add(pointLight);
-
-  // Handle window resize for the loader canvas
-  window.addEventListener('resize', onLoaderCanvasResize, false);
 }
+
 
 function animateThreeJsLoader() {
   animationFrameId = requestAnimationFrame(animateThreeJsLoader);
@@ -231,8 +293,11 @@ function animateThreeJsLoader() {
     particles.material.uniforms.mousePos.value.set(targetX, targetY);
 
     // Animate particles: subtle rotation of the entire system
-    particles.rotation.x += 0.0005;
-    particles.rotation.y += 0.001;
+    // --- NEW: Rotate the entire logo particle system ---
+    if (particles) {
+      particles.rotation.x += 0.0005;
+      particles.rotation.y += 0.001;
+    }
 
     // Camera subtle movement based on mouse position AND continuous oscillation
     const cameraOscillationSpeed = 0.0005;
@@ -247,13 +312,16 @@ function animateThreeJsLoader() {
   }
 }
 
-// --- NEW: 3D Logo Variables ---
+// --- NEW: Global variable for logo texture data ---
+// This was moved inside initThreeJsLoader for better scope management
+// and to ensure it's processed before particles are created.
+
+// --- NEW: Initialize 3D Logo for Header (from previous step) ---
 let logoScene, logoCamera, logoRenderer, logoMesh;
 let logoAnimationFrameId;
 let logoTargetRotationX = 0;
 let logoTargetRotationY = 0;
 
-// --- NEW: Initialize 3D Logo ---
 function initThreeJsLogo() {
   const logoContainer = document.getElementById('threejs-logo-container');
   if (!logoContainer) {
@@ -276,7 +344,7 @@ function initThreeJsLogo() {
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
+  textureLoader.load('your_logo.png', // Path to your logo image
     function (texture) {
       // Create a plane geometry for the logo
       const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
@@ -292,10 +360,10 @@ function initThreeJsLogo() {
     },
     undefined, // onProgress callback
     function (err) {
-      console.error('An error occurred loading the logo texture:', err);
+      console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
+      staticLogo.src = 'your_logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
@@ -329,7 +397,6 @@ function initThreeJsLogo() {
   });
 }
 
-// --- NEW: Animate 3D Logo ---
 function animateThreeJsLogo() {
   logoAnimationFrameId = requestAnimationFrame(animateThreeJsLogo);
 
