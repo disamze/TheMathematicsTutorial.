@@ -12,8 +12,13 @@
   <link rel="stylesheet" href="style.css">
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- Three.js CDN -->
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+
+  <!-- NEW: Three.js ES Module Import -->
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
+    // Make THREE globally available for existing script.js
+    window.THREE = THREE;
+  </script>
 </head>
 
 <body data-theme="light">
@@ -41,43 +46,44 @@
 
   <!-- Header / Navbar -->
   <header class="header" id="main-header" style="display: none;">
-  <div class="container">
-    <!-- Removed the static <img> tag for the logo -->
-    <div id="threejs-logo-container" style="width: 50px; height: 50px; margin-right: 2rem;"></div> <!-- New container for 3D logo -->
-    <nav class="nav">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#notes">Notes</a>
-      <a href="#questions">Questions</a>
-      <a href="#books">Books</a> <!-- New Nav Link -->
-      <a href="#testimonials">Testimonials</a>
-      <a href="#contact" class="btn small">Contact</a>
-    </nav>
-    <div class="profile-info" id="profile-info"></div>
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-      <i class="bx bx-menu"></i>
-    </button>
-  </div>
-</header>
+    <div class="container">
+      <!-- Removed the static <img> tag for the logo -->
+      <div id="threejs-logo-container" style="width: 50px; height: 50px; margin-right: 2rem;"></div> <!-- New container for 3D logo -->
+      <nav class="nav">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#notes">Notes</a>
+        <a href="#questions">Questions</a>
+        <a href="#books">Books</a> <!-- New Nav Link -->
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact" class="btn small">Contact</a>
+      </nav>
+      <div class="profile-info" id="profile-info"></div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <i class="bx bx-menu"></i>
+      </button>
+    </div>
+  </header>
 
   <!-- Login Screen -->
- <section class="login-container" id="login-screen">
-  <div class="login-box" id="login-box">
-    <div class="login-header">
-      <img src="logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
-      <h2>Welcome to The Mathematics Tutorial</h2>
-      <p>Sign in to access exclusive notes, practice questions, and more!</p>
+  <section class="login-container" id="login-screen">
+    <div class="login-box" id="login-box">
+      <div class="login-header">
+        <img src="your_logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
+        <h2>Welcome to The Mathematics Tutorial</h2>
+        <p>Sign in to access exclusive notes, practice questions, and more!</p>
+      </div>
+      <div id="g_id_onload"
+        data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse"
+        data-auto_prompt="false"></div>
+      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
+        data-text="signin_with" data-size="large"></div>
+      <div class="welcome-message" id="welcome-message"></div>
     </div>
-    <div id="g_id_onload"
-      data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
-      data-callback="handleCredentialResponse"
-      data-auto_prompt="false"></div>
-    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
-      data-text="signin_with" data-size="large"></div>
-    <div class="welcome-message" id="welcome-message"></div>
-  </div>
-</section>
+  </section>
+
   <!-- Main Content: hidden until login -->
   <div id="main-content" style="display: none;">
     <main>
@@ -312,7 +318,7 @@
     </div>
     <button class="close-btn">&times;</button>
   </div>
-  <!-- Custom Script -->
-  <script src="script.js"></script>
+  <!-- Custom Script (as a module) -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
