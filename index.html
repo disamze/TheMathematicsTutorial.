@@ -81,16 +81,16 @@
     <div data-barba="container" data-barba-namespace="home">
 
       <!-- Login Screen -->
-     <section class="login-container" id="login-screen">
+      <section class="login-container" id="login-screen">
         <canvas id="login-background-canvas"></canvas> <!-- NEW: Canvas for login background animation -->
         <div class="login-box" id="login-box">
           <div class="login-header">
-            <img src="logo.png" alt="Logo" class="login-logo" width="80" height="80">
+            <img src="logo.png" alt="Logo" class="login-logo" width="80" height="80"> <!-- Added width and height -->
             <h2>Welcome to The Mathematics Tutorial</h2>
             <p>Sign in to access exclusive notes, practice questions, and more!</p>
           </div>
           <div id="g_id_onload"
-            data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
+            data-client_id="YOUR_CLIENT_ID.apps.googleusercontent.com" <!-- Replace with your actual client ID -->
             data-callback="handleCredentialResponse"
             data-auto_prompt="false"></div>
           <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
