@@ -1,260 +1,241 @@
-// ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
-let scene, camera, renderer, particles;
-let preloaderCanvas;
-let animationFrameId; // To store the requestAnimationFrame ID
-let particleOrbitRadius = 0.8; // Slightly larger radius for spread
-let particleSpeed = 0.005;
+// ——— PRELOADER FADE-OUT & LOADER ———
+// Removed all Three.js related variables and functions
+// let scene, camera, renderer, particles;
+// let preloaderCanvas;
+// let animationFrameId; // To store the requestAnimationFrame ID
+// let particleOrbitRadius = 0.8; // Slightly larger radius for spread
+// let particleSpeed = 0.005;
 
-// Mouse/Touch interaction variables
-let mouseX = 0;
-let mouseY = 0;
-let targetX = 0;
-let targetY = 0;
+// Mouse/Touch interaction variables (no longer needed for preloader)
+// let mouseX = 0;
+// let mouseY = 0;
+// let targetX = 0;
+// let targetY = 0;
 
-const windowHalfX = window.innerWidth / 2;
-const windowHalfY = window.innerHeight / 2;
+// const windowHalfX = window.innerWidth / 2;
+// const windowHalfY = window.innerHeight / 2;
 
-// Event listeners for mouse/touch movement
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-document.addEventListener('touchstart', onDocumentTouchStart, false);
-document.addEventListener('touchmove', onDocumentTouchMove, false);
+// Event listeners for mouse/touch movement (no longer needed for preloader)
+// document.addEventListener('mousemove', onDocumentMouseMove, false);
+// document.addEventListener('touchstart', onDocumentTouchStart, false);
+// document.addEventListener('touchmove', onDocumentTouchMove, false);
 
-function onDocumentMouseMove(event) {
-  mouseX = (event.clientX - windowHalfX);
-  mouseY = (event.clientY - windowHalfY);
-}
+// function onDocumentMouseMove(event) {
+//   mouseX = (event.clientX - windowHalfX);
+//   mouseY = (event.clientY - windowHalfY);
+// }
 
-function onDocumentTouchStart(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    mouseX = (event.touches[0].pageX - windowHalfX);
-    mouseY = (event.touches[0].pageY - windowHalfY);
-  }
-}
+// function onDocumentTouchStart(event) {
+//   if (event.touches.length === 1) {
+//     event.preventDefault();
+//     mouseX = (event.touches[0].pageX - windowHalfX);
+//     mouseY = (event.touches[0].pageY - windowHalfY);
+//   }
+// }
 
-function onDocumentTouchMove(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    mouseX = (event.touches[0].pageX - windowHalfX);
-    mouseY = (event.touches[0].pageY - windowHalfY);
-  }
-}
-
-
-// Moved onLoaderCanvasResize function definition up to resolve ReferenceError
-function onLoaderCanvasResize() {
-  if (preloaderCanvas && camera && renderer) {
-    // Update canvas dimensions based on its CSS size
-    const rect = preloaderCanvas.getBoundingClientRect();
-    // Set internal canvas resolution to match CSS size for sharp rendering
-    preloaderCanvas.width = rect.width;
-    preloaderCanvas.height = rect.height;
-
-    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-  }
-}
-
-function initThreeJsLoader() {
-  preloaderCanvas = document.getElementById('preloader-canvas');
-  if (!preloaderCanvas) {
-    console.error("Preloader canvas not found!");
-    return;
-  }
-
-  // Set canvas dimensions explicitly for Three.js
-  const canvasSize = 200; // Internal resolution
-  preloaderCanvas.width = canvasSize;
-  preloaderCanvas.height = canvasSize;
-
-  // Scene
-  scene = new THREE.Scene();
-
-  // Camera
-  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
-  camera.position.z = 2;
-
-  // Renderer
-  renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
-  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x000000, 0); // Make background transparent
-
-  // Particle System
-  const particleCount = 5000; // Significantly increased particle count for a dense, impressive look
-  const particlesGeometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
-  const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
-  const sizes = new Float32Array(particleCount); // Individual size for each particle
-  const opacities = new Float32Array(particleCount); // Individual opacity for each particle
-
-  for (let i = 0; i < particleCount; i++) {
-    // Random positions within a sphere
-    const r = particleOrbitRadius * Math.sqrt(Math.random()); // Distribute more evenly
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos((2 * Math.random()) - 1);
-
-    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta); // x
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta); // y
-    positions[i * 3 + 2] = r * Math.cos(phi); // z
-
-    // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
-    const hue = Math.random() * 0.3 + 0.6; // Hue from blue (0.6) to purple (0.9)
-    const saturation = 0.7 + Math.random() * 0.3; // High saturation
-    const lightness = 0.5 + Math.random() * 0.3; // Medium to high lightness
-
-    const color = new THREE.Color();
-    color.setHSL(hue, saturation, lightness);
-    colors[i * 3] = color.r;
-    colors[i * 3 + 1] = color.g;
-    colors[i * 3 + 2] = color.b;
-
-    sizes[i] = 0.06 + Math.random() * 0.1; // Larger, more varied sizes
-    opacities[i] = 0.7 + Math.random() * 0.3; // Higher base opacity
-  }
-
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
-  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
-
-  // ShaderMaterial for glowing, circular particles
-  const particlesMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0.0 }, // For animating colors and movement
-      mousePos: { value: new THREE.Vector2(0, 0) } // For mouse interaction
-    },
-    vertexShader: `
-      attribute float size;
-      attribute float opacity;
-      attribute vec3 color;
-      varying vec3 vColor;
-      varying float vOpacity;
-      uniform float time;
-      uniform vec2 mousePos;
-
-      void main() {
-        vColor = color;
-        vOpacity = opacity;
-
-        // Add subtle movement based on time and initial position
-        vec3 animatedPosition = position;
-        animatedPosition.x += sin(position.y * 5.0 + time * 0.5) * 0.05;
-        animatedPosition.y += cos(position.x * 5.0 + time * 0.5) * 0.05;
-        animatedPosition.z += sin(position.z * 5.0 + time * 0.5) * 0.05;
-
-        // Add a subtle pull towards mouse position (scaled down)
-        vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
-        animatedPosition += mouseInfluence;
+// function onDocumentTouchMove(event) {
+//   if (event.touches.length === 1) {
+//     event.preventDefault();
+//     mouseX = (event.touches[0].pageX - windowHalfX);
+//     mouseY = (event.touches[0].pageY - windowHalfY);
+//   }
+// }
 
 
-        vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
-        gl_PointSize = size * (300.0 / -mvPosition.z); // Scale size based on distance
-        gl_Position = projectionMatrix * mvPosition;
-      }
-    `,
-    fragmentShader: `
-      varying vec3 vColor;
-      varying float vOpacity;
-      uniform float time;
+// Removed onLoaderCanvasResize function definition
+// function onLoaderCanvasResize() {
+//   if (preloaderCanvas && camera && renderer) {
+//     const rect = preloaderCanvas.getBoundingClientRect();
+//     preloaderCanvas.width = rect.width;
+//     preloaderCanvas.height = rect.height;
 
-      void main() {
-        float r = distance(gl_PointCoord, vec2(0.5)); // Distance from center of point
-        float alpha = 1.0 - r * 2.0; // Fade from center to edge (circular)
+//     camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
+//     camera.updateProjectionMatrix();
+//     renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+//   }
+// }
 
-        // Add a subtle color shift over time
-        vec3 animatedColor = vColor;
-        animatedColor.r = vColor.r + sin(time * 0.5 + vColor.g * 10.0) * 0.1;
-        animatedColor.g = vColor.g + cos(time * 0.5 + vColor.b * 10.0) * 0.1;
-        animatedColor.b = vColor.b + sin(time * 0.5 + vColor.r * 10.0) * 0.1;
-        animatedColor = clamp(animatedColor, 0.0, 1.0); // Keep colors within valid range
+// Removed initThreeJsLoader function
+// function initThreeJsLoader() {
+//   preloaderCanvas = document.getElementById('preloader-canvas');
+//   if (!preloaderCanvas) {
+//     console.error("Preloader canvas not found!");
+//     return;
+//   }
 
-        gl_FragColor = vec4(animatedColor, vOpacity * alpha); // Apply color and faded opacity
-      }
-    `,
-    blending: THREE.AdditiveBlending, // For a glowing, overlapping effect
-    depthTest: false, // Important for transparent particles to render correctly
-    transparent: true
-  });
+//   const canvasSize = 200;
+//   preloaderCanvas.width = canvasSize;
+//   preloaderCanvas.height = canvasSize;
 
-  particles = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particles);
+//   scene = new THREE.Scene();
+//   camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
+//   camera.position.z = 2;
 
-  // Lights (less critical for particle system, but good practice)
-  const ambientLight = new THREE.AmbientLight(0x404040);
-  scene.add(ambientLight);
+//   renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
+//   renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+//   renderer.setPixelRatio(window.devicePixelRatio);
+//   renderer.setClearColor(0x000000, 0);
 
-  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(5, 5, 5);
-  scene.add(pointLight);
+//   const particleCount = 5000;
+//   const particlesGeometry = new THREE.BufferGeometry();
+//   const positions = new Float32Array(particleCount * 3);
+//   const colors = new Float32Array(particleCount * 3);
+//   const sizes = new Float32Array(particleCount);
+//   const opacities = new Float32Array(particleCount);
 
-  // Handle window resize for the loader canvas
-  window.addEventListener('resize', onLoaderCanvasResize, false);
-}
+//   for (let i = 0; i < particleCount; i++) {
+//     const r = particleOrbitRadius * Math.sqrt(Math.random());
+//     const theta = Math.random() * Math.PI * 2;
+//     const phi = Math.acos((2 * Math.random()) - 1);
 
-function animateThreeJsLoader() {
-  animationFrameId = requestAnimationFrame(animateThreeJsLoader);
+//     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+//     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+//     positions[i * 3 + 2] = r * Math.cos(phi);
 
-  if (particles && particles.material.uniforms) {
-    // Update time uniform for shader animations
-    particles.material.uniforms.time.value += 0.01;
+//     const hue = Math.random() * 0.3 + 0.6;
+//     const saturation = 0.7 + Math.random() * 0.3;
+//     const lightness = 0.5 + Math.random() * 0.3;
 
-    // Smoothly interpolate mouse position for camera/particle influence
-    targetX += (mouseX - targetX) * 0.02;
-    targetY += (mouseY - targetY) * 0.02;
+//     const color = new THREE.Color();
+//     color.setHSL(hue, saturation, lightness);
+//     colors[i * 3] = color.r;
+//     colors[i * 3 + 1] = color.g;
+//     colors[i * 3 + 2] = color.b;
 
-    // Update mousePos uniform for shader
-    particles.material.uniforms.mousePos.value.set(targetX, targetY);
+//     sizes[i] = 0.06 + Math.random() * 0.1;
+//     opacities[i] = 0.7 + Math.random() * 0.3;
+//   }
 
-    // Animate particles: subtle rotation of the entire system
-    particles.rotation.x += 0.0005;
-    particles.rotation.y += 0.001;
+//   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+//   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+//   particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+//   particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
 
-    // Camera subtle movement based on mouse position
-    camera.position.x = 2 * Math.sin(targetX * 0.00005);
-    camera.position.y = 2 * Math.cos(targetY * 0.00005);
-    camera.lookAt(scene.position); // Always look at the center of the particle system
-  }
+//   const particlesMaterial = new THREE.ShaderMaterial({
+//     uniforms: {
+//       time: { value: 0.0 },
+//       mousePos: { value: new THREE.Vector2(0, 0) }
+//     },
+//     vertexShader: `
+//       attribute float size;
+//       attribute float opacity;
+//       attribute vec3 color;
+//       varying vec3 vColor;
+//       varying float vOpacity;
+//       uniform float time;
+//       uniform vec2 mousePos;
 
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera);
-  }
-}
+//       void main() {
+//         vColor = color;
+//         vOpacity = opacity;
+
+//         vec3 animatedPosition = position;
+//         animatedPosition.x += sin(position.y * 5.0 + time * 0.5) * 0.05;
+//         animatedPosition.y += cos(position.x * 5.0 + time * 0.5) * 0.05;
+//         animatedPosition.z += sin(position.z * 5.0 + time * 0.5) * 0.05;
+
+//         vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
+//         animatedPosition += mouseInfluence;
+
+
+//         vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
+//         gl_PointSize = size * (300.0 / -mvPosition.z);
+//         gl_Position = projectionMatrix * mvPosition;
+//       }
+//     `,
+//     fragmentShader: `
+//       varying vec3 vColor;
+//       varying float vOpacity;
+//       uniform float time;
+
+//       void main() {
+//         float r = distance(gl_PointCoord, vec2(0.5));
+//         float alpha = 1.0 - r * 2.0;
+
+//         vec3 animatedColor = vColor;
+//         animatedColor.r = vColor.r + sin(time * 0.5 + vColor.g * 10.0) * 0.1;
+//         animatedColor.g = vColor.g + cos(time * 0.5 + vColor.b * 10.0) * 0.1;
+//         animatedColor.b = vColor.b + sin(time * 0.5 + vColor.r * 10.0) * 0.1;
+//         animatedColor = clamp(animatedColor, 0.0, 1.0);
+
+//         gl_FragColor = vec4(animatedColor, vOpacity * alpha);
+//       }
+//     `,
+//     blending: THREE.AdditiveBlending,
+//     depthTest: false,
+//     transparent: true
+//   });
+
+//   particles = new THREE.Points(particlesGeometry, particlesMaterial);
+//   scene.add(particles);
+
+//   const ambientLight = new THREE.AmbientLight(0x404040);
+//   scene.add(ambientLight);
+
+//   const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+//   pointLight.position.set(5, 5, 5);
+//   scene.add(pointLight);
+
+//   window.addEventListener('resize', onLoaderCanvasResize, false);
+// }
+
+// Removed animateThreeJsLoader function
+// function animateThreeJsLoader() {
+//   animationFrameId = requestAnimationFrame(animateThreeJsLoader);
+
+//   if (particles && particles.material.uniforms) {
+//     particles.material.uniforms.time.value += 0.01;
+
+//     targetX += (mouseX - targetX) * 0.02;
+//     targetY += (mouseY - targetY) * 0.02;
+
+//     particles.material.uniforms.mousePos.value.set(targetX, targetY);
+
+//     particles.rotation.x += 0.0005;
+//     particles.rotation.y += 0.001;
+
+//     camera.position.x = 2 * Math.sin(targetX * 0.00005);
+//     camera.position.y = 2 * Math.cos(targetY * 0.00005);
+//     camera.lookAt(scene.position);
+//   }
+
+//   if (renderer && scene && camera) {
+//     renderer.render(scene, camera);
+//   }
+// }
 
 window.addEventListener('load', () => {
-  // Initialize Three.js loader
-  if (typeof THREE !== 'undefined') {
-    initThreeJsLoader();
-    animateThreeJsLoader(); // Start the animation loop
-  } else {
-    console.warn("Three.js not loaded. Preloader will not show 3D animation.");
-  }
+  // Removed Three.js loader initialization and animation
+  // if (typeof THREE !== 'undefined') {
+  //   initThreeJsLoader();
+  //   animateThreeJsLoader(); // Start the animation loop
+  // } else {
+  //   console.warn("Three.js not loaded. Preloader will not show 3D animation.");
+  // }
 
   const pre = document.getElementById('preloader');
   if (pre) {
-    // Give a small delay for the Three.js animation to be visible
+    // Give a small delay for the Lottie animation to be visible
     setTimeout(() => {
       pre.classList.add('fade-out');
-      // Stop the Three.js animation when fading out
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-      // Clean up Three.js resources (optional but good practice)
-      if (renderer) {
-        renderer.dispose();
-        renderer.forceContextLoss();
-        renderer.domElement = null;
-        renderer = null;
-      }
-      scene = null;
-      camera = null;
-      particles = null;
-      preloaderCanvas = null;
-      window.removeEventListener('resize', onLoaderCanvasResize);
-      document.removeEventListener('mousemove', onDocumentMouseMove);
-      document.removeEventListener('touchstart', onDocumentTouchStart);
-      document.removeEventListener('touchmove', onDocumentTouchMove);
+      // Removed Three.js animation stop and cleanup
+      // if (animationFrameId) {
+      //   cancelAnimationFrame(animationFrameId);
+      // }
+      // if (renderer) {
+      //   renderer.dispose();
+      //   renderer.forceContextLoss();
+      //   renderer.domElement = null;
+      //   renderer = null;
+      // }
+      // scene = null;
+      // camera = null;
+      // particles = null;
+      // preloaderCanvas = null;
+      // window.removeEventListener('resize', onLoaderCanvasResize);
+      // document.removeEventListener('mousemove', onDocumentMouseMove);
+      // document.removeEventListener('touchstart', onDocumentTouchStart);
+      // document.removeEventListener('touchmove', onDocumentTouchMove);
 
 
       setTimeout(() => pre.remove(), 900);
@@ -563,7 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       isDown = true;
       slider.classList.add('active');
       startX = e.touches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
+      scrollLeft = e.touches[0].pageX - slider.offsetLeft; // Corrected for touch
     });
     slider.addEventListener('touchend', () => {
       isDown = false;
