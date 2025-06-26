@@ -247,6 +247,107 @@ function animateThreeJsLoader() {
   }
 }
 
+// --- NEW: 3D Logo Variables ---
+let logoScene, logoCamera, logoRenderer, logoMesh;
+let logoAnimationFrameId;
+let logoTargetRotationX = 0;
+let logoTargetRotationY = 0;
+
+// --- NEW: Initialize 3D Logo ---
+function initThreeJsLogo() {
+  const logoContainer = document.getElementById('threejs-logo-container');
+  if (!logoContainer) {
+    console.error("3D Logo container not found!");
+    return;
+  }
+
+  // Create a new canvas for the logo
+  const logoCanvas = document.createElement('canvas');
+  logoCanvas.style.width = '100%';
+  logoCanvas.style.height = '100%';
+  logoContainer.appendChild(logoCanvas);
+
+  logoScene = new THREE.Scene();
+  logoCamera = new THREE.PerspectiveCamera(75, logoContainer.offsetWidth / logoContainer.offsetHeight, 0.1, 1000);
+  logoRenderer = new THREE.WebGLRenderer({ canvas: logoCanvas, antialias: true, alpha: true });
+  logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
+  logoRenderer.setPixelRatio(window.devicePixelRatio);
+  logoRenderer.setClearColor(0x000000, 0); // Transparent background
+
+  // Load your logo texture
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load('your_logo.png', // Path to your logo image
+    function (texture) {
+      // Create a plane geometry for the logo
+      const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
+      const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+      logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
+      logoScene.add(logoMesh);
+
+      // Position the camera
+      logoCamera.position.z = 1.5;
+
+      // Start logo animation loop
+      animateThreeJsLogo();
+    },
+    undefined, // onProgress callback
+    function (err) {
+      console.error('An error occurred loading the logo texture:', err);
+      // Fallback to static image if 3D logo fails to load
+      const staticLogo = document.createElement('img');
+      staticLogo.src = 'your_logo.png';
+      staticLogo.alt = 'Logo';
+      staticLogo.classList.add('logo'); // Apply existing logo styles
+      logoContainer.replaceWith(staticLogo); // Replace the container with the static image
+    }
+  );
+
+  // Handle logo container resize
+  const onLogoContainerResize = () => {
+    if (logoContainer && logoCamera && logoRenderer) {
+      logoCamera.aspect = logoContainer.offsetWidth / logoContainer.offsetHeight;
+      logoCamera.updateProjectionMatrix();
+      logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
+    }
+  };
+  window.addEventListener('resize', onLogoContainerResize);
+
+  // Mouse interaction for the logo
+  logoContainer.addEventListener('mousemove', (event) => {
+    const rect = logoContainer.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Normalize mouse position to -1 to 1
+    logoTargetRotationY = (x / rect.width) * 2 - 1;
+    logoTargetRotationX = (y / rect.height) * 2 - 1;
+  });
+
+  logoContainer.addEventListener('mouseleave', () => {
+    logoTargetRotationX = 0;
+    logoTargetRotationY = 0;
+  });
+}
+
+// --- NEW: Animate 3D Logo ---
+function animateThreeJsLogo() {
+  logoAnimationFrameId = requestAnimationFrame(animateThreeJsLogo);
+
+  if (logoMesh) {
+    // Smoothly interpolate rotation towards target
+    logoMesh.rotation.x += (logoTargetRotationX * 0.5 - logoMesh.rotation.x) * 0.1;
+    logoMesh.rotation.y += (logoTargetRotationY * 0.5 - logoMesh.rotation.y) * 0.1;
+
+    // Add a subtle continuous rotation
+    logoMesh.rotation.y += 0.005;
+  }
+
+  if (logoRenderer && logoScene && logoCamera) {
+    logoRenderer.render(logoScene, logoCamera);
+  }
+}
+
+
 window.addEventListener('load', () => {
   // Initialize Three.js loader
   if (typeof THREE !== 'undefined') {
@@ -317,6 +418,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       nav.style.top = `${headerHeight}px`;
       nav.style.height = `calc(100vh - ${headerHeight}px)`; // Use 100vh for full viewport height
     });
+  }
+
+  // --- NEW: Initialize 3D Logo after DOM is loaded ---
+  if (typeof THREE !== 'undefined') {
+    initThreeJsLogo();
+  } else {
+    console.warn("Three.js not loaded. 3D logo will not be initialized.");
   }
 
   // ——— DYNAMIC NOTES & QUESTIONS & BOOKS ———
