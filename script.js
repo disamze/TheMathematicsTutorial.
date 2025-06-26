@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = parseJwt(credential);
       console.log('User data after parsing:', data);
       sessionStorage.setItem('user', JSON.stringify(data)); // Store parsed user data
-      showMainUI(data);
+      showMainUI(data); // <--- ADDED THIS LINE
       sessionStorage.removeItem('googleCredential'); // Clean up temporary credential
     } else {
       console.warn('googleCredentialReceived event fired, but no credential found in sessionStorage.');
