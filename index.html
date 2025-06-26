@@ -12,15 +12,16 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- NEW: Script for global Google callback - LOADED FIRST -->
+  <!-- This script defines handleCredentialResponse and parseJwt -->
   <script src="google-auth-callback.js"></script>
 
   <!-- Google Identity Services - LOADED AFTER THE CALLBACK SCRIPT -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <!-- NEW: Three.js ES Module Import -->
+  <!-- Making THREE globally available for script.js (still needed for 3D logo and login background) -->
   <script type="module">
     import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
-    // Make THREE globally available for existing script.js
     window.THREE = THREE;
   </script>
 
@@ -31,13 +32,8 @@
 </head>
 
 <body data-theme="light">
-  <!-- Main Preloader (Three.js) -->
-  <div id="preloader">
-    <canvas id="preloader-canvas"></canvas>
-  </div>
-
-  <!-- NEW: Second Loader (Lottie Animation) - Hidden by default -->
-  <div id="lottie-preloader" style="
+  <!-- Primary Loader (Lottie Animation) -->
+  <div id="preloader" style="
     position: fixed;
     inset: 0;
     background: var(--bg); /* Use your theme's background color */
@@ -45,8 +41,8 @@
     align-items: center;
     justify-content: center;
     z-index: 2500; /* Higher than main content, lower than signout popup */
-    opacity: 0; /* Start hidden */
-    visibility: hidden; /* Start hidden */
+    opacity: 1; /* Start visible */
+    visibility: visible; /* Start visible */
     transition: opacity 0.8s ease, visibility 0.8s ease;
   ">
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
@@ -54,17 +50,16 @@
   </div>
 
   <!-- Header / Navbar -->
-  <header class="header" id="main-header"> <!-- Removed inline style="display: none;" -->
+  <header class="header" id="main-header">
     <div class="container">
-      <!-- Removed the static <img> tag for the logo -->
-      <div id="threejs-logo-container" style="width: 50px; height: 50px; margin-right: 2rem;"></div> <!-- New container for 3D logo -->
+      <div id="threejs-logo-container" style="width: 50px; height: 50px; margin-right: 2rem;"></div>
       <nav class="nav">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#skills">Skills</a>
         <a href="#notes">Notes</a>
         <a href="#questions">Questions</a>
-        <a href="#books">Books</a> <!-- New Nav Link -->
+        <a href="#books">Books</a>
         <a href="#testimonials">Testimonials</a>
         <a href="#contact" class="btn small">Contact</a>
       </nav>
@@ -82,15 +77,15 @@
 
       <!-- Login Screen -->
       <section class="login-container" id="login-screen">
-        <canvas id="login-background-canvas"></canvas> <!-- NEW: Canvas for login background animation -->
+        <canvas id="login-background-canvas"></canvas>
         <div class="login-box" id="login-box">
           <div class="login-header">
-            <img src="logo.png" alt="Logo" class="login-logo" width="80" height="80"> <!-- Added width and height -->
+            <img src="logo.png" alt="Logo" class="login-logo" width="80" height="80">
             <h2>Welcome to The Mathematics Tutorial</h2>
             <p>Sign in to access exclusive notes, practice questions, and more!</p>
           </div>
           <div id="g_id_onload"
-            data-client_id="YOUR_CLIENT_ID.apps.googleusercontent.com" <!-- Replace with your actual client ID -->
+            data-client_id="YOUR_ACTUAL_GOOGLE_CLIENT_ID.apps.googleusercontent.com" <!-- REPLACE THIS WITH YOUR ACTUAL CLIENT ID -->
             data-callback="handleCredentialResponse"
             data-auto_prompt="false"></div>
           <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
@@ -100,7 +95,7 @@
       </section>
 
       <!-- Main Content: hidden until login -->
-      <div id="main-content"> <!-- Removed inline style="display: none;" -->
+      <div id="main-content">
         <main>
           <!-- Hero -->
           <section id="home" class="hero">
@@ -129,7 +124,7 @@
                 <h2>About Me</h2>
                 <p>
                   I’m <strong>Shashi Kant</strong>, a dedicated educator holding a
-                  B.Sc. (Mathematics) and M.Ed. Awarded “Best Tutor of the Year 2023.”
+                  B.Sc. (Mathematics), Patna University (2013) and M.Ed., IGNOU (2015). Awarded “Best Tutor of the Year 2023.”
                   I blend real-world examples with personalized coaching to build
                   confidence and mastery.
                 </p>
@@ -336,7 +331,7 @@
     </div>
     <button class="close-btn">&times;</button>
   </div>
-  <!-- Custom Script (as a module) -->
-  <script type="module" src="script.js"></script>
+  <!-- Custom Script (as a regular script, not module, for global access) -->
+  <script src="script.js"></script>
 </body>
 </html>
