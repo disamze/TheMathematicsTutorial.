@@ -86,7 +86,7 @@ function initThreeJsLoader() {
 
   // --- NEW: Load logo image and process it for particle placement ---
   const img = new Image();
-  img.src = 'logo.png'; // Path to your logo image
+  img.src = 'your_logo.png'; // Path to your logo image
   img.onload = () => {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -333,24 +333,30 @@ function initThreeJsLogo() {
   logoContainer.appendChild(logoCanvas);
 
   logoScene = new THREE.Scene();
+  // Use the actual dimensions of the container for the camera aspect ratio
   logoCamera = new THREE.PerspectiveCamera(75, logoContainer.offsetWidth / logoContainer.offsetHeight, 0.1, 1000);
   logoRenderer = new THREE.WebGLRenderer({ canvas: logoCanvas, antialias: true, alpha: true });
+  // Set renderer size to match container dimensions for clarity
   logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
   logoRenderer.setPixelRatio(window.devicePixelRatio);
   logoRenderer.setClearColor(0x000000, 0); // Transparent background
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
+  textureLoader.load('your_logo.png', // Path to your logo image
     function (texture) {
-      // Create a plane geometry for the logo
-      const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
+      // Apply better filtering for clarity
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+
+      // Create a plane geometry for the logo, slightly larger
+      const logoGeometry = new THREE.PlaneGeometry(1.2, 1.2); // Increased size
       const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
       logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
       logoScene.add(logoMesh);
 
-      // Position the camera
-      logoCamera.position.z = 1.5;
+      // Position the camera, slightly further back to accommodate larger logo
+      logoCamera.position.z = 1.8; // Adjusted camera position
 
       // Start logo animation loop
       animateThreeJsLogo();
@@ -360,7 +366,7 @@ function initThreeJsLogo() {
       console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
+      staticLogo.src = 'your_logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
@@ -370,6 +376,10 @@ function initThreeJsLogo() {
   // Handle logo container resize
   const onLogoContainerResize = () => {
     if (logoContainer && logoCamera && logoRenderer) {
+      // Update canvas internal resolution to match display size
+      logoCanvas.width = logoContainer.offsetWidth;
+      logoCanvas.height = logoContainer.offsetHeight;
+
       logoCamera.aspect = logoContainer.offsetWidth / logoContainer.offsetHeight;
       logoCamera.updateProjectionMatrix();
       logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
