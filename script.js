@@ -66,10 +66,11 @@ function initThreeJsLoader() {
     return;
   }
 
-  // Set canvas dimensions explicitly for Three.js
-  const canvasSize = 200; // Internal resolution
-  preloaderCanvas.width = canvasSize;
-  preloaderCanvas.height = canvasSize;
+  // Set canvas dimensions explicitly for Three.js based on its current CSS size
+  // This ensures the renderer matches the displayed size for sharpness
+  const rect = preloaderCanvas.getBoundingClientRect();
+  preloaderCanvas.width = rect.width;
+  preloaderCanvas.height = rect.height;
 
   // Scene
   scene = new THREE.Scene();
@@ -112,13 +113,14 @@ function initThreeJsLoader() {
 
   // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
+  // Call resize handler immediately after init to ensure correct initial sizing
+  onLoaderCanvasResize();
 }
 
 // --- NEW: Function to create particles based on logo data ---
 function createParticlesFromLogo(fallback = false) {
   const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
-  // CORRECTED: Declared particlesGeometry here
-  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesGeometry = new THREE.BufferGeometry(); // CORRECTED: Declared particlesGeometry here
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
   const sizes = new Float32Array(particleCount);
@@ -557,14 +559,21 @@ function initPageScripts() {
   }
 
   // Fetch additional files and combine with initial lists
-  const fetchedNotes = await fetchFiles('notes_directory', 'notes'); // Replace 'notes_directory' with actual path if using server
-  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
+  // Using Promise.all to fetch all data concurrently
+  Promise.all([
+    fetchFiles('notes_directory', 'notes'),
+    fetchFiles('questions_directory', 'questions'),
+    fetchFiles('books_directory', 'books')
+  ]).then(([fetchedNotes, fetchedQuestions, fetchedBooks]) => {
+    allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
+    allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
+    allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
 
-  const fetchedQuestions = await fetchFiles('questions_directory', 'questions'); // Replace 'questions_directory' with actual path if using server
-  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
-
-  const fetchedBooks = await fetchFiles('books_directory', 'books'); // New fetch for books
-  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
+    // Initial render for main sections with "More" cards after data is ready
+    renderList(allNotes, 'notes-list', true);
+    renderList(allQuestions, 'questions-list', true);
+    renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
+  });
 
 
   function renderList(items, containerId, showMoreCard = false) {
@@ -608,11 +617,6 @@ function initPageScripts() {
       ul.appendChild(moreCard);
     }
   }
-
-  // Initial render for main sections with "More" cards
-  renderList(allNotes, 'notes-list', true);
-  renderList(allQuestions, 'questions-list', true);
-  renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
 
   // Full-screen overlay logic
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
