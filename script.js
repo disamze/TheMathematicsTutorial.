@@ -86,7 +86,7 @@ function initThreeJsLoader() {
 
   // --- NEW: Load logo image and process it for particle placement ---
   const img = new Image();
-  img.src = 'logo.png'; // Path to your logo image
+  img.src = 'your_logo.png'; // Path to your logo image
   img.onload = () => {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -117,8 +117,8 @@ function initThreeJsLoader() {
 // --- NEW: Function to create particles based on logo data ---
 function createParticlesFromLogo(fallback = false) {
   const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
-  const particlesGeometry = new THREE.BufferGeometry();
-  const positions = new new Float32Array(particleCount * 3);
+  // CORRECTED LINE: Removed the extra 'new'
+  const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
   const sizes = new Float32Array(particleCount);
   const opacities = new Float32Array(particleCount);
@@ -312,10 +312,6 @@ function animateThreeJsLoader() {
   }
 }
 
-// --- NEW: Global variable for logo texture data ---
-// This was moved inside initThreeJsLoader for better scope management
-// and to ensure it's processed before particles are created.
-
 // --- NEW: Initialize 3D Logo for Header (from previous step) ---
 let logoScene, logoCamera, logoRenderer, logoMesh;
 let logoAnimationFrameId;
@@ -344,7 +340,7 @@ function initThreeJsLogo() {
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
+  textureLoader.load('your_logo.png', // Path to your logo image
     function (texture) {
       // Create a plane geometry for the logo
       const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
@@ -363,7 +359,7 @@ function initThreeJsLogo() {
       console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
+      staticLogo.src = 'your_logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
