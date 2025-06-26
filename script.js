@@ -86,7 +86,7 @@ function initThreeJsLoader() {
 
   // --- NEW: Load logo image and process it for particle placement ---
   const img = new Image();
-  img.src = 'logo.png'; // Path to your logo image
+  img.src = 'your_logo.png'; // Path to your logo image
   img.onload = () => {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -343,7 +343,7 @@ function initThreeJsLogo() {
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
+  textureLoader.load('your_logo.png', // Path to your logo image
     function (texture) {
       // Apply better filtering for clarity
       texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -366,7 +366,7 @@ function initThreeJsLogo() {
       console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
+      staticLogo.src = 'your_logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
@@ -462,16 +462,23 @@ window.addEventListener('load', () => {
   }
 });
 
-// ——— MOBILE MENU TOGGLE ———
-document.addEventListener('DOMContentLoaded', async () => {
+// --- Function to initialize/re-initialize all page-specific scripts ---
+// This function will be called on DOMContentLoaded and after each Barba page transition
+function initPageScripts() {
+  // ——— MOBILE MENU TOGGLE ———
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
   const header = document.getElementById('main-header'); // Get the header to calculate top offset
 
   if (nav && navToggle && header) {
-    navToggle.addEventListener('click', () => {
-      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-      navToggle.setAttribute('aria-expanded', String(!expanded));
+    // Remove existing event listener to prevent duplicates after Barba transitions
+    const oldNavToggle = navToggle.cloneNode(true);
+    navToggle.parentNode.replaceChild(oldNavToggle, navToggle);
+    const newNavToggle = oldNavToggle; // Renamed for clarity
+
+    newNavToggle.addEventListener('click', () => {
+      const expanded = newNavToggle.getAttribute('aria-expanded') === 'true';
+      newNavToggle.setAttribute('aria-expanded', String(!expanded));
       nav.classList.toggle('open');
 
       // Dynamically set top position based on header height
@@ -479,13 +486,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       nav.style.top = `${headerHeight}px`;
       nav.style.height = `calc(100vh - ${headerHeight}px)`; // Use 100vh for full viewport height
     });
-  }
-
-  // --- NEW: Initialize 3D Logo after DOM is loaded ---
-  if (typeof THREE !== 'undefined') {
-    initThreeJsLogo();
-  } else {
-    console.warn("Three.js not loaded. 3D logo will not be initialized.");
   }
 
   // ——— DYNAMIC NOTES & QUESTIONS & BOOKS ———
@@ -620,6 +620,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const overlayList = document.getElementById('overlay-list');
   const closeBtn = fullScreenOverlay.querySelector('.close-btn');
 
+  // Remove existing event listeners to prevent duplicates
+  const oldCloseBtn = closeBtn.cloneNode(true);
+  closeBtn.parentNode.replaceChild(oldCloseBtn, closeBtn);
+  const newCloseBtn = oldCloseBtn; // Renamed for clarity
+
   function openFullScreenOverlay(listType) {
     let itemsToDisplay = [];
     let title = '';
@@ -651,43 +656,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.style.overflow = 'hidden'; // Prevent scrolling body when overlay is open
   }
 
-  closeBtn.addEventListener('click', () => {
+  newCloseBtn.addEventListener('click', () => {
     fullScreenOverlay.classList.remove('active');
     document.body.style.overflow = ''; // Restore body scrolling
   });
 
   // Close overlay if clicked outside content (on the overlay itself)
   fullScreenOverlay.addEventListener('click', (e) => {
-    // Check if the click target is the overlay itself or the close button
-    if (e.target === fullScreenOverlay || e.target === closeBtn) {
+    // Only close if the click is directly on the overlay, not its children
+    if (e.target === fullScreenOverlay || e.target === newCloseBtn) {
       fullScreenOverlay.classList.remove('active');
       document.body.style.overflow = '';
     }
   });
 
 
-  // ——— THEME TOGGLE ———
-  const themeBtn = document.querySelector('.theme-toggle');
-  if (themeBtn) {
-    // Set initial icon based on current theme
-    themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
-      ? '<i class="bx bx-sun"></i>'
-      : '<i class="bx bx-moon"></i>';
-
-    themeBtn.addEventListener('click', () => {
-      const isDark = document.documentElement.dataset.theme === 'dark';
-      document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-      themeBtn.setAttribute('aria-expanded', String(isDark));
-      themeBtn.innerHTML = isDark
-        ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
-        : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
-    });
-  }
-
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message'
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .login-box, .welcome-message'
   );
 
   const observerOptions = {
@@ -695,6 +682,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     rootMargin: '0px',
     threshold: 0.1 // Trigger when 10% of the item is visible
   };
+
+  // Disconnect previous observer if it exists
+  if (window.revealObserver) {
+    window.revealObserver.disconnect();
+  }
 
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -711,15 +703,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     element.classList.add('reveal-item');
     observer.observe(element);
   });
+  window.revealObserver = observer; // Store observer globally to disconnect later
 
 
   // Close nav when a nav link is clicked
   const navLinks = document.querySelectorAll('.nav a');
   navLinks.forEach(link => {
-    link.addEventListener('click', () => {
+    // Remove existing event listener to prevent duplicates
+    const oldLink = link.cloneNode(true);
+    link.parentNode.replaceChild(oldLink, link);
+    const newLink = oldLink; // Renamed for clarity
+
+    newLink.addEventListener('click', () => {
       if (nav.classList.contains('open')) {
         nav.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
+        newNavToggle.setAttribute('aria-expanded', 'false');
       }
     });
   });
@@ -731,78 +729,69 @@ document.addEventListener('DOMContentLoaded', async () => {
   let scrollLeft;
 
   if (slider) {
-    slider.addEventListener('mousedown', (e) => {
+    // Remove existing event listeners to prevent duplicates
+    const oldSlider = slider.cloneNode(true);
+    slider.parentNode.replaceChild(oldSlider, slider);
+    const newSlider = oldSlider; // Renamed for clarity
+
+    newSlider.addEventListener('mousedown', (e) => {
       isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
+      newSlider.classList.add('active');
+      startX = e.pageX - newSlider.offsetLeft;
+      scrollLeft = newSlider.scrollLeft;
     });
-    slider.addEventListener('mouseleave', () => {
+    newSlider.addEventListener('mouseleave', () => {
       isDown = false;
-      slider.classList.remove('active');
+      newSlider.classList.remove('active');
     });
-    slider.addEventListener('mouseup', () => {
+    newSlider.addEventListener('mouseup', () => {
       isDown = false;
-      slider.classList.remove('active');
+      newSlider.classList.remove('active');
     });
-    slider.addEventListener('mousemove', (e) => {
+    newSlider.addEventListener('mousemove', (e) => {
       if (!isDown) return;
       e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
+      const x = e.pageX - newSlider.offsetLeft;
       const walk = (x - startX) * 2; // scroll speed
-      slider.scrollLeft = scrollLeft - walk;
+      newSlider.scrollLeft = scrollLeft - walk;
     });
 
     // Touch events for mobile
-    slider.addEventListener('touchstart', (e) => {
+    newSlider.addEventListener('touchstart', (e) => {
       isDown = true;
-      slider.classList.add('active');
-      startX = e.touches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
+      newSlider.classList.add('active');
+      startX = e.touches[0].pageX - newSlider.offsetLeft;
+      scrollLeft = newSlider.scrollLeft;
     });
-    slider.addEventListener('touchend', () => {
+    newSlider.addEventListener('touchend', () => {
       isDown = false;
-      slider.classList.remove('active');
+      newSlider.classList.remove('active');
     });
-    slider.addEventListener('touchmove', (e) => {
+    newSlider.addEventListener('touchmove', (e) => {
       if (!isDown) return;
-      const x = e.touches[0].pageX - slider.offsetLeft;
+      const x = e.touches[0].pageX - newSlider.offsetLeft;
       const walk = (x - startX) * 2;
-      slider.scrollLeft = scrollLeft - walk;
+      newSlider.scrollLeft = scrollLeft - walk;
     });
   }
 
-  // --- GOOGLE SIGN-IN LOGIC ---
-  // Listen for the custom event dispatched by google-auth-callback.js
-  document.addEventListener('googleCredentialReceived', () => {
-    console.log('googleCredentialReceived event caught in script.js');
-    const credential = sessionStorage.getItem('googleCredential');
-    if (credential) {
-      const data = parseJwt(credential);
-      console.log('User data after parsing:', data);
-      sessionStorage.setItem('user', JSON.stringify(data)); // Store parsed user data
-      showMainUI(data); // <--- ADDED THIS LINE
-      sessionStorage.removeItem('googleCredential'); // Clean up temporary credential
-    } else {
-      console.warn('googleCredentialReceived event fired, but no credential found in sessionStorage.');
-    }
-  });
+  // Handle back-top button
+  const backTopBtn = document.querySelector('.back-top');
+  if (backTopBtn) {
+    // Remove existing event listener to prevent duplicates
+    const oldBackTopBtn = backTopBtn.cloneNode(true);
+    backTopBtn.parentNode.replaceChild(oldBackTopBtn, backTopBtn);
+    const newBackTopBtn = oldBackTopBtn; // Renamed for clarity
 
-  // Also, check for user session on initial load (if user was already logged in)
-  const userData = sessionStorage.getItem('user');
-  if (userData) {
-    console.log('User data found in session storage on DOMContentLoaded.');
-    const data = JSON.parse(userData);
-    showMainUI(data);
-  } else {
-    console.log('No user data found in session storage. Showing login screen.');
-    // If no user data, ensure login screen is visible
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
+    newBackTopBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
-});
+}
 
+
+// --- GOOGLE SIGN-IN LOGIC ---
 // parseJwt can remain here as it's used by showMainUI
 function parseJwt(token) {
   const base64Url = token.split('.')[1];
@@ -923,3 +912,92 @@ if (popupOverlay) {
     }
   });
 };
+
+// ——— THEME TOGGLE (Global, outside Barba) ———
+const themeBtn = document.querySelector('.theme-toggle');
+if (themeBtn) {
+  // Set initial icon based on current theme
+  themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+    ? '<i class="bx bx-sun"></i>'
+    : '<i class="bx bx-moon"></i>';
+
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+    themeBtn.setAttribute('aria-expanded', String(isDark));
+    themeBtn.innerHTML = isDark
+      ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
+      : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
+  });
+}
+
+
+// ——— BARBA.JS & GSAP INTEGRATION ———
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Three.js Logo once, as it's outside the Barba container
+  if (typeof THREE !== 'undefined') {
+    initThreeJsLogo();
+  } else {
+    console.warn("Three.js not loaded. 3D logo will not be initialized.");
+  }
+
+  // Check for user session on initial load (if user was already logged in)
+  // This part runs only once on initial page load, before Barba takes over.
+  const userData = sessionStorage.getItem('user');
+  if (userData) {
+    console.log('User data found in session storage on DOMContentLoaded. Showing main UI.');
+    const data = JSON.parse(userData);
+    showMainUI(data);
+  } else {
+    console.log('No user data found in session storage. Showing login screen.');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-header').style.display = 'none';
+  }
+
+  // Initialize Barba.js
+  barba.init({
+    transitions: [{
+      name: 'opacity-transition',
+      leave(data) {
+        // Animate out the old page
+        return gsap.to(data.current.container, {
+          opacity: 0,
+          y: -50, // Slide up slightly
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      },
+      enter(data) {
+        // Animate in the new page
+        return gsap.from(data.next.container, {
+          opacity: 0,
+          y: 50, // Slide down slightly
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      }
+    }],
+    views: [{
+      namespace: 'home', // Corresponds to data-barba-namespace="home" in index.html
+      afterEnter() {
+        // Re-initialize scripts specific to the 'home' namespace (which is our main content)
+        // This ensures all event listeners, observers, and dynamic content are set up for the new DOM.
+        initPageScripts();
+      }
+    }]
+  });
+
+  // Barba.js hooks for re-initializing scripts
+  barba.hooks.after(() => {
+    // This hook runs after every page transition (including initial load if using barba.once)
+    // We call initPageScripts here to ensure all dynamic elements and event listeners
+    // within the barba container are re-initialized.
+    initPageScripts();
+    // Scroll to top of the new page
+    window.scrollTo(0, 0);
+  });
+
+  // Initial call to initPageScripts for the first page load (before Barba takes over subsequent loads)
+  initPageScripts();
+});
