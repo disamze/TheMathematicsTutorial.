@@ -2,8 +2,6 @@
 let scene, camera, renderer, particles;
 let preloaderCanvas;
 let animationFrameId; // To store the requestAnimationFrame ID
-let particleOrbitRadius = 0.8; // Slightly larger radius for spread
-let particleSpeed = 0.005;
 
 // Mouse/Touch interaction variables for main preloader
 let mouseX = 0;
@@ -20,23 +18,128 @@ document.addEventListener('touchstart', onDocumentTouchStart, false);
 document.addEventListener('touchmove', onDocumentTouchMove, false);
 
 function onDocumentMouseMove(event) {
-  mouseX = (event.clientX - windowHalfX);
-  mouseY = (event.clientY - windowHalfY);
+  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 
 function onDocumentTouchStart(event) {
   if (event.touches.length === 1) {
     event.preventDefault();
-    mouseX = (event.touches[0].pageX - windowHalfX);
-    mouseY = (event.touches[0].pageY - windowHalfY);
+    mouseX = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
   }
 }
 
 function onDocumentTouchMove(event) {
   if (event.touches.length === 1) {
     event.preventDefault();
-    mouseX = (event.touches[0].pageX - windowHalfX);
-    mouseY = (event.touches[0].pageY - windowHalfY);
+    mouseX = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
+  }
+}
+
+// Initialize the preloader with a fluid-like animation
+function initFluidPreloader() {
+  preloaderCanvas = document.getElementById('preloader-canvas');
+  if (!preloaderCanvas) {
+    console.error("Preloader canvas not found!");
+    return;
+  }
+
+  // Set canvas dimensions explicitly for Three.js
+  const rect = preloaderCanvas.getBoundingClientRect();
+  preloaderCanvas.width = rect.width;
+  preloaderCanvas.height = rect.height;
+
+  // Scene
+  scene = new THREE.Scene();
+
+  // Camera
+  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
+  camera.position.z = 2;
+
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
+  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 0); // Make background transparent
+
+  // Create a plane geometry for the background
+  const geometry = new THREE.PlaneGeometry(2, 2);
+
+  // Shader material for fluid-like effect
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      time: { value: 0.0 },
+      mouse: { value: new THREE.Vector2() }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float time;
+      uniform vec2 mouse;
+      varying vec2 vUv;
+
+      void main() {
+        vec2 uv = vUv;
+        vec3 color = vec3(0.0);
+
+        // Simple fluid-like distortion
+        float dist = distance(uv, vec2(0.5));
+        float strength = 0.1;
+        uv.x += sin(uv.y * 10.0 + time) * strength;
+        uv.y += cos(uv.x * 10.0 + time) * strength;
+
+        // Add mouse influence
+        vec2 mouse_uv = mouse * 0.5 + 0.5; // Map mouse from -1 to 1 to 0 to 1
+        float mouse_dist = distance(uv, mouse_uv);
+        float mouse_influence = 0.05 / (mouse_dist + 0.01);
+        uv.x += sin(uv.y * 5.0 + time * 0.5) * mouse_influence;
+        uv.y += cos(uv.x * 5.0 + time * 0.5) * mouse_influence;
+
+        // Create a colorful, glowing effect
+        float r = sin(uv.x * 15.0 + time * 0.8) * 0.5 + 0.5;
+        float g = cos(uv.y * 15.0 + time * 0.6) * 0.5 + 0.5;
+        float b = sin((uv.x + uv.y) * 10.0 + time * 0.7) * 0.5 + 0.5;
+
+        color = vec3(r, g, b);
+
+        // Add a subtle glow around the center
+        float glow = 0.1 / (dist + 0.01);
+        color += glow * 0.5;
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `,
+    transparent: true
+  });
+
+  particles = new THREE.Mesh(geometry, material);
+  scene.add(particles);
+
+  // Handle window resize for the loader canvas
+  window.addEventListener('resize', onLoaderCanvasResize, false);
+}
+
+function animateFluidPreloader() {
+  animationFrameId = requestAnimationFrame(animateFluidPreloader);
+
+  if (particles && particles.material.uniforms) {
+    particles.material.uniforms.time.value += 0.01;
+
+    // Smoothly interpolate mouse position
+    targetX += (mouseX - targetX) * 0.05;
+    targetY += (mouseY - targetY) * 0.05;
+    particles.material.uniforms.mouse.value.set(targetX, targetY);
+  }
+
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
   }
 }
 
@@ -65,10 +168,10 @@ function initThreeJsLoader() {
     return;
   }
 
-  // Set canvas dimensions explicitly for Three.js based on its current CSS size
-  const rect = preloaderCanvas.getBoundingClientRect();
-  preloaderCanvas.width = rect.width;
-  preloaderCanvas.height = rect.height;
+  // Set canvas dimensions explicitly for Three.js
+  const canvasSize = 200; // Internal resolution
+  preloaderCanvas.width = canvasSize;
+  preloaderCanvas.height = canvasSize;
 
   // Scene
   scene = new THREE.Scene();
@@ -111,12 +214,12 @@ function initThreeJsLoader() {
 
   // Handle window resize for the loader canvas
   window.addEventListener('resize', onLoaderCanvasResize, false);
-  onLoaderCanvasResize(); // Initial call
 }
 
 // --- NEW: Function to create particles based on logo data ---
 function createParticlesFromLogo(fallback = false) {
   const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
+  // CORRECTED: Declared particlesGeometry here
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
@@ -154,7 +257,7 @@ function createParticlesFromLogo(fallback = false) {
 
     if (fallback || !validPixel) {
       // Fallback to random sphere if logo data is not available or pixel not found
-      const r = particleOrbitRadius * Math.sqrt(Math.random());
+      const r = 0.8 * Math.sqrt(Math.random()); // particleOrbitRadius
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos((2 * Math.random()) - 1);
       x = r * Math.sin(phi) * Math.cos(theta);
@@ -420,216 +523,6 @@ function animateThreeJsLogo() {
   }
 }
 
-// --- NEW: Variables and functions for Login Background Three.js Animation ---
-let loginScene, loginCamera, loginRenderer, loginParticles;
-let loginAnimationFrameId;
-let loginMouseX = 0;
-let loginMouseY = 0;
-let loginTargetX = 0;
-let loginTargetY = 0;
-
-// Event listeners for mouse/touch movement on the login background
-// These are added dynamically when the login screen is active
-function onLoginBackgroundMouseMove(event) {
-  loginMouseX = (event.clientX - windowHalfX);
-  loginMouseY = (event.clientY - windowHalfY);
-}
-
-function onLoginBackgroundTouchStart(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    loginMouseX = (event.touches[0].pageX - windowHalfX);
-    loginMouseY = (event.touches[0].pageY - windowHalfY);
-  }
-}
-
-function onLoginBackgroundTouchMove(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    loginMouseX = (event.touches[0].pageX - windowHalfX);
-    loginMouseY = (event.touches[0].pageY - windowHalfY);
-  }
-}
-
-function onLoginBackgroundCanvasResize() {
-  const loginCanvas = document.getElementById('login-background-canvas');
-  if (loginCanvas && loginCamera && loginRenderer) {
-    const rect = loginCanvas.getBoundingClientRect();
-    loginCanvas.width = rect.width;
-    loginCanvas.height = rect.height;
-
-    loginCamera.aspect = loginCanvas.width / loginCanvas.height;
-    loginRenderer.setSize(loginCanvas.width, loginCanvas.height);
-    loginCamera.updateProjectionMatrix();
-  }
-}
-
-function initLoginBackgroundAnimation() {
-  const loginCanvas = document.getElementById('login-background-canvas');
-  if (!loginCanvas) {
-    console.error("Login background canvas not found!");
-    return;
-  }
-
-  // Set canvas dimensions explicitly for Three.js
-  const rect = loginCanvas.getBoundingClientRect();
-  loginCanvas.width = rect.width;
-  loginCanvas.height = rect.height;
-
-  // Scene
-  loginScene = new THREE.Scene();
-
-  // Camera
-  loginCamera = new THREE.PerspectiveCamera(75, loginCanvas.width / loginCanvas.height, 0.1, 1000);
-  loginCamera.position.z = 5; // Further back to see more of the animation
-
-  // Renderer
-  loginRenderer = new THREE.WebGLRenderer({ canvas: loginCanvas, antialias: true, alpha: true });
-  loginRenderer.setSize(loginCanvas.width, loginCanvas.height);
-  loginRenderer.setPixelRatio(window.devicePixelRatio);
-  loginRenderer.setClearColor(0x000000, 0); // Transparent background
-
-  // Particles for the flowing effect
-  const particleCount = 10000; // More particles for a denser effect
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-  const sizes = new Float32Array(particleCount);
-  const initialOffsets = new Float32Array(particleCount); // For varied movement
-
-  for (let i = 0; i < particleCount; i++) {
-    // Distribute particles randomly in a larger volume
-    positions[i * 3] = (Math.random() - 0.5) * 20; // x
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 20; // y
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 20; // z
-
-    // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
-    const hue = Math.random() * 0.5 + 0.5; // 0.5 to 1.0 for blues/purples
-    const saturation = 0.8 + Math.random() * 0.2;
-    const lightness = 0.6 + Math.random() * 0.2;
-
-    const color = new THREE.Color();
-    color.setHSL(hue, saturation, lightness);
-    colors[i * 3] = color.r;
-    colors[i * 3 + 1] = color.g;
-    colors[i * 3 + 2] = color.b;
-
-    sizes[i] = 0.1 + Math.random() * 0.5; // Varied sizes
-    initialOffsets[i] = Math.random() * Math.PI * 2; // Random phase for movement
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-  geometry.setAttribute('initialOffset', new THREE.BufferAttribute(initialOffsets, 1));
-
-  const material = new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0.0 },
-      mousePos: { value: new THREE.Vector2(0, 0) },
-      cameraNear: { value: loginCamera.near },
-      cameraFar: { value: loginCamera.far }
-    },
-    vertexShader: `
-      attribute float size;
-      attribute vec3 color;
-      attribute float initialOffset;
-      varying vec3 vColor;
-      uniform float time;
-      uniform vec2 mousePos;
-      uniform float cameraNear;
-      uniform float cameraFar;
-
-      void main() {
-        vColor = color;
-
-        vec3 animatedPosition = position;
-
-        // Flowing motion based on time and initial offset
-        float speed = 0.5;
-        float flowStrength = 2.0;
-        animatedPosition.x += sin(animatedPosition.y * 0.5 + time * speed + initialOffset) * flowStrength;
-        animatedPosition.y += cos(animatedPosition.x * 0.5 + time * speed * 0.8 + initialOffset) * flowStrength;
-        animatedPosition.z += sin(animatedPosition.x * 0.3 + animatedPosition.y * 0.3 + time * speed * 1.2 + initialOffset) * flowStrength;
-
-        // Wrap particles around if they go too far
-        float wrapLimit = 10.0;
-        if (animatedPosition.x > wrapLimit) animatedPosition.x -= wrapLimit * 2.0;
-        if (animatedPosition.x < -wrapLimit) animatedPosition.x += wrapLimit * 2.0;
-        if (animatedPosition.y > wrapLimit) animatedPosition.y -= wrapLimit * 2.0;
-        if (animatedPosition.y < -wrapLimit) animatedPosition.y += wrapLimit * 2.0;
-        if (animatedPosition.z > wrapLimit) animatedPosition.z -= wrapLimit * 2.0;
-        if (animatedPosition.z < -wrapLimit) animatedPosition.z += wrapLimit * 2.0;
-
-        // Subtle pull towards mouse position
-        vec3 mouseInfluence = vec3(mousePos.x * 0.0005, mousePos.y * 0.0005, 0.0);
-        animatedPosition += mouseInfluence;
-
-        vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
-
-        // Scale size based on distance from camera
-        float distanceFactor = smoothstep(cameraNear, cameraFar, -mvPosition.z);
-        gl_PointSize = size * (500.0 / -mvPosition.z) * (1.0 + sin(time * 2.0 + initialOffset) * 0.2);
-        gl_PointSize = max(gl_PointSize, 1.0); // Minimum size
-
-        gl_Position = projectionMatrix * mvPosition;
-      }
-    `,
-    fragmentShader: `
-      varying vec3 vColor;
-      uniform float time;
-
-      void main() {
-        float r = distance(gl_PointCoord, vec2(0.5));
-        float alpha = 1.0 - r * 2.0; // Circular fade
-
-        // Add subtle glow and color shift
-        vec3 finalColor = vColor;
-        finalColor.r += sin(time * 0.5 + vColor.g * 10.0) * 0.1;
-        finalColor.g += cos(time * 0.5 + vColor.b * 10.0) * 0.1;
-        finalColor.b += sin(time * 0.5 + vColor.r * 10.0) * 0.1;
-        finalColor = clamp(finalColor, 0.0, 1.0);
-
-        gl_FragColor = vec4(finalColor, alpha * 0.7); // Slightly transparent
-      }
-    `,
-    blending: THREE.AdditiveBlending,
-    depthTest: false,
-    transparent: true
-  });
-
-  loginParticles = new THREE.Points(geometry, material);
-  loginScene.add(loginParticles);
-
-  // Handle window resize for the login background canvas
-  window.addEventListener('resize', onLoginBackgroundCanvasResize, false);
-  onLoginBackgroundCanvasResize(); // Initial call
-}
-
-function animateLoginBackground() {
-  loginAnimationFrameId = requestAnimationFrame(animateLoginBackground);
-
-  if (loginParticles && loginParticles.material.uniforms) {
-    loginParticles.material.uniforms.time.value += 0.005; // Slower time for subtle flow
-
-    // Smoothly interpolate mouse position for camera/particle influence
-    loginTargetX += (loginMouseX - loginTargetX) * 0.02;
-    loginTargetY += (loginMouseY - loginTargetY) * 0.02;
-
-    // Update mousePos uniform for shader
-    loginParticles.material.uniforms.mousePos.value.set(loginTargetX, loginTargetY);
-
-    // Subtle camera movement
-    loginCamera.position.x = loginTargetX * 0.001;
-    loginCamera.position.y = loginTargetY * 0.001;
-    loginCamera.lookAt(loginScene.position);
-  }
-
-  if (loginRenderer && loginScene && loginCamera) {
-    loginRenderer.render(loginScene, loginCamera);
-  }
-}
-
 
 window.addEventListener('load', () => {
   // Initialize Three.js loader
@@ -766,21 +659,14 @@ function initPageScripts() {
   }
 
   // Fetch additional files and combine with initial lists
-  // Using Promise.all to fetch all data concurrently
-  Promise.all([
-    fetchFiles('notes_directory', 'notes'),
-    fetchFiles('questions_directory', 'questions'),
-    fetchFiles('books_directory', 'books')
-  ]).then(([fetchedNotes, fetchedQuestions, fetchedBooks]) => {
-    allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
-    allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
-    allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
+  const fetchedNotes = await fetchFiles('notes_directory', 'notes'); // Replace 'notes_directory' with actual path if using server
+  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
 
-    // Initial render for main sections with "More" cards after data is ready
-    renderList(allNotes, 'notes-list', true);
-    renderList(allQuestions, 'questions-list', true);
-    renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
-  });
+  const fetchedQuestions = await fetchFiles('questions_directory', 'questions'); // Replace 'questions_directory' with actual path if using server
+  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
+
+  const fetchedBooks = await fetchFiles('books_directory', 'books'); // New fetch for books
+  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
 
 
   function renderList(items, containerId, showMoreCard = false) {
@@ -824,6 +710,11 @@ function initPageScripts() {
       ul.appendChild(moreCard);
     }
   }
+
+  // Initial render for main sections with "More" cards
+  renderList(allNotes, 'notes-list', true);
+  renderList(allQuestions, 'questions-list', true);
+  renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
 
   // Full-screen overlay logic
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
@@ -1016,7 +907,7 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-// showMainUI remains the same, but we add stopping the login animation
+// showMainUI remains the same
 function showMainUI(data) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-content').style.display = 'block';
@@ -1035,29 +926,6 @@ function showMainUI(data) {
   document.getElementById('popup-name').textContent = data.name;
   document.getElementById('popup-pic').src = data.picture;
 
-  // Stop login background animation
-  if (loginAnimationFrameId) {
-    cancelAnimationFrame(loginAnimationFrameId);
-    loginAnimationFrameId = null; // Clear the ID
-  }
-  if (loginRenderer) {
-    loginRenderer.dispose();
-    loginRenderer.domElement = null;
-    loginRenderer = null;
-    loginScene = null;
-    loginCamera = null;
-    loginParticles = null;
-    window.removeEventListener('resize', onLoginBackgroundCanvasResize);
-    document.getElementById('login-screen')?.removeEventListener('mousemove', onLoginBackgroundMouseMove);
-    document.getElementById('login-screen')?.removeEventListener('touchstart', onLoginBackgroundTouchStart);
-    document.getElementById('login-screen')?.removeEventListener('touchmove', onLoginBackgroundTouchMove);
-  }
-  const loginCanvas = document.getElementById('login-background-canvas');
-  if (loginCanvas) {
-    loginCanvas.style.display = 'none'; // Hide the canvas
-  }
-
-
   // NEW: Show Lottie preloader briefly after main UI is shown
   const lottiePreloader = document.getElementById('lottie-preloader');
   if (lottiePreloader) {
@@ -1071,7 +939,6 @@ function showMainUI(data) {
     }, 2000); // Lottie preloader visible for 2 seconds
   }
 }
-window.showMainUI = showMainUI; // Make showMainUI globally accessible for google-auth-callback.js
 
 // Handle sign out
 const signoutBtn = document.getElementById('signout-btn');
@@ -1097,24 +964,6 @@ if (signoutBtn) {
     document.getElementById('main-header').style.display = 'none';
     document.getElementById('profile-info').style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex'; // Show login screen
-
-    // Start login background animation again
-    const loginCanvas = document.getElementById('login-background-canvas');
-    if (loginCanvas) {
-      loginCanvas.style.display = 'block'; // Show the canvas
-      // Re-initialize and start animation only if it's not already running
-      if (!loginRenderer) { // Check if renderer exists, if not, it means it was disposed
-        initLoginBackgroundAnimation();
-      }
-      if (!loginAnimationFrameId) { // Check if animation frame is active
-        animateLoginBackground();
-      }
-      // Re-add event listeners for mouse/touch movement on the login background
-      document.getElementById('login-screen')?.addEventListener('mousemove', onLoginBackgroundMouseMove, false);
-      document.getElementById('login-screen')?.addEventListener('touchstart', onLoginBackgroundTouchStart, false);
-      document.getElementById('login-screen')?.addEventListener('touchmove', onLoginBackgroundTouchMove, false);
-    }
-
 
     // If signing out, ensure Lottie preloader is removed if it somehow still exists
     const lottiePreloader = document.getElementById('lottie-preloader');
@@ -1200,23 +1049,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (userData) {
     console.log('User data found in session storage on DOMContentLoaded. Showing main UI.');
     const data = JSON.parse(userData);
-    showMainUI(data); // This will stop the login animation if it was running
+    showMainUI(data);
   } else {
     console.log('No user data found in session storage. Showing login screen.');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('main-content').style.display = 'none';
     document.getElementById('main-header').style.display = 'none';
-    // Start login background animation only if not logged in
-    if (typeof THREE !== 'undefined') {
-      initLoginBackgroundAnimation();
-      animateLoginBackground();
-      // Add event listeners for mouse/touch movement on the login background
-      document.getElementById('login-screen')?.addEventListener('mousemove', onLoginBackgroundMouseMove, false);
-      document.getElementById('login-screen')?.addEventListener('touchstart', onLoginBackgroundTouchStart, false);
-      document.getElementById('login-screen')?.addEventListener('touchmove', onLoginBackgroundTouchMove, false);
-    } else {
-      console.warn("Three.js not loaded. Login background animation will not be initialized.");
-    }
   }
 
   // Initialize Barba.js
@@ -1252,14 +1090,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }]
   });
 
-  // Barba.js hooks for re-initializing scripts
+  // Barba.js hooks.after is called after every page transition.
+  // This is where we re-initialize scripts that need to run on new content.
   barba.hooks.after(() => {
-    // This hook runs after every page transition (including initial load if using barba.once)
-    // We call initPageScripts here to ensure all dynamic elements and event listeners
-    // within the barba container are re-initialized.
     initPageScripts();
-    // Scroll to top of the new page
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); // Scroll to top of the new page
   });
 
   // Initial call to initPageScripts for the first page load (before Barba takes over subsequent loads)
