@@ -116,7 +116,7 @@ function initThreeJsLoader() {
 
 // --- NEW: Function to create particles based on logo data ---
 function createParticlesFromLogo(fallback = false) {
-  const particleCount = fallback ? 20000 : 14000; // Fewer particles for logo, more for generic
+  const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
   const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
@@ -1071,6 +1071,7 @@ function showMainUI(data) {
     }, 2000); // Lottie preloader visible for 2 seconds
   }
 }
+window.showMainUI = showMainUI; // Make showMainUI globally accessible for google-auth-callback.js
 
 // Handle sign out
 const signoutBtn = document.getElementById('signout-btn');
@@ -1209,6 +1210,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof THREE !== 'undefined') {
       initLoginBackgroundAnimation();
       animateLoginBackground();
+      // Add event listeners for mouse/touch movement on the login background
+      document.getElementById('login-screen')?.addEventListener('mousemove', onLoginBackgroundMouseMove, false);
+      document.getElementById('login-screen')?.addEventListener('touchstart', onLoginBackgroundTouchStart, false);
+      document.getElementById('login-screen')?.addEventListener('touchmove', onLoginBackgroundTouchMove, false);
     } else {
       console.warn("Three.js not loaded. Login background animation will not be initialized.");
     }
