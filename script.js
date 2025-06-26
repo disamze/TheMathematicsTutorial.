@@ -1,265 +1,40 @@
-// ——— PRELOADER FADE-OUT & LOADER ———
-// Removed all Three.js related variables and functions
-// let scene, camera, renderer, particles;
-// let preloaderCanvas;
-// let animationFrameId; // To store the requestAnimationFrame ID
-// let particleOrbitRadius = 0.8; // Slightly larger radius for spread
-// let particleSpeed = 0.005;
-
-// Mouse/Touch interaction variables (no longer needed for preloader)
-// let mouseX = 0;
-// let mouseY = 0;
-// let targetX = 0;
-// let targetY = 0;
-
-// const windowHalfX = window.innerWidth / 2;
-// const windowHalfY = window.innerHeight / 2;
-
-// Event listeners for mouse/touch movement (no longer needed for preloader)
-// document.addEventListener('mousemove', onDocumentMouseMove, false);
-// document.addEventListener('touchstart', onDocumentTouchStart, false);
-// document.addEventListener('touchmove', onDocumentTouchMove, false);
-
-// function onDocumentMouseMove(event) {
-//   mouseX = (event.clientX - windowHalfX);
-//   mouseY = (event.clientY - windowHalfY);
-// }
-
-// function onDocumentTouchStart(event) {
-//   if (event.touches.length === 1) {
-//     event.preventDefault();
-//     mouseX = (event.touches[0].pageX - windowHalfX);
-//     mouseY = (event.touches[0].pageY - windowHalfY);
-//   }
-// }
-
-// function onDocumentTouchMove(event) {
-//   if (event.touches.length === 1) {
-//     event.preventDefault();
-//     mouseX = (event.touches[0].pageX - windowHalfX);
-//     mouseY = (event.touches[0].pageY - windowHalfY);
-//   }
-// }
-
-
-// Removed onLoaderCanvasResize function definition
-// function onLoaderCanvasResize() {
-//   if (preloaderCanvas && camera && renderer) {
-//     const rect = preloaderCanvas.getBoundingClientRect();
-//     preloaderCanvas.width = rect.width;
-//     preloaderCanvas.height = rect.height;
-
-//     camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
-//     camera.updateProjectionMatrix();
-//     renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-//   }
-// }
-
-// Removed initThreeJsLoader function
-// function initThreeJsLoader() {
-//   preloaderCanvas = document.getElementById('preloader-canvas');
-//   if (!preloaderCanvas) {
-//     console.error("Preloader canvas not found!");
-//     return;
-//   }
-
-//   const canvasSize = 200;
-//   preloaderCanvas.width = canvasSize;
-//   preloaderCanvas.height = canvasSize;
-
-//   scene = new THREE.Scene();
-//   camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
-//   camera.position.z = 2;
-
-//   renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
-//   renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-//   renderer.setPixelRatio(window.devicePixelRatio);
-//   renderer.setClearColor(0x000000, 0);
-
-//   const particleCount = 5000;
-//   const particlesGeometry = new THREE.BufferGeometry();
-//   const positions = new Float32Array(particleCount * 3);
-//   const colors = new Float32Array(particleCount * 3);
-//   const sizes = new Float32Array(particleCount);
-//   const opacities = new Float32Array(particleCount);
-
-//   for (let i = 0; i < particleCount; i++) {
-//     const r = particleOrbitRadius * Math.sqrt(Math.random());
-//     const theta = Math.random() * Math.PI * 2;
-//     const phi = Math.acos((2 * Math.random()) - 1);
-
-//     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-//     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-//     positions[i * 3 + 2] = r * Math.cos(phi);
-
-//     const hue = Math.random() * 0.3 + 0.6;
-//     const saturation = 0.7 + Math.random() * 0.3;
-//     const lightness = 0.5 + Math.random() * 0.3;
-
-//     const color = new THREE.Color();
-//     color.setHSL(hue, saturation, lightness);
-//     colors[i * 3] = color.r;
-//     colors[i * 3 + 1] = color.g;
-//     colors[i * 3 + 2] = color.b;
-
-//     sizes[i] = 0.06 + Math.random() * 0.1;
-//     opacities[i] = 0.7 + Math.random() * 0.3;
-//   }
-
-//   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-//   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-//   particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-//   particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-
-//   const particlesMaterial = new THREE.ShaderMaterial({
-//     uniforms: {
-//       time: { value: 0.0 },
-//       mousePos: { value: new THREE.Vector2(0, 0) }
-//     },
-//     vertexShader: `
-//       attribute float size;
-//       attribute float opacity;
-//       attribute vec3 color;
-//       varying vec3 vColor;
-//       varying float vOpacity;
-//       uniform float time;
-//       uniform vec2 mousePos;
-
-//       void main() {
-//         vColor = color;
-//         vOpacity = opacity;
-
-//         vec3 animatedPosition = position;
-//         animatedPosition.x += sin(position.y * 5.0 + time * 0.5) * 0.05;
-//         animatedPosition.y += cos(position.x * 5.0 + time * 0.5) * 0.05;
-//         animatedPosition.z += sin(position.z * 5.0 + time * 0.5) * 0.05;
-
-//         vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
-//         animatedPosition += mouseInfluence;
-
-
-//         vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
-//         gl_PointSize = size * (300.0 / -mvPosition.z);
-//         gl_Position = projectionMatrix * mvPosition;
-//       }
-//     `,
-//     fragmentShader: `
-//       varying vec3 vColor;
-//       varying float vOpacity;
-//       uniform float time;
-
-//       void main() {
-//         float r = distance(gl_PointCoord, vec2(0.5));
-//         float alpha = 1.0 - r * 2.0;
-
-//         vec3 animatedColor = vColor;
-//         animatedColor.r = vColor.r + sin(time * 0.5 + vColor.g * 10.0) * 0.1;
-//         animatedColor.g = vColor.g + cos(time * 0.5 + vColor.b * 10.0) * 0.1;
-//         animatedColor.b = vColor.b + sin(time * 0.5 + vColor.r * 10.0) * 0.1;
-//         animatedColor = clamp(animatedColor, 0.0, 1.0);
-
-//         gl_FragColor = vec4(animatedColor, vOpacity * alpha);
-//       }
-//     `,
-//     blending: THREE.AdditiveBlending,
-//     depthTest: false,
-//     transparent: true
-//   });
-
-//   particles = new THREE.Points(particlesGeometry, particlesMaterial);
-//   scene.add(particles);
-
-//   const ambientLight = new THREE.AmbientLight(0x404040);
-//   scene.add(ambientLight);
-
-//   const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-//   pointLight.position.set(5, 5, 5);
-//   scene.add(pointLight);
-
-//   window.addEventListener('resize', onLoaderCanvasResize, false);
-// }
-
-// Removed animateThreeJsLoader function
-// function animateThreeJsLoader() {
-//   animationFrameId = requestAnimationFrame(animateThreeJsLoader);
-
-//   if (particles && particles.material.uniforms) {
-//     particles.material.uniforms.time.value += 0.01;
-
-//     targetX += (mouseX - targetX) * 0.02;
-//     targetY += (mouseY - targetY) * 0.02;
-
-//     particles.material.uniforms.mousePos.value.set(targetX, targetY);
-
-//     particles.rotation.x += 0.0005;
-//     particles.rotation.y += 0.001;
-
-//     camera.position.x = 2 * Math.sin(targetX * 0.00005);
-//     camera.position.y = 2 * Math.cos(targetY * 0.00005);
-//     camera.lookAt(scene.position);
-//   }
-
-//   if (renderer && scene && camera) {
-//     renderer.render(scene, camera);
-//   }
-// }
-
+// ——— PRELOADER FADE-OUT ———
 window.addEventListener('load', () => {
-  // Removed Three.js loader initialization and animation
-  // if (typeof THREE !== 'undefined') {
-  //   initThreeJsLoader();
-  //   animateThreeJsLoader(); // Start the animation loop
-  // } else {
-  //   console.warn("Three.js not loaded. Preloader will not show 3D animation.");
-  // }
-
-  const pre = document.getElementById('preloader');
-  if (pre) {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
     // Give a small delay for the Lottie animation to be visible
     setTimeout(() => {
-      pre.classList.add('fade-out');
-      // Removed Three.js animation stop and cleanup
-      // if (animationFrameId) {
-      //   cancelAnimationFrame(animationFrameId);
-      // }
-      // if (renderer) {
-      //   renderer.dispose();
-      //   renderer.forceContextLoss();
-      //   renderer.domElement = null;
-      //   renderer = null;
-      // }
-      // scene = null;
-      // camera = null;
-      // particles = null;
-      // preloaderCanvas = null;
-      // window.removeEventListener('resize', onLoaderCanvasResize);
-      // document.removeEventListener('mousemove', onDocumentMouseMove);
-      // document.removeEventListener('touchstart', onDocumentTouchStart);
-      // document.removeEventListener('touchmove', onDocumentTouchMove);
-
-
-      setTimeout(() => pre.remove(), 900);
-    }, 3000); // Show loader for at least 3 seconds for better animation
+      preloader.classList.add('fade-out');
+      // Remove preloader from DOM after transition
+      preloader.addEventListener('transitionend', () => {
+        preloader.remove();
+      }, { once: true });
+    }, 3000); // Show loader for at least 3 seconds
   }
 
   // Check for user session on load
   const userData = sessionStorage.getItem('user');
+  const loginScreen = document.getElementById('login-screen');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
+
   if (userData) {
     const data = JSON.parse(userData);
     showMainUI(data);
   } else {
     // If no user data, ensure login screen is visible
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
+    if (loginScreen) loginScreen.style.display = 'flex';
+    if (mainContent) mainContent.style.display = 'none';
+    if (mainHeader) mainHeader.style.display = 'none';
   }
 });
 
-// ——— MOBILE MENU TOGGLE ———
+// ——— MOBILE MENU TOGGLE & SMOOTH SCROLLING ———
 document.addEventListener('DOMContentLoaded', async () => {
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
-  const header = document.getElementById('main-header'); // Get the header to calculate top offset
+  const header = document.getElementById('main-header');
+  const navLinks = document.querySelectorAll('.nav a');
 
   if (nav && navToggle && header) {
     navToggle.addEventListener('click', () => {
@@ -273,6 +48,37 @@ document.addEventListener('DOMContentLoaded', async () => {
       nav.style.height = `calc(100vh - ${headerHeight}px)`; // Use 100vh for full viewport height
     });
   }
+
+  // Smooth scrolling for navigation links
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      // Check if it's an internal link (starts with #)
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          // Close mobile nav if open
+          if (nav && nav.classList.contains('open')) {
+            nav.classList.remove('open');
+            if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+          }
+
+          // Scroll to the target element smoothly
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+
+          // Adjust scroll position for fixed header if necessary
+          // This is a common pattern for fixed headers
+          const headerOffset = header ? header.offsetHeight : 0;
+          window.scrollBy(0, -headerOffset);
+        }
+      }
+    });
+  });
 
   // ——— DYNAMIC NOTES & QUESTIONS & BOOKS ———
   // Initial static lists (these will be augmented by fetched files)
@@ -312,17 +118,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. A build process that generates a JSON file containing file names.
   // For this example, we'll simulate it or assume files are manually added to the arrays.
   async function fetchFiles(directoryPath, type) {
-    // Placeholder: In a real scenario, you'd make an AJAX request here
-    // e.g., const response = await fetch(`/api/list-files?dir=${directoryPath}`);
-    // const files = await response.json();
-    // return files.map(file => ({ title: file.replace('.pdf', '').replace(/_/g, ' '), file: file }));
-
-    // For demonstration, we'll just return an empty array or add some dummy files
-    // You would replace this with actual logic to get file names from your server/build
     console.warn(`Client-side JavaScript cannot directly list files from '${directoryPath}'.
                   You need a server-side solution or a pre-generated list of files.`);
 
-    // Example of how you might manually add new files if you don't have a server
+    // For demonstration, we'll just return an empty array or add some dummy files
+    // You would replace this with actual logic to get file names from your server/build
     if (type === 'notes') {
       return [
         { title: 'New Fetched Note 1', file: 'new_fetched_note_1.pdf' },
@@ -333,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         { title: 'New Fetched Question 1', file: 'new_fetched_question_1.pdf' },
         { title: 'New Fetched Question 2', file: 'new_fetched_question_2.pdf' },
       ];
-    } else if (type === 'books') { // New type for books
+    } else if (type === 'books') {
       return [
         { title: 'New Fetched Book 1', file: 'new_fetched_book_1.pdf' },
         { title: 'New Fetched Book 2', file: 'new_fetched_book_2.pdf' },
@@ -343,26 +143,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Fetch additional files and combine with initial lists
-  const fetchedNotes = await fetchFiles('notes_directory', 'notes'); // Replace 'notes_directory' with actual path if using server
-  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()]; // Deduplicate
+  // Using Promise.all to fetch all data concurrently
+  const [fetchedNotes, fetchedQuestions, fetchedBooks] = await Promise.all([
+    fetchFiles('notes_directory', 'notes'),
+    fetchFiles('questions_directory', 'questions'),
+    fetchFiles('books_directory', 'books')
+  ]);
 
-  const fetchedQuestions = await fetchFiles('questions_directory', 'questions'); // Replace 'questions_directory' with actual path if using server
-  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()]; // Deduplicate
-
-  const fetchedBooks = await fetchFiles('books_directory', 'books'); // New fetch for books
-  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()]; // Deduplicate
+  // Deduplicate and update global arrays
+  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()];
+  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()];
+  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()];
 
 
   function renderList(items, containerId, showMoreCard = false) {
     const ul = document.getElementById(containerId);
-    if (!ul) return;
+    if (!ul) {
+      console.warn(`Container with ID '${containerId}' not found.`);
+      return;
+    }
     ul.innerHTML = ''; // Clear existing content
 
     const initialDisplayLimit = 5; // Number of items to show initially
 
     // Determine which items to display for the initial view
-    // If showMoreCard is true, display only up to initialDisplayLimit
-    // Otherwise, display all items (for the full-screen overlay)
     const itemsToRender = showMoreCard ? items.slice(0, initialDisplayLimit) : items;
 
     itemsToRender.forEach(({ title, file }, index) => {
@@ -371,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       li.style.setProperty('--item-index', index); // Set custom property for staggered delay
       li.innerHTML = `
         <span>${title}</span>
-        <a href="${file}" target="_blank" rel="noopener">Download</a>
+        <a href="${file}" target="_blank" rel="noopener" aria-label="Download ${title}">Download</a>
       `;
       ul.appendChild(li);
     });
@@ -404,9 +208,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
   const overlayTitle = document.getElementById('overlay-title');
   const overlayList = document.getElementById('overlay-list');
-  const closeBtn = fullScreenOverlay.querySelector('.close-btn');
+  const closeBtn = fullScreenOverlay ? fullScreenOverlay.querySelector('.close-btn') : null;
 
   function openFullScreenOverlay(listType) {
+    if (!fullScreenOverlay || !overlayTitle || !overlayList) {
+      console.error("Full screen overlay elements not found.");
+      return;
+    }
+
     let itemsToDisplay = [];
     let title = '';
 
@@ -428,7 +237,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const li = document.createElement('li');
       li.innerHTML = `
         <span>${title}</span>
-        <a href="${file}" target="_blank" rel="noopener">Download</a>
+        <a href="${file}" target="_blank" rel="noopener" aria-label="Download ${title}">Download</a>
       `;
       overlayList.appendChild(li);
     });
@@ -437,19 +246,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.style.overflow = 'hidden'; // Prevent scrolling body when overlay is open
   }
 
-  closeBtn.addEventListener('click', () => {
-    fullScreenOverlay.classList.remove('active');
-    document.body.style.overflow = ''; // Restore body scrolling
-  });
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      if (fullScreenOverlay) fullScreenOverlay.classList.remove('active');
+      document.body.style.overflow = ''; // Restore body scrolling
+    });
+  }
 
   // Close overlay if clicked outside content (on the overlay itself)
-  fullScreenOverlay.addEventListener('click', (e) => {
-    // Check if the click target is the overlay itself or the close button
-    if (e.target === fullScreenOverlay || e.target === closeBtn) {
-      fullScreenOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-  });
+  if (fullScreenOverlay) {
+    fullScreenOverlay.addEventListener('click', (e) => {
+      // Check if the click target is the overlay itself or the close button
+      if (e.target === fullScreenOverlay || e.target === closeBtn) {
+        fullScreenOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  }
 
 
   // ——— THEME TOGGLE ———
@@ -498,18 +311,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     observer.observe(element);
   });
 
-
-  // Close nav when a nav link is clicked
-  const navLinks = document.querySelectorAll('.nav a');
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (nav.classList.contains('open')) {
-        nav.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  });
-
   // Testimonial Slider (Drag functionality)
   const slider = document.querySelector('.testimonial-grid');
   let isDown = false;
@@ -544,7 +345,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       isDown = true;
       slider.classList.add('active');
       startX = e.touches[0].pageX - slider.offsetLeft;
-      scrollLeft = e.touches[0].pageX - slider.offsetLeft; // Corrected for touch
+      scrollLeft = slider.scrollLeft; // Store current scroll position
     });
     slider.addEventListener('touchend', () => {
       isDown = false;
@@ -552,9 +353,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     slider.addEventListener('touchmove', (e) => {
       if (!isDown) return;
+      e.preventDefault(); // Prevent scrolling the page
       const x = e.touches[0].pageX - slider.offsetLeft;
       const walk = (x - startX) * 2;
       slider.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  // ——— CONTACT FORM SUBMISSION ———
+  const contactForm = document.getElementById('contact-form');
+  const formMessage = document.getElementById('form-message');
+
+  if (contactForm && formMessage) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      // Basic client-side validation
+      const name = contactForm.querySelector('[name="name"]').value;
+      const email = contactForm.querySelector('[name="email"]').value;
+      const phone = contactForm.querySelector('[name="phone"]').value;
+      const message = contactForm.querySelector('[name="message"]').value;
+
+      if (!name || !email || !phone || !message) {
+        formMessage.style.color = 'red';
+        formMessage.textContent = 'Please fill in all required fields.';
+        return;
+      }
+
+      // Use FormData to easily get form data
+      const formData = new FormData(contactForm);
+
+      try {
+        const response = await fetch(contactForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json' // Important for FormSubmit.co to return JSON
+          }
+        });
+
+        if (response.ok) {
+          formMessage.style.color = 'var(--accent)';
+          formMessage.textContent = 'Message sent successfully! We will get back to you soon.';
+          contactForm.reset(); // Clear the form
+        } else {
+          const data = await response.json();
+          formMessage.style.color = 'red';
+          formMessage.textContent = data.message || 'Oops! There was an error sending your message.';
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        formMessage.style.color = 'red';
+        formMessage.textContent = 'Network error. Please try again later.';
+      }
     });
   }
 });
@@ -585,11 +436,17 @@ function parseJwt(token) {
 
 // Display UI after successful login or session restore
 function showMainUI(data) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('main-content').style.display = 'block';
-  document.getElementById('main-header').style.display = 'flex'; // Use flex for header
-
+  const loginScreen = document.getElementById('login-screen');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
   const profileDiv = document.getElementById('profile-info');
+  const popupName = document.getElementById('popup-name');
+  const popupPic = document.getElementById('popup-pic');
+
+  if (loginScreen) loginScreen.style.display = 'none';
+  if (mainContent) mainContent.style.display = 'block';
+  if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
+
   if (profileDiv && data.picture && data.name) {
     profileDiv.innerHTML = `
       <img src="${data.picture}" alt="Profile Picture">
@@ -599,8 +456,8 @@ function showMainUI(data) {
   }
 
   // Set data for signout popup
-  document.getElementById('popup-name').textContent = data.name;
-  document.getElementById('popup-pic').src = data.picture;
+  if (popupName) popupName.textContent = data.name;
+  if (popupPic) popupPic.src = data.picture;
 }
 
 // Handle sign out
@@ -614,25 +471,35 @@ if (signoutBtn) {
     //   console.log('consent revoked', done);
     // });
 
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
-    document.getElementById('profile-info').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex'; // Show login screen
+    const popupOverlay = document.getElementById('popup-overlay');
+    const signoutPopup = document.getElementById('signout-popup');
+    const mainContent = document.getElementById('main-content');
+    const mainHeader = document.getElementById('main-header');
+    const profileInfo = document.getElementById('profile-info');
+    const loginScreen = document.getElementById('login-screen');
+
+    if (popupOverlay) popupOverlay.style.display = 'none';
+    if (signoutPopup) signoutPopup.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'none';
+    if (mainHeader) mainHeader.style.display = 'none';
+    if (profileInfo) profileInfo.style.display = 'none';
+    if (loginScreen) loginScreen.style.display = 'flex'; // Show login screen
   });
 }
 
 // Handle profile click to show popup
 document.addEventListener('click', (e) => {
   const profileInfo = e.target.closest('#profile-info');
+  const popupOverlay = document.getElementById('popup-overlay');
+  const signoutPopup = document.getElementById('signout-popup');
+
   if (profileInfo) {
     const data = JSON.parse(sessionStorage.getItem('user'));
-    if (data) {
+    if (data && popupOverlay && signoutPopup) {
       document.getElementById('popup-name').textContent = data.name;
       document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('popup-overlay').style.display = 'block';
-      document.getElementById('signout-popup').style.display = 'block';
+      popupOverlay.style.display = 'block';
+      signoutPopup.style.display = 'block';
     }
   }
 });
@@ -641,10 +508,11 @@ document.addEventListener('click', (e) => {
 const popupOverlay = document.getElementById('popup-overlay');
 if (popupOverlay) {
   popupOverlay.addEventListener('click', (e) => {
+    const signoutPopup = document.getElementById('signout-popup');
     // Only close if the click is directly on the overlay, not its children
-    if (e.target === popupOverlay) {
-      document.getElementById('popup-overlay').style.display = 'none';
-      document.getElementById('signout-popup').style.display = 'none';
+    if (e.target === popupOverlay && signoutPopup) {
+      popupOverlay.style.display = 'none';
+      signoutPopup.style.display = 'none';
     }
   });
-};
+}
