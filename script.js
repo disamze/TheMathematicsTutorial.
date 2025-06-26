@@ -1,25 +1,18 @@
-// ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
-let scene, camera, renderer, particles;
-let preloaderCanvas;
-let animationFrameId; // To store the requestAnimationFrame ID
-
-// Mouse/Touch interaction variables for main preloader
+// Mouse/Touch interaction variables for login background animation
 let mouseX = 0;
 let mouseY = 0;
 let targetX = 0;
 let targetY = 0;
 
-const windowHalfX = window.innerWidth / 2;
-const windowHalfY = window.innerHeight / 2;
-
-// Event listeners for mouse/touch movement on main preloader
+// Event listeners for mouse/touch movement on login background canvas
 document.addEventListener('mousemove', onDocumentMouseMove, false);
 document.addEventListener('touchstart', onDocumentTouchStart, false);
 document.addEventListener('touchmove', onDocumentTouchMove, false);
 
 function onDocumentMouseMove(event) {
+  // Normalize mouse position to -1 to 1 for Three.js shaders
   mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouseY = -(event.clientY / window.innerHeight) * 2 + 1; // Invert Y for typical 3D coordinates
 }
 
 function onDocumentTouchStart(event) {
@@ -38,330 +31,100 @@ function onDocumentTouchMove(event) {
   }
 }
 
-// Initialize the preloader with a fluid-like animation
-function initFluidPreloader() {
-  preloaderCanvas = document.getElementById('preloader-canvas');
-  if (!preloaderCanvas) {
-    console.error("Preloader canvas not found!");
+// --- Login Background Canvas (Three.js) ---
+let loginScene, loginCamera, loginRenderer, loginParticles;
+let loginAnimationFrameId;
+
+function initLoginBackground() {
+  const canvas = document.getElementById('login-background-canvas');
+  if (!canvas) {
+    console.error("Login background canvas not found!");
     return;
   }
 
-  // Set canvas dimensions explicitly for Three.js
-  const rect = preloaderCanvas.getBoundingClientRect();
-  preloaderCanvas.width = rect.width;
-  preloaderCanvas.height = rect.height;
+  // Set canvas dimensions to fill its parent
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-  // Scene
-  scene = new THREE.Scene();
+  loginScene = new THREE.Scene();
+  loginCamera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
+  loginCamera.position.z = 5;
 
-  // Camera
-  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
-  camera.position.z = 2;
+  loginRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  loginRenderer.setSize(canvas.width, canvas.height);
+  loginRenderer.setPixelRatio(window.devicePixelRatio);
+  loginRenderer.setClearColor(0x000000, 0); // Transparent background
 
-  // Renderer
-  renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
-  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x000000, 0); // Make background transparent
-
-  // Create a plane geometry for the background
-  const geometry = new THREE.PlaneGeometry(2, 2);
-
-  // Shader material for fluid-like effect
-  const material = new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0.0 },
-      mouse: { value: new THREE.Vector2() }
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float time;
-      uniform vec2 mouse;
-      varying vec2 vUv;
-
-      void main() {
-        vec2 uv = vUv;
-        vec3 color = vec3(0.0);
-
-        // Simple fluid-like distortion
-        float dist = distance(uv, vec2(0.5));
-        float strength = 0.1;
-        uv.x += sin(uv.y * 10.0 + time) * strength;
-        uv.y += cos(uv.x * 10.0 + time) * strength;
-
-        // Add mouse influence
-        vec2 mouse_uv = mouse * 0.5 + 0.5; // Map mouse from -1 to 1 to 0 to 1
-        float mouse_dist = distance(uv, mouse_uv);
-        float mouse_influence = 0.05 / (mouse_dist + 0.01);
-        uv.x += sin(uv.y * 5.0 + time * 0.5) * mouse_influence;
-        uv.y += cos(uv.x * 5.0 + time * 0.5) * mouse_influence;
-
-        // Create a colorful, glowing effect
-        float r = sin(uv.x * 15.0 + time * 0.8) * 0.5 + 0.5;
-        float g = cos(uv.y * 15.0 + time * 0.6) * 0.5 + 0.5;
-        float b = sin((uv.x + uv.y) * 10.0 + time * 0.7) * 0.5 + 0.5;
-
-        color = vec3(r, g, b);
-
-        // Add a subtle glow around the center
-        float glow = 0.1 / (dist + 0.01);
-        color += glow * 0.5;
-
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `,
-    transparent: true
-  });
-
-  particles = new THREE.Mesh(geometry, material);
-  scene.add(particles);
-
-  // Handle window resize for the loader canvas
-  window.addEventListener('resize', onLoaderCanvasResize, false);
-}
-
-function animateFluidPreloader() {
-  animationFrameId = requestAnimationFrame(animateFluidPreloader);
-
-  if (particles && particles.material.uniforms) {
-    particles.material.uniforms.time.value += 0.01;
-
-    // Smoothly interpolate mouse position
-    targetX += (mouseX - targetX) * 0.05;
-    targetY += (mouseY - targetY) * 0.05;
-    particles.material.uniforms.mouse.value.set(targetX, targetY);
-  }
-
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera);
-  }
-}
-
-// Moved onLoaderCanvasResize function definition up to resolve ReferenceError
-function onLoaderCanvasResize() {
-  if (preloaderCanvas && camera && renderer) {
-    // Update canvas dimensions based on its CSS size
-    const rect = preloaderCanvas.getBoundingClientRect();
-    // Set internal canvas resolution to match CSS size for sharp rendering
-    preloaderCanvas.width = rect.width;
-    preloaderCanvas.height = rect.height;
-
-    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
-    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-    camera.updateProjectionMatrix();
-  }
-}
-
-// --- NEW: Global variable for logo texture data ---
-let logoImageData = null;
-
-function initThreeJsLoader() {
-  preloaderCanvas = document.getElementById('preloader-canvas');
-  if (!preloaderCanvas) {
-    console.error("Preloader canvas not found!");
-    return;
-  }
-
-  // Set canvas dimensions explicitly for Three.js
-  const canvasSize = 200; // Internal resolution
-  preloaderCanvas.width = canvasSize;
-  preloaderCanvas.height = canvasSize;
-
-  // Scene
-  scene = new THREE.Scene();
-
-  // Camera
-  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
-  camera.position.z = 2;
-
-  // Renderer
-  renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
-  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x000000, 0); // Make background transparent
-
-  // --- NEW: Load logo image and process it for particle placement ---
-  const img = new Image();
-  img.src = 'logo.png'; // Path to your logo image
-  img.onload = () => {
-    const tempCanvas = document.createElement('canvas');
-    const ctx = tempCanvas.getContext('2d');
-    const logoSize = 100; // Size to scale logo for particle sampling
-    tempCanvas.width = logoSize;
-    tempCanvas.height = logoSize;
-    ctx.drawImage(img, 0, 0, logoSize, logoSize);
-    logoImageData = ctx.getImageData(0, 0, logoSize, logoSize);
-    createParticlesFromLogo(); // Call particle creation after image is loaded
-  };
-  img.onerror = (err) => {
-    console.error('Error loading logo for preloader:', err);
-    createParticlesFromLogo(true); // Create generic particles if logo fails to load
-  };
-
-  // Lights (less critical for particle system, but good practice)
-  const ambientLight = new THREE.AmbientLight(0x404040);
-  scene.add(ambientLight);
-
-  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(5, 5, 5);
-  scene.add(pointLight);
-
-  // Handle window resize for the loader canvas
-  window.addEventListener('resize', onLoaderCanvasResize, false);
-}
-
-// --- NEW: Function to create particles based on logo data ---
-function createParticlesFromLogo(fallback = false) {
-  const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
-  // CORRECTED: Declared particlesGeometry here
-  const particlesGeometry = new THREE.BufferGeometry();
+  const geometry = new THREE.BufferGeometry();
+  const particleCount = 10000;
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
   const sizes = new Float32Array(particleCount);
-  const opacities = new Float32Array(particleCount);
-  const initialAngles = new Float32Array(particleCount);
-
-  const logoWidth = logoImageData ? logoImageData.width : 1;
-  const logoHeight = logoImageData ? logoImageData.height : 1;
 
   for (let i = 0; i < particleCount; i++) {
-    let x, y, z;
-    let validPixel = false;
-    let attempts = 0;
-    const maxAttempts = 100; // Prevent infinite loops for sparse logos
+    // Position particles in a sphere
+    const r = 50 * Math.random(); // Max radius
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((2 * Math.random()) - 1); // Distribute evenly on sphere
 
-    if (!fallback && logoImageData) {
-      // Sample pixels from the logo image
-      while (!validPixel && attempts < maxAttempts) {
-        const px = Math.floor(Math.random() * logoWidth);
-        const py = Math.floor(Math.random() * logoHeight);
-        const index = (py * logoWidth + px) * 4; // RGBA
+    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = r * Math.cos(phi);
 
-        // Check alpha channel for non-transparent pixels
-        if (logoImageData.data[index + 3] > 128) { // If alpha is > 50%
-          // Map pixel coordinates to Three.js coordinates (-1 to 1)
-          x = (px / logoWidth - 0.5) * 1.5; // Scale to fit within view
-          y = (0.5 - py / logoHeight) * 1.5; // Invert Y for canvas vs Three.js
-          z = (Math.random() - 0.5) * 0.5; // Add some depth
-          validPixel = true;
-        }
-        attempts++;
-      }
-    }
-
-    if (fallback || !validPixel) {
-      // Fallback to random sphere if logo data is not available or pixel not found
-      const r = 0.8 * Math.sqrt(Math.random()); // particleOrbitRadius
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos((2 * Math.random()) - 1);
-      x = r * Math.sin(phi) * Math.cos(theta);
-      y = r * Math.sin(phi) * Math.sin(theta);
-      z = r * Math.cos(phi);
-    }
-
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
-
-    // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
-    const hue = Math.random() * 0.5 + 0.5;
-    const saturation = 0.8 + Math.random() * 0.2;
-    const lightness = 0.6 + Math.random() * 0.2;
-
+    // Random colors (blues, purples, pinks)
     const color = new THREE.Color();
-    color.setHSL(hue, saturation, lightness);
+    color.setHSL(Math.random() * 0.3 + 0.6, 0.7 + Math.random() * 0.3, 0.5 + Math.random() * 0.5); // Hues from blue to magenta
     colors[i * 3] = color.r;
     colors[i * 3 + 1] = color.g;
     colors[i * 3 + 2] = color.b;
 
-    sizes[i] = 0.08 + Math.random() * 0.12;
-    opacities[i] = 0.8 + Math.random() * 0.2;
-    initialAngles[i] = Math.random() * Math.PI * 2;
+    sizes[i] = (Math.random() * 0.5 + 0.5) * 0.5; // Particle size
   }
 
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-  particlesGeometry.setAttribute('initialAngle', new THREE.BufferAttribute(initialAngles, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-  // ShaderMaterial for glowing, circular particles
-  const particlesMaterial = new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     uniforms: {
       time: { value: 0.0 },
-      mousePos: { value: new THREE.Vector2(0, 0) },
-      cameraNear: { value: camera.near },
-      cameraFar: { value: camera.far }
+      mouse: { value: new THREE.Vector2(0, 0) },
+      cameraNear: { value: loginCamera.near },
+      cameraFar: { value: loginCamera.far }
     },
     vertexShader: `
       attribute float size;
-      attribute float opacity;
       attribute vec3 color;
-      attribute float initialAngle;
       varying vec3 vColor;
-      varying float vOpacity;
       uniform float time;
-      uniform vec2 mousePos;
+      uniform vec2 mouse;
       uniform float cameraNear;
       uniform float cameraFar;
 
       void main() {
         vColor = color;
-        vOpacity = opacity;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
-        vec3 animatedPosition = position;
+        // Add subtle movement based on time and mouse
+        float wave = sin(mvPosition.x * 0.5 + time * 0.5) * 0.5 + cos(mvPosition.y * 0.5 + time * 0.7) * 0.5;
+        mvPosition.z += wave * 0.5;
 
-        // Subtle orbital motion around the center of the logo
-        float orbitSpeed = 0.2; // Slower orbit for logo particles
-        float angle = initialAngle + time * orbitSpeed;
-        float orbitRadius = length(position.xy) * 0.1; // Smaller orbit radius
-        animatedPosition.x += orbitRadius * cos(angle);
-        animatedPosition.y += orbitRadius * sin(angle);
+        // Mouse influence: pull particles towards mouse position
+        vec3 mouseInfluence = vec3(mouse.x * 10.0, mouse.y * 10.0, 0.0);
+        mvPosition.xyz += (mouseInfluence - mvPosition.xyz) * 0.005; // Gentle pull
 
-        // Add subtle vertical bobbing
-        animatedPosition.z += sin(time * 2.0 + position.x * 10.0) * 0.02;
-
-        // Add a subtle pull towards mouse position (scaled down)
-        vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
-        animatedPosition += mouseInfluence;
-
-        vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
-
-        // Scale size based on distance from camera, with a minimum size
-        float distanceFactor = smoothstep(cameraNear, cameraFar, -mvPosition.z);
-        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time * 3.0 + initialAngle) * 0.1);
-        gl_PointSize = max(gl_PointSize, 5.0);
+        gl_PointSize = size * (300.0 / -mvPosition.z); // Scale size by distance
+        gl_PointSize = max(gl_PointSize, 1.0); // Minimum size
 
         gl_Position = projectionMatrix * mvPosition;
       }
     `,
     fragmentShader: `
       varying vec3 vColor;
-      varying float vOpacity;
-      uniform float time;
-
       void main() {
         float r = distance(gl_PointCoord, vec2(0.5));
-        float alpha = 1.0 - r * 2.0;
-
-        // Add a more pronounced and varied color shift over time
-        vec3 animatedColor = vColor;
-        animatedColor.r = vColor.r + sin(time * 1.0 + vColor.g * 15.0) * 0.15;
-        animatedColor.g = vColor.g + cos(time * 1.0 + vColor.b * 15.0) * 0.15;
-        animatedColor.b = vColor.b + sin(time * 1.0 + vColor.r * 15.0) * 0.15;
-        animatedColor = clamp(animatedColor, 0.0, 1.0);
-
-        // Add a subtle flicker/glow effect
-        float glow = sin(time * 5.0 + r * 10.0) * 0.1 + 0.9;
-        animatedColor *= glow;
-
-        gl_FragColor = vec4(animatedColor, vOpacity * alpha);
+        float alpha = 1.0 - r * 2.0; // Circular fade
+        gl_FragColor = vec4(vColor, alpha);
       }
     `,
     blending: THREE.AdditiveBlending,
@@ -369,53 +132,45 @@ function createParticlesFromLogo(fallback = false) {
     transparent: true
   });
 
-  // Remove existing particles if any
-  if (particles) {
-    scene.remove(particles);
-    particles.geometry.dispose();
-    particles.material.dispose();
-  }
+  loginParticles = new THREE.Points(geometry, material);
+  loginScene.add(loginParticles);
 
-  particles = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particles);
+  window.addEventListener('resize', onLoginBackgroundResize);
 }
 
+function animateLoginBackground() {
+  loginAnimationFrameId = requestAnimationFrame(animateLoginBackground);
 
-function animateThreeJsLoader() {
-  animationFrameId = requestAnimationFrame(animateThreeJsLoader);
+  if (loginParticles && loginParticles.material.uniforms) {
+    loginParticles.material.uniforms.time.value += 0.01;
+    // Smoothly interpolate mouse position for shader
+    targetX += (mouseX - targetX) * 0.05;
+    targetY += (mouseY - targetY) * 0.05;
+    loginParticles.material.uniforms.mouse.value.set(targetX, targetY);
 
-  if (particles && particles.material.uniforms) {
-    // Update time uniform for shader animations
-    particles.material.uniforms.time.value += 0.01;
-
-    // Smoothly interpolate mouse position for camera/particle influence
-    targetX += (mouseX - targetX) * 0.02;
-    targetY += (mouseY - targetY) * 0.02;
-
-    // Update mousePos uniform for shader
-    particles.material.uniforms.mousePos.value.set(targetX, targetY);
-
-    // Animate particles: subtle rotation of the entire system
-    // --- NEW: Rotate the entire logo particle system ---
-    if (particles) {
-      particles.rotation.x += 0.0005;
-      particles.rotation.y += 0.001;
-    }
-
-    // Camera subtle movement based on mouse position AND continuous oscillation
-    const cameraOscillationSpeed = 0.0005;
-    const cameraOscillationAmount = 0.05;
-    camera.position.x = 2 * Math.sin(targetX * 0.00005) + Math.sin(Date.now() * cameraOscillationSpeed) * cameraOscillationAmount;
-    camera.position.y = 2 * Math.cos(targetY * 0.00005) + Math.cos(Date.now() * cameraOscillationSpeed * 1.2) * cameraOscillationAmount;
-    camera.lookAt(scene.position); // Always look at the center of the particle system
+    // Rotate the entire particle system slowly
+    loginParticles.rotation.x += 0.0001;
+    loginParticles.rotation.y += 0.0002;
   }
 
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera);
+  if (loginRenderer && loginScene && loginCamera) {
+    loginRenderer.render(loginScene, loginCamera);
   }
 }
 
-// --- NEW: Initialize 3D Logo for Header (from previous step) ---
+function onLoginBackgroundResize() {
+  const canvas = document.getElementById('login-background-canvas');
+  if (canvas && loginCamera && loginRenderer) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    loginCamera.aspect = canvas.width / canvas.height;
+    loginCamera.updateProjectionMatrix();
+    loginRenderer.setSize(canvas.width, canvas.height);
+  }
+}
+
+
+// --- NEW: Initialize 3D Logo for Header ---
 let logoScene, logoCamera, logoRenderer, logoMesh;
 let logoAnimationFrameId;
 let logoTargetRotationX = 0;
@@ -524,49 +279,159 @@ function animateThreeJsLogo() {
 }
 
 
+// --- Primary Lottie Preloader Fade-out ---
 window.addEventListener('load', () => {
-  // Initialize Three.js loader
-  if (typeof THREE !== 'undefined') {
-    initThreeJsLoader();
-    animateThreeJsLoader(); // Start the animation loop
-  } else {
-    console.warn("Three.js not loaded. Preloader will not show 3D animation.");
-  }
-
-  const mainPreloader = document.getElementById('preloader');
-  if (mainPreloader) {
-    // Give a small delay for the Three.js animation to be visible
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    // Give a small delay for the Lottie animation to be visible
     setTimeout(() => {
-      mainPreloader.classList.add('fade-out');
-      // Stop the Three.js animation when fading out
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-      // Clean up Three.js resources (optional but good practice)
-      if (renderer) {
-        renderer.dispose();
-        renderer.forceContextLoss();
-        renderer.domElement = null;
-        renderer = null;
-      }
-      scene = null;
-      camera = null;
-      particles = null;
-      preloaderCanvas = null;
-      window.removeEventListener('resize', onLoaderCanvasResize);
-      document.removeEventListener('mousemove', onDocumentMouseMove);
-      document.removeEventListener('touchstart', onDocumentTouchStart);
-      document.removeEventListener('touchmove', onDocumentTouchMove);
-
-
-      setTimeout(() => mainPreloader.remove(), 900); // Remove after transition
-    }, 3000); // Show main (Three.js) loader for at least 3 seconds
+      preloader.classList.add('fade-out');
+      setTimeout(() => preloader.remove(), 900); // Remove after transition
+    }, 3000); // Show Lottie loader for at least 3 seconds
   }
 });
 
+
+// --- GOOGLE SIGN-IN LOGIC ---
+// showMainUI is now globally accessible via window.showMainUI
+window.showMainUI = function(data) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  document.getElementById('main-header').style.display = 'flex'; // Use flex for header
+
+  const profileDiv = document.getElementById('profile-info');
+  if (profileDiv && data.picture && data.name) {
+    profileDiv.innerHTML = `
+      <img src="${data.picture}" alt="Profile Picture">
+      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
+    `;
+    profileDiv.style.display = 'flex';
+  }
+
+  // Set data for signout popup
+  document.getElementById('popup-name').textContent = data.name;
+  document.getElementById('popup-pic').src = data.picture;
+
+  // Stop and dispose login background animation when main UI is shown
+  if (loginAnimationFrameId) {
+    cancelAnimationFrame(loginAnimationFrameId);
+  }
+  if (loginRenderer) {
+    loginRenderer.dispose();
+    loginRenderer.domElement = null;
+    loginRenderer = null;
+  }
+  loginScene = null;
+  loginCamera = null;
+  loginParticles = null;
+  window.removeEventListener('resize', onLoginBackgroundResize);
+  document.removeEventListener('mousemove', onDocumentMouseMove);
+  document.removeEventListener('touchstart', onDocumentTouchStart);
+  document.removeEventListener('touchmove', onDocumentTouchMove);
+};
+
+// Handle sign out
+const signoutBtn = document.getElementById('signout-btn');
+if (signoutBtn) {
+  signoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('user');
+    // Google Sign-out (if using Google's JS API for sign-out)
+    // This is the recommended way to revoke consent and clear Google's session
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect(); // Prevents auto-login on next visit
+        // If you need to revoke consent for a specific user:
+        // const userEmail = JSON.parse(sessionStorage.getItem('user'))?.email;
+        // if (userEmail) {
+        //     google.accounts.id.revoke(userEmail, done => {
+        //         console.log('Consent revoked for:', userEmail, done);
+        //     });
+        // }
+    }
+
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-header').style.display = 'none';
+    document.getElementById('profile-info').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex'; // Show login screen
+
+    // Re-initialize login background animation on sign out
+    if (typeof THREE !== 'undefined') {
+      initLoginBackground();
+      animateLoginBackground();
+    }
+    // Ensure the main preloader (Lottie) is removed if it somehow still exists
+    const mainPreloader = document.getElementById('preloader');
+    if (mainPreloader) {
+      mainPreloader.remove();
+    }
+
+    // NEW: Re-render the Google Sign-In button after logout
+    // This is crucial because the GSI button might not re-initialize itself
+    // when its container is hidden and then shown again.
+    const g_id_signin_div = document.querySelector('.g_id_signin');
+    if (g_id_signin_div) {
+        // Clear its content to force a re-render
+        g_id_signin_div.innerHTML = '';
+        // Re-initialize the GSI button
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            google.accounts.id.renderButton(
+                g_id_signin_div,
+                { type: "standard", shape: "pill", theme: "outline", text: "signin_with", size: "large" } // Re-use your button configuration
+            );
+        }
+    }
+  });
+}
+
+// Handle profile click to show popup
+document.addEventListener('click', (e) => {
+  const profileInfo = e.target.closest('#profile-info');
+  if (profileInfo) {
+    const data = JSON.parse(sessionStorage.getItem('user'));
+    if (data) {
+      document.getElementById('popup-name').textContent = data.name;
+      document.getElementById('popup-pic').src = data.picture;
+      document.getElementById('popup-overlay').style.display = 'block';
+      document.getElementById('signout-popup').style.display = 'block';
+    }
+  }
+});
+
+// Hide popup on outside click
+const popupOverlay = document.getElementById('popup-overlay');
+if (popupOverlay) {
+  popupOverlay.addEventListener('click', (e) => {
+    // Only close if the click is directly on the overlay, not its children
+    if (e.target === popupOverlay) {
+      document.getElementById('popup-overlay').style.display = 'none';
+      document.getElementById('signout-popup').style.display = 'none';
+    }
+  });
+}
+
+// ——— THEME TOGGLE (Global, outside Barba) ———
+const themeBtn = document.querySelector('.theme-toggle');
+if (themeBtn) {
+  // Set initial icon based on current theme
+  themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+    ? '<i class="bx bx-sun"></i>'
+    : '<i class="bx bx-moon"></i>';
+
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+    themeBtn.setAttribute('aria-expanded', String(isDark));
+    themeBtn.innerHTML = isDark
+      ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
+      : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
+  });
+}
+
+
 // --- Function to initialize/re-initialize all page-specific scripts ---
 // This function will be called on DOMContentLoaded and after each Barba page transition
-function initPageScripts() {
+async function initPageScripts() { // Marked as async because it uses await
   // ——— MOBILE MENU TOGGLE ———
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
@@ -893,147 +758,6 @@ function initPageScripts() {
 }
 
 
-// --- GOOGLE SIGN-IN LOGIC ---
-// parseJwt can remain here as it's used by showMainUI
-function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  );
-  return JSON.parse(jsonPayload);
-}
-
-// showMainUI remains the same
-function showMainUI(data) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('main-content').style.display = 'block';
-  document.getElementById('main-header').style.display = 'flex'; // Use flex for header
-
-  const profileDiv = document.getElementById('profile-info');
-  if (profileDiv && data.picture && data.name) {
-    profileDiv.innerHTML = `
-      <img src="${data.picture}" alt="Profile Picture">
-      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
-    `;
-    profileDiv.style.display = 'flex';
-  }
-
-  // Set data for signout popup
-  document.getElementById('popup-name').textContent = data.name;
-  document.getElementById('popup-pic').src = data.picture;
-
-  // NEW: Show Lottie preloader briefly after main UI is shown
-  const lottiePreloader = document.getElementById('lottie-preloader');
-  if (lottiePreloader) {
-    lottiePreloader.style.opacity = '1';
-    lottiePreloader.style.visibility = 'visible';
-
-    setTimeout(() => {
-      lottiePreloader.style.opacity = '0';
-      lottiePreloader.style.visibility = 'hidden';
-      setTimeout(() => lottiePreloader.remove(), 900); // Remove after transition
-    }, 2000); // Lottie preloader visible for 2 seconds
-  }
-}
-
-// Handle sign out
-const signoutBtn = document.getElementById('signout-btn');
-if (signoutBtn) {
-  signoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem('user');
-    // Google Sign-out (if using Google's JS API for sign-out)
-    // This is the recommended way to revoke consent and clear Google's session
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect(); // Prevents auto-login on next visit
-        // If you need to revoke consent for a specific user:
-        // const userEmail = JSON.parse(sessionStorage.getItem('user'))?.email;
-        // if (userEmail) {
-        //     google.accounts.id.revoke(userEmail, done => {
-        //         console.log('Consent revoked for:', userEmail, done);
-        //     });
-        // }
-    }
-
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
-    document.getElementById('profile-info').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex'; // Show login screen
-
-    // If signing out, ensure Lottie preloader is removed if it somehow still exists
-    const lottiePreloader = document.getElementById('lottie-preloader');
-    if (lottiePreloader) {
-      lottiePreloader.remove();
-    }
-
-    // NEW: Re-render the Google Sign-In button after logout
-    // This is crucial because the GSI button might not re-initialize itself
-    // when its container is hidden and then shown again.
-    const g_id_signin_div = document.querySelector('.g_id_signin');
-    if (g_id_signin_div) {
-        // Clear its content to force a re-render
-        g_id_signin_div.innerHTML = '';
-        // Re-initialize the GSI button
-        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-            google.accounts.id.renderButton(
-                g_id_signin_div,
-                { type: "standard", shape: "pill", theme: "outline", text: "signin_with", size: "large" } // Re-use your button configuration
-            );
-        }
-    }
-  });
-}
-
-// Handle profile click to show popup
-document.addEventListener('click', (e) => {
-  const profileInfo = e.target.closest('#profile-info');
-  if (profileInfo) {
-    const data = JSON.parse(sessionStorage.getItem('user'));
-    if (data) {
-      document.getElementById('popup-name').textContent = data.name;
-      document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('popup-overlay').style.display = 'block';
-      document.getElementById('signout-popup').style.display = 'block';
-    }
-  }
-});
-
-// Hide popup on outside click
-const popupOverlay = document.getElementById('popup-overlay');
-if (popupOverlay) {
-  popupOverlay.addEventListener('click', (e) => {
-    // Only close if the click is directly on the overlay, not its children
-    if (e.target === popupOverlay) {
-      document.getElementById('popup-overlay').style.display = 'none';
-      document.getElementById('signout-popup').style.display = 'none';
-    }
-  });
-};
-
-// ——— THEME TOGGLE (Global, outside Barba) ———
-const themeBtn = document.querySelector('.theme-toggle');
-if (themeBtn) {
-  // Set initial icon based on current theme
-  themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
-    ? '<i class="bx bx-sun"></i>'
-    : '<i class="bx bx-moon"></i>';
-
-  themeBtn.addEventListener('click', () => {
-    const isDark = document.documentElement.dataset.theme === 'dark';
-    document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-    themeBtn.setAttribute('aria-expanded', String(isDark));
-    themeBtn.innerHTML = isDark
-      ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
-      : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
-  });
-}
-
-
 // ——— BARBA.JS & GSAP INTEGRATION ———
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Three.js Logo once, as it's outside the Barba container
@@ -1043,13 +767,21 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("Three.js not loaded. 3D logo will not be initialized.");
   }
 
+  // Initialize login background animation
+  if (typeof THREE !== 'undefined') {
+    initLoginBackground();
+    animateLoginBackground();
+  } else {
+    console.warn("Three.js not loaded. Login background animation will not run.");
+  }
+
   // Check for user session on initial load (if user was already logged in)
   // This part runs only once on initial page load, before Barba takes over.
   const userData = sessionStorage.getItem('user');
   if (userData) {
     console.log('User data found in session storage on DOMContentLoaded. Showing main UI.');
     const data = JSON.parse(userData);
-    showMainUI(data);
+    window.showMainUI(data); // Use window.showMainUI
   } else {
     console.log('No user data found in session storage. Showing login screen.');
     document.getElementById('login-screen').style.display = 'flex';
