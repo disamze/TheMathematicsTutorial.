@@ -10,7 +10,11 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
-  <!-- Google Identity Services -->
+
+  <!-- NEW: Script for global Google callback - LOADED FIRST -->
+  <script src="google-auth-callback.js"></script>
+
+  <!-- Google Identity Services - LOADED AFTER THE CALLBACK SCRIPT -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <!-- NEW: Three.js ES Module Import -->
@@ -70,7 +74,7 @@
   <section class="login-container" id="login-screen">
     <div class="login-box" id="login-box">
       <div class="login-header">
-        <img src="logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
+        <img src="your_logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
         <h2>Welcome to The Mathematics Tutorial</h2>
         <p>Sign in to access exclusive notes, practice questions, and more!</p>
       </div>
