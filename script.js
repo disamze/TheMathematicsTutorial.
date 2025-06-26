@@ -117,7 +117,8 @@ function initThreeJsLoader() {
 // --- NEW: Function to create particles based on logo data ---
 function createParticlesFromLogo(fallback = false) {
   const particleCount = fallback ? 8000 : 5000; // Fewer particles for logo, more for generic
-  // CORRECTED LINE: Removed the extra 'new'
+  // CORRECTED: Declared particlesGeometry here
+  const particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
   const sizes = new Float32Array(particleCount);
