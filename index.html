@@ -23,6 +23,11 @@
     // Make THREE globally available for existing script.js
     window.THREE = THREE;
   </script>
+
+  <!-- GSAP and Barba.js Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://unpkg.com/@barba/core"></script>
+
 </head>
 
 <body data-theme="light">
@@ -70,237 +75,245 @@
     </div>
   </header>
 
-  <!-- Login Screen -->
-  <section class="login-container" id="login-screen">
-    <div class="login-box" id="login-box">
-      <div class="login-header">
-        <img src="logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
-        <h2>Welcome to The Mathematics Tutorial</h2>
-        <p>Sign in to access exclusive notes, practice questions, and more!</p>
+  <!-- Barba Wrapper -->
+  <div data-barba="wrapper">
+    <!-- Barba Container -->
+    <div data-barba="container" data-barba-namespace="home">
+
+      <!-- Login Screen -->
+      <section class="login-container" id="login-screen">
+        <div class="login-box" id="login-box">
+          <div class="login-header">
+            <img src="logo.png" alt="Logo" class="login-logo"> <!-- Keep this static for the login screen -->
+            <h2>Welcome to The Mathematics Tutorial</h2>
+            <p>Sign in to access exclusive notes, practice questions, and more!</p>
+          </div>
+          <div id="g_id_onload"
+            data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false"></div>
+          <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
+            data-text="signin_with" data-size="large"></div>
+          <div class="welcome-message" id="welcome-message"></div>
+        </div>
+      </section>
+
+      <!-- Main Content: hidden until login -->
+      <div id="main-content" style="display: none;">
+        <main>
+          <!-- Hero -->
+          <section id="home" class="hero">
+            <div class="container hero-grid">
+              <div class="hero-info">
+                <h1>Hi, I’m <span>Shashi Kant</span></h1>
+                <p>
+                  Mathematics & Science tutor with 8+ years’ experience, helping
+                  students achieve top grades through interactive lessons.
+                </p>
+                <a href="#" class="btn">Download CV</a>
+              </div>
+              <div class="hero-img">
+                <img src="shashi.png" alt="Shashi Kant" />
+              </div>
+            </div>
+          </section>
+
+          <!-- About -->
+          <section id="about" class="about">
+            <div class="container about-grid">
+              <div class="about-img">
+                <img src="shashi.png" alt="Tutor portrait" />
+              </div>
+              <div class="about-info">
+                <h2>About Me</h2>
+                <p>
+                  I’m <strong>Shashi Kant</strong>, a dedicated educator holding a
+                  B.Sc. (Mathematics) and M.Ed. Awarded “Best Tutor of the Year 2023.”
+                  I blend real-world examples with personalized coaching to build
+                  confidence and mastery.
+                </p>
+                <div class="info-cards">
+                  <div class="card">
+                    <h4>Education</h4>
+                    <p>
+                      B.Sc. (Mathematics), Patna University (2013)<br />
+                      M.Ed., IGNOU (2015)
+                    </p>
+                  </div>
+                  <div class="card">
+                    <h4>Experience</h4>
+                    <p>
+                      8+ years tutoring ICSE, CBSE & state boards in Math & Science.
+                    </p>
+                  </div>
+                  <div class="card">
+                    <h4>Certifications</h4>
+                    <p>
+                      Google Certified Educator Level 1<br />
+                      Advanced Excel Trainer
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          <!-- Skills -->
+          <section id="skills" class="skills">
+            <div class="container">
+              <h2>Core Competencies</h2>
+              <ul class="skills-list">
+                <li>
+                  <span>Algebra & Trigonometry</span>
+                  <div class="progress">
+                    <div style="width:95%"></div>
+                  </div>
+                </li>
+                <li>
+                  <span>Calculus & Analytic Geometry</span>
+                  <div class="progress">
+                    <div style="width:90%"></div>
+                  </div>
+                </li>
+                <li>
+                  <span>Physics Fundamentals</span>
+                  <div class="progress">
+                    <div style="width:85%"></div>
+                  </div>
+                </li>
+                <li>
+                  <span>Statistics & Probability</span>
+                  <div class="progress">
+                    <div style="width:80%"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- NOTES -->
+          <section id="notes" class="list-section">
+            <div class="container">
+              <h2>Downloadable Notes</h2>
+              <ul id="notes-list" class="item-list"></ul>
+            </div>
+          </section>
+
+          <!-- QUESTIONS -->
+          <section id="questions" class="list-section">
+            <div class="container">
+              <h2>Practice Questions</h2>
+              <ul id="questions-list" class="item-list"></ul>
+            </div>
+          </section>
+
+          <!-- BOOKS -->
+          <section id="books" class="list-section">
+            <div class="container">
+              <h2>Recommended Books</h2>
+              <ul id="books-list" class="item-list"></ul>
+            </div>
+          </section>
+
+          <!-- TESTIMONIALS -->
+          <section id="testimonials" class="testimonials">
+            <div class="container">
+              <h2>Student Feedback</h2>
+              <div class="testimonial-grid">
+                <div class="testimonial-card">
+                  <p>
+                    “Shashi Sir’s classes transformed my problem-solving—I jumped from 65% to 88% in boards!”
+                  </p>
+                  <h5>— Aisha K., Class 12</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>
+                    “His concise notes and real-life examples make every concept stick. Highly recommend!”
+                  </p>
+                  <h5>— Rahul S., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>
+                    “Excellent teacher with a unique way of explaining complex concepts!”
+                  </p>
+                  <h5>— Priya M., Class 9</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>
+                    “Math was never this fun! Shashi Sir makes everything easy to understand.”
+                  </p>
+                  <h5>— Rohan T., Class 11</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
+                  <h5>— Neha R., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“He explains complex topics in the simplest way possible.”</p>
+                  <h5>— Aman S., Class 12</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Thanks to Sir, I scored 95% in Maths!”</p>
+                  <h5>— Priyanka J., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
+                  <h5>— Neha R., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“He explains complex topics in the simplest way possible.”</p>
+                  <h5>— Aman S., Class 12</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Thanks to Sir, I scored 95% in Maths!”</p>
+                  <h5>— Priyanka J., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
+                  <h5>— Neha R., Class 10</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“He explains complex topics in the simplest way possible.”</p>
+                  <h5>— Aman S., Class 12</h5>
+                </div>
+                <div class="testimonial-card">
+                  <p>“Thanks to Sir, I scored 95% in Maths!”</p>
+                  <h5>— Priyanka J., Class 10</h5>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CONTACT -->
+          <section id="contact" class="contact">
+            <div class="container">
+              <h2>Get in Touch</h2>
+              <form action="https://formsubmit.co/disamaze@gmail.com" method="POST" class="contact-form">
+                <input type="hidden" name="_captcha" value="false" />
+                <div class="form-row">
+                  <input type="text" name="name" placeholder="Full Name" required />
+                  <input type="email" name="email" placeholder="Email Address" required />
+                </div>
+                <div class="form-row">
+                  <input type="tel" name="phone" placeholder="Mobile Number" required />
+                  <input type="text" name="subject" placeholder="Subject" />
+                </div>
+                <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn">Send Message</button>
+              </form>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="container">
+            <p>© 2025 Shashi Kant • The Mathematics Tutorial</p>
+            <a href="#home" class="back-top"><i class="bx bx-up-arrow-alt"></i></a>
+          </div>
+        </footer>
       </div>
-      <div id="g_id_onload"
-        data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
-        data-callback="handleCredentialResponse"
-        data-auto_prompt="false"></div>
-      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
-        data-text="signin_with" data-size="large"></div>
-      <div class="welcome-message" id="welcome-message"></div>
-    </div>
-  </section>
 
-  <!-- Main Content: hidden until login -->
-  <div id="main-content" style="display: none;">
-    <main>
-      <!-- Hero -->
-      <section id="home" class="hero">
-        <div class="container hero-grid">
-          <div class="hero-info">
-            <h1>Hi, I’m <span>Shashi Kant</span></h1>
-            <p>
-              Mathematics & Science tutor with 8+ years’ experience, helping
-              students achieve top grades through interactive lessons.
-            </p>
-            <a href="#" class="btn">Download CV</a>
-          </div>
-          <div class="hero-img">
-            <img src="shashi.png" alt="Shashi Kant" />
-          </div>
-        </div>
-      </section>
-
-      <!-- About -->
-      <section id="about" class="about">
-        <div class="container about-grid">
-          <div class="about-img">
-            <img src="shashi.png" alt="Tutor portrait" />
-          </div>
-          <div class="about-info">
-            <h2>About Me</h2>
-            <p>
-              I’m <strong>Shashi Kant</strong>, a dedicated educator holding a
-              B.Sc. (Mathematics) and M.Ed. Awarded “Best Tutor of the Year 2023.”
-              I blend real-world examples with personalized coaching to build
-              confidence and mastery.
-            </p>
-            <div class="info-cards">
-              <div class="card">
-                <h4>Education</h4>
-                <p>
-                  B.Sc. (Mathematics), Patna University (2013)<br />
-                  M.Ed., IGNOU (2015)
-                </p>
-              </div>
-              <div class="card">
-                <h4>Experience</h4>
-                <p>
-                  8+ years tutoring ICSE, CBSE & state boards in Math & Science.
-                </p>
-              </div>
-              <div class="card">
-                <h4>Certifications</h4>
-                <p>
-                  Google Certified Educator Level 1<br />
-                  Advanced Excel Trainer
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      <!-- Skills -->
-      <section id="skills" class="skills">
-        <div class="container">
-          <h2>Core Competencies</h2>
-          <ul class="skills-list">
-            <li>
-              <span>Algebra & Trigonometry</span>
-              <div class="progress">
-                <div style="width:95%"></div>
-              </div>
-            </li>
-            <li>
-              <span>Calculus & Analytic Geometry</span>
-              <div class="progress">
-                <div style="width:90%"></div>
-              </div>
-            </li>
-            <li>
-              <span>Physics Fundamentals</span>
-              <div class="progress">
-                <div style="width:85%"></div>
-              </div>
-            </li>
-            <li>
-              <span>Statistics & Probability</span>
-              <div class="progress">
-                <div style="width:80%"></div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- NOTES -->
-      <section id="notes" class="list-section">
-        <div class="container">
-          <h2>Downloadable Notes</h2>
-          <ul id="notes-list" class="item-list"></ul>
-        </div>
-      </section>
-
-      <!-- QUESTIONS -->
-      <section id="questions" class="list-section">
-        <div class="container">
-          <h2>Practice Questions</h2>
-          <ul id="questions-list" class="item-list"></ul>
-        </div>
-      </section>
-
-      <!-- BOOKS -->
-      <section id="books" class="list-section">
-        <div class="container">
-          <h2>Recommended Books</h2>
-          <ul id="books-list" class="item-list"></ul>
-        </div>
-      </section>
-
-      <!-- TESTIMONIALS -->
-      <section id="testimonials" class="testimonials">
-        <div class="container">
-          <h2>Student Feedback</h2>
-          <div class="testimonial-grid">
-            <div class="testimonial-card">
-              <p>
-                “Shashi Sir’s classes transformed my problem-solving—I jumped from 65% to 88% in boards!”
-              </p>
-              <h5>— Aisha K., Class 12</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>
-                “His concise notes and real-life examples make every concept stick. Highly recommend!”
-              </p>
-              <h5>— Rahul S., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>
-                “Excellent teacher with a unique way of explaining complex concepts!”
-              </p>
-              <h5>— Priya M., Class 9</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>
-                “Math was never this fun! Shashi Sir makes everything easy to understand.”
-              </p>
-              <h5>— Rohan T., Class 11</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
-              <h5>— Neha R., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“He explains complex topics in the simplest way possible.”</p>
-              <h5>— Aman S., Class 12</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Thanks to Sir, I scored 95% in Maths!”</p>
-              <h5>— Priyanka J., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
-              <h5>— Neha R., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“He explains complex topics in the simplest way possible.”</p>
-              <h5>— Aman S., Class 12</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Thanks to Sir, I scored 95% in Maths!”</p>
-              <h5>— Priyanka J., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
-              <h5>— Neha R., Class 10</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“He explains complex topics in the simplest way possible.”</p>
-              <h5>— Aman S., Class 12</h5>
-            </div>
-            <div class="testimonial-card">
-              <p>“Thanks to Sir, I scored 95% in Maths!”</p>
-              <h5>— Priyanka J., Class 10</h5>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CONTACT -->
-      <section id="contact" class="contact">
-        <div class="container">
-          <h2>Get in Touch</h2>
-          <form action="https://formsubmit.co/disamaze@gmail.com" method="POST" class="contact-form">
-            <input type="hidden" name="_captcha" value="false" />
-            <div class="form-row">
-              <input type="text" name="name" placeholder="Full Name" required />
-              <input type="email" name="email" placeholder="Email Address" required />
-            </div>
-            <div class="form-row">
-              <input type="tel" name="phone" placeholder="Mobile Number" required />
-              <input type="text" name="subject" placeholder="Subject" />
-            </div>
-            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
-            <button type="submit" class="btn">Send Message</button>
-          </form>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="container">
-        <p>© 2025 Shashi Kant • The Mathematics Tutorial</p>
-        <a href="#home" class="back-top"><i class="bx bx-up-arrow-alt"></i></a>
-      </div>
-    </footer>
-  </div>
+    </div> <!-- End Barba Container -->
+  </div> <!-- End Barba Wrapper -->
 
 
   <!-- Signout Popup -->
