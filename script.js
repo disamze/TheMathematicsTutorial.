@@ -1,262 +1,289 @@
-// No more mouse/touch interaction variables for login background animation
-// No more initLoginBackground, animateLoginBackground, onLoginBackgroundResize functions
+// ——— PRELOADER FADE-OUT & THREE.JS LOADER ———
+let scene, camera, renderer, particles;
+let preloaderCanvas;
+let animationFrameId; // To store the requestAnimationFrame ID
+let particleOrbitRadius = 0.8; // Slightly larger radius for spread
+let particleSpeed = 0.005;
 
-// --- NEW: Initialize 3D Logo for Header ---
-let logoScene, logoCamera, logoRenderer, logoMesh;
-let logoAnimationFrameId;
-let logoTargetRotationX = 0;
-let logoTargetRotationY = 0;
+// Mouse/Touch interaction variables
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
 
-function initThreeJsLogo() {
-  const logoContainer = document.getElementById('threejs-logo-container');
-  if (!logoContainer) {
-    console.error("3D Logo container not found!");
+const windowHalfX = window.innerWidth / 2;
+const windowHalfY = window.innerHeight / 2;
+
+// Event listeners for mouse/touch movement
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+document.addEventListener('touchstart', onDocumentTouchStart, false);
+document.addEventListener('touchmove', onDocumentTouchMove, false);
+
+function onDocumentMouseMove(event) {
+  mouseX = (event.clientX - windowHalfX);
+  mouseY = (event.clientY - windowHalfY);
+}
+
+function onDocumentTouchStart(event) {
+  if (event.touches.length === 1) {
+    event.preventDefault();
+    mouseX = (event.touches[0].pageX - windowHalfX);
+    mouseY = (event.touches[0].pageY - windowHalfY);
+  }
+}
+
+function onDocumentTouchMove(event) {
+  if (event.touches.length === 1) {
+    event.preventDefault();
+    mouseX = (event.touches[0].pageX - windowHalfX);
+    mouseY = (event.touches[0].pageY - windowHalfY);
+  }
+}
+
+
+// Moved onLoaderCanvasResize function definition up to resolve ReferenceError
+function onLoaderCanvasResize() {
+  if (preloaderCanvas && camera && renderer) {
+    // Update canvas dimensions based on its CSS size
+    const rect = preloaderCanvas.getBoundingClientRect();
+    // Set internal canvas resolution to match CSS size for sharp rendering
+    preloaderCanvas.width = rect.width;
+    preloaderCanvas.height = rect.height;
+
+    camera.aspect = preloaderCanvas.width / preloaderCanvas.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+  }
+}
+
+function initThreeJsLoader() {
+  preloaderCanvas = document.getElementById('preloader-canvas');
+  if (!preloaderCanvas) {
+    console.error("Preloader canvas not found!");
     return;
   }
 
-  // Create a new canvas for the logo
-  const logoCanvas = document.createElement('canvas');
-  logoCanvas.style.width = '100%';
-  logoCanvas.style.height = '100%';
-  logoContainer.appendChild(logoCanvas);
+  // Set canvas dimensions explicitly for Three.js
+  const canvasSize = 200; // Internal resolution
+  preloaderCanvas.width = canvasSize;
+  preloaderCanvas.height = canvasSize;
 
-  logoScene = new THREE.Scene();
-  // Use the actual dimensions of the container for the camera aspect ratio
-  logoCamera = new THREE.PerspectiveCamera(75, logoContainer.offsetWidth / logoContainer.offsetHeight, 0.1, 1000);
-  logoRenderer = new THREE.WebGLRenderer({ canvas: logoCanvas, antialias: true, alpha: true });
-  // Set renderer size to match container dimensions for clarity
-  logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
-  logoRenderer.setPixelRatio(window.devicePixelRatio);
-  logoRenderer.setClearColor(0x000000, 0); // Transparent background
+  // Scene
+  scene = new THREE.Scene();
 
-  // Load your logo texture
-  const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
-    function (texture) {
-      // Apply better filtering for clarity
-      texture.minFilter = THREE.LinearMipmapLinearFilter;
-      texture.magFilter = THREE.LinearFilter;
+  // Camera
+  camera = new THREE.PerspectiveCamera(75, preloaderCanvas.width / preloaderCanvas.height, 0.1, 1000);
+  camera.position.z = 2;
 
-      // Create a plane geometry for the logo, slightly larger
-      const logoGeometry = new THREE.PlaneGeometry(1.2, 1.2); // Increased size
-      const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
-      logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
-      logoScene.add(logoMesh);
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ canvas: preloaderCanvas, antialias: true, alpha: true });
+  renderer.setSize(preloaderCanvas.width, preloaderCanvas.height);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 0); // Make background transparent
 
-      // Position the camera, slightly further back to accommodate larger logo
-      logoCamera.position.z = 1.8; // Adjusted camera position
+  // Particle System
+  const particleCount = 5000; // Significantly increased particle count for a dense, impressive look
+  const particlesGeometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3); // x, y, z for each particle
+  const colors = new Float32Array(particleCount * 3); // r, g, b for each particle
+  const sizes = new Float32Array(particleCount); // Individual size for each particle
+  const opacities = new Float32Array(particleCount); // Individual opacity for each particle
 
-      // Start logo animation loop
-      animateThreeJsLogo();
+  for (let i = 0; i < particleCount; i++) {
+    // Random positions within a sphere
+    const r = particleOrbitRadius * Math.sqrt(Math.random()); // Distribute more evenly
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((2 * Math.random()) - 1);
+
+    positions[i * 3] = r * Math.sin(phi) * Math.cos(theta); // x
+    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta); // y
+    positions[i * 3 + 2] = r * Math.cos(phi); // z
+
+    // Dynamic color range: blues, purples, and some greens for a vibrant, techy feel
+    const hue = Math.random() * 0.3 + 0.6; // Hue from blue (0.6) to purple (0.9)
+    const saturation = 0.7 + Math.random() * 0.3; // High saturation
+    const lightness = 0.5 + Math.random() * 0.3; // Medium to high lightness
+
+    const color = new THREE.Color();
+    color.setHSL(hue, saturation, lightness);
+    colors[i * 3] = color.r;
+    colors[i * 3 + 1] = color.g;
+    colors[i * 3 + 2] = color.b;
+
+    sizes[i] = 0.06 + Math.random() * 0.1; // Larger, more varied sizes
+    opacities[i] = 0.7 + Math.random() * 0.3; // Higher base opacity
+  }
+
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1)); // Custom attribute for size
+  particlesGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1)); // Custom attribute for opacity
+
+  // ShaderMaterial for glowing, circular particles
+  const particlesMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      time: { value: 0.0 }, // For animating colors and movement
+      mousePos: { value: new THREE.Vector2(0, 0) } // For mouse interaction
     },
-    undefined, // onProgress callback
-    function (err) {
-      console.error('An error occurred loading the logo texture for header:', err);
-      // Fallback to static image if 3D logo fails to load
-      const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
-      staticLogo.alt = 'Logo';
-      staticLogo.classList.add('logo'); // Apply existing logo styles
-      logoContainer.replaceWith(staticLogo); // Replace the container with the static image
-    }
-  );
+    vertexShader: `
+      attribute float size;
+      attribute float opacity;
+      attribute vec3 color;
+      varying vec3 vColor;
+      varying float vOpacity;
+      uniform float time;
+      uniform vec2 mousePos;
 
-  // Handle logo container resize
-  const onLogoContainerResize = () => {
-    if (logoContainer && logoCamera && logoRenderer) {
-      // Update canvas internal resolution to match display size
-      logoCanvas.width = logoContainer.offsetWidth;
-      logoCanvas.height = logoContainer.offsetHeight;
+      void main() {
+        vColor = color;
+        vOpacity = opacity;
 
-      logoCamera.aspect = logoContainer.offsetWidth / logoContainer.offsetHeight;
-      logoCamera.updateProjectionMatrix();
-      logoRenderer.setSize(logoContainer.offsetWidth, logoContainer.offsetHeight);
-    }
-  };
-  window.addEventListener('resize', onLogoContainerResize);
+        // Add subtle movement based on time and initial position
+        vec3 animatedPosition = position;
+        animatedPosition.x += sin(position.y * 5.0 + time * 0.5) * 0.05;
+        animatedPosition.y += cos(position.x * 5.0 + time * 0.5) * 0.05;
+        animatedPosition.z += sin(position.z * 5.0 + time * 0.5) * 0.05;
 
-  // Mouse interaction for the logo
-  logoContainer.addEventListener('mousemove', (event) => {
-    const rect = logoContainer.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+        // Add a subtle pull towards mouse position (scaled down)
+        vec3 mouseInfluence = vec3(mousePos.x * 0.0001, mousePos.y * 0.0001, 0.0);
+        animatedPosition += mouseInfluence;
 
-    // Normalize mouse position to -1 to 1
-    logoTargetRotationY = (x / rect.width) * 2 - 1;
-    logoTargetRotationX = (y / rect.height) * 2 - 1;
+
+        vec4 mvPosition = modelViewMatrix * vec4(animatedPosition, 1.0);
+        gl_PointSize = size * (300.0 / -mvPosition.z); // Scale size based on distance
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      varying float vOpacity;
+      uniform float time;
+
+      void main() {
+        float r = distance(gl_PointCoord, vec2(0.5)); // Distance from center of point
+        float alpha = 1.0 - r * 2.0; // Fade from center to edge (circular)
+
+        // Add a subtle color shift over time
+        vec3 animatedColor = vColor;
+        animatedColor.r = vColor.r + sin(time * 0.5 + vColor.g * 10.0) * 0.1;
+        animatedColor.g = vColor.g + cos(time * 0.5 + vColor.b * 10.0) * 0.1;
+        animatedColor.b = vColor.b + sin(time * 0.5 + vColor.r * 10.0) * 0.1;
+        animatedColor = clamp(animatedColor, 0.0, 1.0); // Keep colors within valid range
+
+        gl_FragColor = vec4(animatedColor, vOpacity * alpha); // Apply color and faded opacity
+      }
+    `,
+    blending: THREE.AdditiveBlending, // For a glowing, overlapping effect
+    depthTest: false, // Important for transparent particles to render correctly
+    transparent: true
   });
 
-  logoContainer.addEventListener('mouseleave', () => {
-    logoTargetRotationX = 0;
-    logoTargetRotationY = 0;
-  });
+  particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
+
+  // Lights (less critical for particle system, but good practice)
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+
+  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight.position.set(5, 5, 5);
+  scene.add(pointLight);
+
+  // Handle window resize for the loader canvas
+  window.addEventListener('resize', onLoaderCanvasResize, false);
 }
 
-function animateThreeJsLogo() {
-  logoAnimationFrameId = requestAnimationFrame(animateThreeJsLogo);
+function animateThreeJsLoader() {
+  animationFrameId = requestAnimationFrame(animateThreeJsLoader);
 
-  if (logoMesh) {
-    // Smoothly interpolate rotation towards target
-    logoMesh.rotation.x += (logoTargetRotationX * 0.5 - logoMesh.rotation.x) * 0.1;
-    logoMesh.rotation.y += (logoTargetRotationY * 0.5 - logoMesh.rotation.y) * 0.1;
+  if (particles && particles.material.uniforms) {
+    // Update time uniform for shader animations
+    particles.material.uniforms.time.value += 0.01;
 
-    // Add a subtle continuous rotation
-    logoMesh.rotation.y += 0.005;
+    // Smoothly interpolate mouse position for camera/particle influence
+    targetX += (mouseX - targetX) * 0.02;
+    targetY += (mouseY - targetY) * 0.02;
+
+    // Update mousePos uniform for shader
+    particles.material.uniforms.mousePos.value.set(targetX, targetY);
+
+    // Animate particles: subtle rotation of the entire system
+    particles.rotation.x += 0.0005;
+    particles.rotation.y += 0.001;
+
+    // Camera subtle movement based on mouse position
+    camera.position.x = 2 * Math.sin(targetX * 0.00005);
+    camera.position.y = 2 * Math.cos(targetY * 0.00005);
+    camera.lookAt(scene.position); // Always look at the center of the particle system
   }
 
-  if (logoRenderer && logoScene && logoCamera) {
-    logoRenderer.render(logoScene, logoCamera);
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
   }
 }
 
-
-// --- Primary Lottie Preloader Fade-out ---
 window.addEventListener('load', () => {
-  const preloader = document.getElementById('preloader');
-  if (preloader) {
-    // Give a small delay for the Lottie animation to be visible
+  // Initialize Three.js loader
+  if (typeof THREE !== 'undefined') {
+    initThreeJsLoader();
+    animateThreeJsLoader(); // Start the animation loop
+  } else {
+    console.warn("Three.js not loaded. Preloader will not show 3D animation.");
+  }
+
+  const pre = document.getElementById('preloader');
+  if (pre) {
+    // Give a small delay for the Three.js animation to be visible
     setTimeout(() => {
-      preloader.classList.add('fade-out');
-      setTimeout(() => preloader.remove(), 900); // Remove after transition
-    }, 3000); // Show Lottie loader for at least 3 seconds
+      pre.classList.add('fade-out');
+      // Stop the Three.js animation when fading out
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      // Clean up Three.js resources (optional but good practice)
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+        renderer.domElement = null;
+        renderer = null;
+      }
+      scene = null;
+      camera = null;
+      particles = null;
+      preloaderCanvas = null;
+      window.removeEventListener('resize', onLoaderCanvasResize);
+      document.removeEventListener('mousemove', onDocumentMouseMove);
+      document.removeEventListener('touchstart', onDocumentTouchStart);
+      document.removeEventListener('touchmove', onDocumentTouchMove);
+
+
+      setTimeout(() => pre.remove(), 900);
+    }, 3000); // Show loader for at least 3 seconds for better animation
   }
-});
 
-
-// --- GOOGLE SIGN-IN LOGIC ---
-// showMainUI is now globally accessible via window.showMainUI
-window.showMainUI = function(data) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('main-content').style.display = 'block';
-  document.getElementById('main-header').style.display = 'flex'; // Use flex for header
-
-  const profileDiv = document.getElementById('profile-info');
-  if (profileDiv && data.picture && data.name) {
-    profileDiv.innerHTML = `
-      <img src="${data.picture}" alt="Profile Picture">
-      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
-    `;
-    profileDiv.style.display = 'flex';
-  }
-
-  // Set data for signout popup
-  document.getElementById('popup-name').textContent = data.name;
-  document.getElementById('popup-pic').src = data.picture;
-
-  // No more login background animation cleanup here
-};
-
-// Handle sign out
-const signoutBtn = document.getElementById('signout-btn');
-if (signoutBtn) {
-  signoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem('user');
-    // Google Sign-out (if using Google's JS API for sign-out)
-    // This is the recommended way to revoke consent and clear Google's session
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect(); // Prevents auto-login on next visit
-        // If you need to revoke consent for a specific user:
-        // const userEmail = JSON.parse(sessionStorage.getItem('user'))?.email;
-        // if (userEmail) {
-        //     google.accounts.id.revoke(userEmail, done => {
-        //         console.log('Consent revoked for:', userEmail, done);
-        //     });
-        // }
-    }
-
-    document.getElementById('popup-overlay').style.display = 'none';
-    document.getElementById('signout-popup').style.display = 'none';
+  // Check for user session on load
+  const userData = sessionStorage.getItem('user');
+  if (userData) {
+    const data = JSON.parse(userData);
+    showMainUI(data);
+  } else {
+    // If no user data, ensure login screen is visible
+    document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('main-content').style.display = 'none';
     document.getElementById('main-header').style.display = 'none';
-    document.getElementById('profile-info').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex'; // Show login screen
-
-    // Ensure the main preloader (Lottie) is removed if it somehow still exists
-    const mainPreloader = document.getElementById('preloader');
-    if (mainPreloader) {
-      mainPreloader.remove();
-    }
-
-    // NEW: Re-render the Google Sign-In button after logout
-    // This is crucial because the GSI button might not re-initialize itself
-    // when its container is hidden and then shown again.
-    const g_id_signin_div = document.querySelector('.g_id_signin');
-    if (g_id_signin_div) {
-        // Clear its content to force a re-render
-        g_id_signin_div.innerHTML = '';
-        // Re-initialize the GSI button
-        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-            google.accounts.id.renderButton(
-                g_id_signin_div,
-                { type: "standard", shape: "pill", theme: "outline", text: "signin_with", size: "large" } // Re-use your button configuration
-            );
-        }
-    }
-  });
-}
-
-// Handle profile click to show popup
-document.addEventListener('click', (e) => {
-  const profileInfo = e.target.closest('#profile-info');
-  if (profileInfo) {
-    const data = JSON.parse(sessionStorage.getItem('user'));
-    if (data) {
-      document.getElementById('popup-name').textContent = data.name;
-      document.getElementById('popup-pic').src = data.picture;
-      document.getElementById('popup-overlay').style.display = 'block';
-      document.getElementById('signout-popup').style.display = 'block';
-    }
   }
 });
 
-// Hide popup on outside click
-const popupOverlay = document.getElementById('popup-overlay');
-if (popupOverlay) {
-  popupOverlay.addEventListener('click', (e) => {
-    // Only close if the click is directly on the overlay, not its children
-    if (e.target === popupOverlay) {
-      document.getElementById('popup-overlay').style.display = 'none';
-      document.getElementById('signout-popup').style.display = 'none';
-    }
-  });
-}
-
-// ——— THEME TOGGLE (Global, outside Barba) ———
-const themeBtn = document.querySelector('.theme-toggle');
-if (themeBtn) {
-  // Set initial icon based on current theme
-  themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
-    ? '<i class="bx bx-sun"></i>'
-    : '<i class="bx bx-moon"></i>';
-
-  themeBtn.addEventListener('click', () => {
-    const isDark = document.documentElement.dataset.theme === 'dark';
-    document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-    themeBtn.setAttribute('aria-expanded', String(isDark));
-    themeBtn.innerHTML = isDark
-      ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
-      : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
-  });
-}
-
-
-// --- Function to initialize/re-initialize all page-specific scripts ---
-// This function will be called on DOMContentLoaded and after each Barba page transition
-async function initPageScripts() { // Marked as async because it uses await
-  // ——— MOBILE MENU TOGGLE ———
+// ——— MOBILE MENU TOGGLE ———
+document.addEventListener('DOMContentLoaded', async () => {
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
   const header = document.getElementById('main-header'); // Get the header to calculate top offset
 
   if (nav && navToggle && header) {
-    // Remove existing event listener to prevent duplicates after Barba transitions
-    const oldNavToggle = navToggle.cloneNode(true);
-    navToggle.parentNode.replaceChild(oldNavToggle, navToggle);
-    const newNavToggle = oldNavToggle; // Renamed for clarity
-
-    newNavToggle.addEventListener('click', () => {
-      const expanded = newNavToggle.getAttribute('aria-expanded') === 'true';
-      newNavToggle.setAttribute('aria-expanded', String(!expanded));
+    navToggle.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
       nav.classList.toggle('open');
 
       // Dynamically set top position based on header height
@@ -398,11 +425,6 @@ async function initPageScripts() { // Marked as async because it uses await
   const overlayList = document.getElementById('overlay-list');
   const closeBtn = fullScreenOverlay.querySelector('.close-btn');
 
-  // Remove existing event listeners to prevent duplicates
-  const oldCloseBtn = closeBtn.cloneNode(true);
-  closeBtn.parentNode.replaceChild(oldCloseBtn, closeBtn);
-  const newCloseBtn = oldCloseBtn; // Renamed for clarity
-
   function openFullScreenOverlay(listType) {
     let itemsToDisplay = [];
     let title = '';
@@ -434,25 +456,43 @@ async function initPageScripts() { // Marked as async because it uses await
     document.body.style.overflow = 'hidden'; // Prevent scrolling body when overlay is open
   }
 
-  newCloseBtn.addEventListener('click', () => {
+  closeBtn.addEventListener('click', () => {
     fullScreenOverlay.classList.remove('active');
     document.body.style.overflow = ''; // Restore body scrolling
   });
 
   // Close overlay if clicked outside content (on the overlay itself)
   fullScreenOverlay.addEventListener('click', (e) => {
-    // Only close if the click is directly on the overlay, not its children
-    if (e.target === fullScreenOverlay || e.target === newCloseBtn) {
+    // Check if the click target is the overlay itself or the close button
+    if (e.target === fullScreenOverlay || e.target === closeBtn) {
       fullScreenOverlay.classList.remove('active');
       document.body.style.overflow = '';
     }
   });
 
 
+  // ——— THEME TOGGLE ———
+  const themeBtn = document.querySelector('.theme-toggle');
+  if (themeBtn) {
+    // Set initial icon based on current theme
+    themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+      ? '<i class="bx bx-sun"></i>'
+      : '<i class="bx bx-moon"></i>';
+
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+      themeBtn.setAttribute('aria-expanded', String(isDark));
+      themeBtn.innerHTML = isDark
+        ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
+        : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
+    });
+  }
+
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .login-box, .welcome-message'
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message'
   );
 
   const observerOptions = {
@@ -460,11 +500,6 @@ async function initPageScripts() { // Marked as async because it uses await
     rootMargin: '0px',
     threshold: 0.1 // Trigger when 10% of the item is visible
   };
-
-  // Disconnect previous observer if it exists
-  if (window.revealObserver) {
-    window.revealObserver.disconnect();
-  }
 
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -481,21 +516,15 @@ async function initPageScripts() { // Marked as async because it uses await
     element.classList.add('reveal-item');
     observer.observe(element);
   });
-  window.revealObserver = observer; // Store observer globally to disconnect later
 
 
   // Close nav when a nav link is clicked
   const navLinks = document.querySelectorAll('.nav a');
   navLinks.forEach(link => {
-    // Remove existing event listener to prevent duplicates
-    const oldLink = link.cloneNode(true);
-    link.parentNode.replaceChild(oldLink, link);
-    const newLink = oldLink; // Renamed for clarity
-
-    newLink.addEventListener('click', () => {
+    link.addEventListener('click', () => {
       if (nav.classList.contains('open')) {
         nav.classList.remove('open');
-        newNavToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-expanded', 'false');
       }
     });
   });
@@ -507,131 +536,134 @@ async function initPageScripts() { // Marked as async because it uses await
   let scrollLeft;
 
   if (slider) {
-    // Remove existing event listeners to prevent duplicates
-    const oldSlider = slider.cloneNode(true);
-    slider.parentNode.replaceChild(oldSlider, slider);
-    const newSlider = oldSlider; // Renamed for clarity
-
-    newSlider.addEventListener('mousedown', (e) => {
+    slider.addEventListener('mousedown', (e) => {
       isDown = true;
-      newSlider.classList.add('active');
-      startX = e.pageX - newSlider.offsetLeft;
-      scrollLeft = newSlider.scrollLeft;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
     });
-    newSlider.addEventListener('mouseleave', () => {
+    slider.addEventListener('mouseleave', () => {
       isDown = false;
-      newSlider.classList.remove('active');
+      slider.classList.remove('active');
     });
-    newSlider.addEventListener('mouseup', () => {
+    slider.addEventListener('mouseup', () => {
       isDown = false;
-      newSlider.classList.remove('active');
+      slider.classList.remove('active');
     });
-    newSlider.addEventListener('mousemove', (e) => {
+    slider.addEventListener('mousemove', (e) => {
       if (!isDown) return;
       e.preventDefault();
-      const x = e.pageX - newSlider.offsetLeft;
+      const x = e.pageX - slider.offsetLeft;
       const walk = (x - startX) * 2; // scroll speed
-      newSlider.scrollLeft = scrollLeft - walk;
+      slider.scrollLeft = scrollLeft - walk;
     });
 
     // Touch events for mobile
-    newSlider.addEventListener('touchstart', (e) => {
+    slider.addEventListener('touchstart', (e) => {
       isDown = true;
-      newSlider.classList.add('active');
-      startX = e.touches[0].pageX - newSlider.offsetLeft;
-      scrollLeft = newSlider.scrollLeft;
+      slider.classList.add('active');
+      startX = e.touches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
     });
-    newSlider.addEventListener('touchend', () => {
+    slider.addEventListener('touchend', () => {
       isDown = false;
-      newSlider.classList.remove('active');
+      slider.classList.remove('active');
     });
-    newSlider.addEventListener('touchmove', (e) => {
+    slider.addEventListener('touchmove', (e) => {
       if (!isDown) return;
-      const x = e.touches[0].pageX - newSlider.offsetLeft;
+      const x = e.touches[0].pageX - slider.offsetLeft;
       const walk = (x - startX) * 2;
-      newSlider.scrollLeft = scrollLeft - walk;
+      slider.scrollLeft = scrollLeft - walk;
     });
   }
+});
 
-  // Handle back-top button
-  const backTopBtn = document.querySelector('.back-top');
-  if (backTopBtn) {
-    // Remove existing event listener to prevent duplicates
-    const oldBackTopBtn = backTopBtn.cloneNode(true);
-    backTopBtn.parentNode.replaceChild(oldBackTopBtn, backTopBtn);
-    const newBackTopBtn = oldBackTopBtn; // Renamed for clarity
+// ——— GOOGLE SIGN-IN LOGIC ———
+// Google Sign-In callback must be globally accessible
+window.handleCredentialResponse = function (response) {
+  const data = parseJwt(response.credential);
+  if (!data || !data.name || !data.picture) return;
 
-    newBackTopBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
+  // Save user data in sessionStorage
+  sessionStorage.setItem('user', JSON.stringify(data));
+  showMainUI(data);
+};
+
+// Parse JWT token to extract user info
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+  return JSON.parse(jsonPayload);
 }
 
+// Display UI after successful login or session restore
+function showMainUI(data) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  document.getElementById('main-header').style.display = 'flex'; // Use flex for header
 
-// ——— BARBA.JS & GSAP INTEGRATION ———
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Three.js Logo once, as it's outside the Barba container
-  if (typeof THREE !== 'undefined') {
-    initThreeJsLogo();
-  } else {
-    console.warn("Three.js not loaded. 3D logo will not be initialized.");
+  const profileDiv = document.getElementById('profile-info');
+  if (profileDiv && data.picture && data.name) {
+    profileDiv.innerHTML = `
+      <img src="${data.picture}" alt="Profile Picture">
+      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
+    `;
+    profileDiv.style.display = 'flex';
   }
 
-  // Check for user session on initial load (if user was already logged in)
-  // This part runs only once on initial page load, before Barba takes over.
-  const userData = sessionStorage.getItem('user');
-  if (userData) {
-    console.log('User data found in session storage on DOMContentLoaded. Showing main UI.');
-    const data = JSON.parse(userData);
-    window.showMainUI(data); // Use window.showMainUI
-  } else {
-    console.log('No user data found in session storage. Showing login screen.');
-    document.getElementById('login-screen').style.display = 'flex';
+  // Set data for signout popup
+  document.getElementById('popup-name').textContent = data.name;
+  document.getElementById('popup-pic').src = data.picture;
+}
+
+// Handle sign out
+const signoutBtn = document.getElementById('signout-btn');
+if (signoutBtn) {
+  signoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('user');
+    // Google Sign-out (if using Google's JS API for sign-out)
+    // google.accounts.id.disableAutoSelect(); // This might be needed depending on your GSI setup
+    // google.accounts.id.revoke(data.email, done => {
+    //   console.log('consent revoked', done);
+    // });
+
+    document.getElementById('popup-overlay').style.display = 'none';
+    document.getElementById('signout-popup').style.display = 'none';
     document.getElementById('main-content').style.display = 'none';
     document.getElementById('main-header').style.display = 'none';
+    document.getElementById('profile-info').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex'; // Show login screen
+  });
+}
+
+// Handle profile click to show popup
+document.addEventListener('click', (e) => {
+  const profileInfo = e.target.closest('#profile-info');
+  if (profileInfo) {
+    const data = JSON.parse(sessionStorage.getItem('user'));
+    if (data) {
+      document.getElementById('popup-name').textContent = data.name;
+      document.getElementById('popup-pic').src = data.picture;
+      document.getElementById('popup-overlay').style.display = 'block';
+      document.getElementById('signout-popup').style.display = 'block';
+    }
   }
-
-  // Initialize Barba.js
-  barba.init({
-    transitions: [{
-      name: 'opacity-transition',
-      leave(data) {
-        // Animate out the old page
-        return gsap.to(data.current.container, {
-          opacity: 0,
-          y: -50, // Slide up slightly
-          duration: 0.5,
-          ease: 'power2.out'
-        });
-      },
-      enter(data) {
-        // Animate in the new page
-        return gsap.from(data.next.container, {
-          opacity: 0,
-          y: 50, // Slide down slightly
-          duration: 0.5,
-          ease: 'power2.out'
-        });
-      }
-    }],
-    views: [{
-      namespace: 'home', // Corresponds to data-barba-namespace="home" in index.html
-      afterEnter() {
-        // Re-initialize scripts specific to the 'home' namespace (which is our main content)
-        // This ensures all event listeners, observers, and dynamic content are set up for the new DOM.
-        initPageScripts();
-      }
-    }]
-  });
-
-  // Barba.js hooks.after is called after every page transition.
-  // This is where we re-initialize scripts that need to run on new content.
-  barba.hooks.after(() => {
-    initPageScripts();
-    window.scrollTo(0, 0); // Scroll to top of the new page
-  });
-
-  // Initial call to initPageScripts for the first page load (before Barba takes over subsequent loads)
-  initPageScripts();
 });
+
+// Hide popup on outside click
+const popupOverlay = document.getElementById('popup-overlay');
+if (popupOverlay) {
+  popupOverlay.addEventListener('click', (e) => {
+    // Only close if the click is directly on the overlay, not its children
+    if (e.target === popupOverlay) {
+      document.getElementById('popup-overlay').style.display = 'none';
+      document.getElementById('signout-popup').style.display = 'none';
+    }
+  });
+};
