@@ -86,7 +86,7 @@ function initThreeJsLoader() {
 
   // --- NEW: Load logo image and process it for particle placement ---
   const img = new Image();
-  img.src = 'logo.png'; // Path to your logo image
+  img.src = 'your_logo.png'; // Path to your logo image
   img.onload = () => {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -341,7 +341,7 @@ function initThreeJsLogo() {
 
   // Load your logo texture
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('logo.png', // Path to your logo image
+  textureLoader.load('your_logo.png', // Path to your logo image
     function (texture) {
       // Create a plane geometry for the logo
       const logoGeometry = new THREE.PlaneGeometry(1, 1); // Adjust size as needed
@@ -360,7 +360,7 @@ function initThreeJsLogo() {
       console.error('An error occurred loading the logo texture for header:', err);
       // Fallback to static image if 3D logo fails to load
       const staticLogo = document.createElement('img');
-      staticLogo.src = 'logo.png';
+      staticLogo.src = 'your_logo.png';
       staticLogo.alt = 'Logo';
       staticLogo.classList.add('logo'); // Apply existing logo styles
       logoContainer.replaceWith(staticLogo); // Replace the container with the static image
@@ -451,18 +451,18 @@ window.addEventListener('load', () => {
     }, 3000); // Show main (Three.js) loader for at least 3 seconds
   }
 
-  // Check for user session on load
-  const userData = sessionStorage.getItem('user');
-  if (userData) {
-    const data = JSON.parse(userData);
-    // If user data exists, show main UI and then the Lottie preloader
-    showMainUI(data);
-  } else {
-    // If no user data, ensure login screen is visible
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('main-header').style.display = 'none';
-  }
+  // Check for user session on load (this will be handled by the event listener now)
+  // const userData = sessionStorage.getItem('user');
+  // if (userData) {
+  //   const data = JSON.parse(userData);
+  //   // If user data exists, show main UI and then the Lottie preloader
+  //   showMainUI(data);
+  // } else {
+  //   // If no user data, ensure login screen is visible
+  //   document.getElementById('login-screen').style.display = 'flex';
+  //   document.getElementById('main-content').style.display = 'none';
+  //   document.getElementById('main-header').style.display = 'none';
+  // }
 });
 
 // ——— MOBILE MENU TOGGLE ———
@@ -777,17 +777,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ——— GOOGLE SIGN-IN LOGIC ———
-// Google Sign-In callback must be globally accessible
-window.handleCredentialResponse = function (response) {
-  const data = parseJwt(response.credential);
-  if (!data || !data.name || !data.picture) return;
-
-  // Save user data in sessionStorage
-  sessionStorage.setItem('user', JSON.stringify(data));
-  showMainUI(data); // Call showMainUI after successful login
-};
-
-// Parse JWT token to extract user info
+// parseJwt can remain here as it's used by showMainUI
 function parseJwt(token) {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -800,7 +790,7 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-// Display UI after successful login or session restore
+// showMainUI remains the same
 function showMainUI(data) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-content').style.display = 'block';
