@@ -70,16 +70,6 @@ ul {
   z-index: 2000;
 }
 
-/* REMOVED:
-#preloader-canvas {
-  display: block;
-  width: 200px;
-  height: 200px;
-  max-width: 90vw;
-  max-height: 90vh;
-}
-*/
-
 /* Added styles for dotlottie-player within preloader */
 #preloader dotlottie-player {
   display: block;
