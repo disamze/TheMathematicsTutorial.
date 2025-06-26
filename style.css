@@ -58,23 +58,18 @@ ul {
   --border-color: #495057; /* Dark border color */
 }
 
-/*———————— PRELOADER ————————*/
+/*———————— PRELOADER (Now Lottie) ————————*/
 #preloader {
   position: fixed;
   inset: 0;
-  /* Changed preloader background to a dark color for contrast */
-  background: #1a1a2e; /* A deep, dark blue/purple for better contrast with glowing particles */
+  background: var(--bg); /* Use theme's background color */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-}
-#preloader-canvas {
-  display: block; /* Ensure canvas is block level */
-  width: 200px; /* Increased size for more impact */
-  height: 200px;
-  max-width: 90vw; /* Responsive sizing */
-  max-height: 90vh;
+  z-index: 2500; /* Higher than main content, lower than signout popup */
+  opacity: 1; /* Start visible */
+  visibility: visible; /* Start visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease;
 }
 
 #preloader.fade-out {
@@ -82,6 +77,9 @@ ul {
   visibility: hidden;
   transition: opacity 0.8s ease, visibility 0.8s ease;
 }
+
+/* No #preloader-canvas specific styles needed anymore */
+
 
 /*———————— CONTAINERS & GRID ————————*/
 .container {
