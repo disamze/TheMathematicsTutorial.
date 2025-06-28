@@ -18,190 +18,6 @@ html {
   width: 0;
   height: 0;
 }
-/* Add/Modify these styles in MultipleFiles/style (3).css */
-
-/* Global transitions for smooth effects */
-* {
-  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
-    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
-    filter 0.2s ease-out; /* Added filter for subtle depth */
-}
-
-/* Buttons - General 3D & Interactive Style */
-.btn {
-  position: relative; /* Needed for pseudo-elements or deeper shadows */
-  overflow: hidden; /* Ensures shadow/glow stays within bounds */
-  transform-style: preserve-3d; /* Enable 3D transforms for children */
-  box-shadow: 0 8px 20px var(--shadow); /* Deeper initial shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  will-change: transform, box-shadow; /* Optimize for animation */
-}
-
-.btn:hover {
-  transform: translateY(-5px) translateZ(10px); /* Lift and push forward */
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
-  filter: brightness(1.1); /* Slightly brighten on hover */
-}
-
-.btn:active {
-  transform: translateY(-2px) translateZ(5px); /* Slightly press down */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Specific Button Overrides (e.g., Contact button in nav) */
-.nav a.btn.small {
-  padding: 0.6rem 1.2rem; /* Adjust padding for smaller button */
-  font-size: 0.9rem;
-  transform: none; /* Reset transform for nav button if it's not meant to lift */
-  box-shadow: none; /* Remove shadow if it's part of the nav */
-}
-
-.nav a.btn.small:hover {
-  transform: none; /* No lift for nav button */
-  box-shadow: none; /* No shadow for nav button */
-  filter: none; /* No brightness filter */
-  color: var(--card-bg); /* Ensure text color changes */
-}
-
-
-/* Images - General 3D & Interactive Style */
-.hero-img img,
-.about-grid img {
-  border-radius: 12px;
-  box-shadow: 0 10px 25px var(--shadow); /* Deeper initial shadow */
-  transform-style: preserve-3d; /* Enable 3D transforms */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.hero-img img:hover,
-.about-grid img:hover {
-  transform: scale(1.02) translateZ(15px) rotateY(2deg); /* Slightly enlarge, push forward, subtle rotate */
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4); /* Stronger shadow */
-  filter: brightness(1.05); /* Subtle brightness */
-}
-
-/* Cards - General 3D & Interactive Style */
-.info-cards .card,
-.item-list li,
-.testimonial-card,
-.login-box { /* Apply to login box as well */
-  transform-style: preserve-3d; /* Enable 3D transforms */
-  box-shadow: 0 8px 20px var(--shadow); /* Deeper initial shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.info-cards .card:hover,
-.item-list li:hover,
-.testimonial-card:hover,
-.login-box:hover { /* Add hover for login box too */
-  transform: translateY(-8px) translateZ(15px) rotateX(2deg); /* Lift, push forward, subtle tilt */
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); /* Stronger shadow */
-  filter: brightness(1.05);
-}
-
-/* Specific overrides for item-list li (download cards) */
-.item-list li:hover {
-  /* Keep existing rotateY/rotateX for a distinct effect, but combine with translateZ */
-  transform: rotateY(5deg) rotateX(2deg) translateY(-8px) translateZ(15px);
-  box-shadow: 0 15px 35px var(--shadow);
-}
-
-/* More Card specific hover */
-.item-list li.more-card:hover {
-  background: var(--accent); /* Keep background change */
-  transform: translateY(-8px) translateZ(15px); /* Lift and push forward */
-  box-shadow: 0 15px 35px var(--shadow);
-}
-
-
-/* Profile Info - subtle 3D */
-.profile-info {
-  transform-style: preserve-3d;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  will-change: transform, box-shadow;
-}
-
-.profile-info:hover {
-  transform: translateY(-2px) translateZ(5px);
-  box-shadow: 0 5px 15px var(--shadow);
-  background: var(--primary); /* Keep existing background change */
-  color: var(--card-bg); /* Keep existing color change */
-}
-
-/* Theme Toggle Button - 3D */
-.theme-toggle {
-  transform-style: preserve-3d;
-  box-shadow: 0 6px 16px var(--shadow); /* Deeper initial shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.theme-toggle:hover {
-  transform: translateY(-5px) translateZ(10px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  background: var(--accent);
-}
-
-/* Signout Button - 3D */
-.signout-button {
-  transform-style: preserve-3d;
-  box-shadow: 0 6px 18px var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.signout-button:hover {
-  transform: translateY(-4px) translateZ(10px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-  background: var(--primary);
-}
-
-/* Close Button (Overlay) - 3D */
-.full-screen-overlay .close-btn {
-  transform-style: preserve-3d;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.full-screen-overlay .close-btn:hover {
-  transform: scale(1.1) translateZ(10px); /* Scale and push forward */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  background: var(--accent);
-}
-
-/* Ensure reveal animations play nicely with 3D transforms */
-.reveal-item {
-  opacity: 0;
-  transform: translateY(30px) translateZ(0); /* Ensure initial Z is 0 */
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.reveal-item.is-visible {
-  opacity: 1;
-  transform: translateY(0) translateZ(0);
-}
-
-/* Add a perspective to the body or a common parent for 3D effects to be visible */
-body {
-  perspective: 1000px; /* Apply perspective to the body */
-}
-
-/* Ensure elements that are children of a 3D transformed parent also preserve 3D */
-.header .container,
-.hero-grid,
-.about-grid,
-.info-cards,
-.skills-list,
-.item-list,
-.testimonial-grid,
-.contact-form,
-.footer .container {
-  transform-style: preserve-3d;
-}
-
 
 body {
   background: var(--bg);
@@ -209,6 +25,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
   position: relative; /* Needed for fixed elements within body */
+  perspective: 1000px; /* Apply perspective to the body for 3D effects */
 }
 
 a {
@@ -246,7 +63,6 @@ ul {
 #preloader {
   position: fixed;
   inset: 0;
-  /* Changed preloader background to a dark color for contrast */
   background: #fff; /* Dark blue/purple for contrast */
   display: flex;
   align-items: center;
@@ -254,7 +70,6 @@ ul {
   z-index: 2000;
 }
 
-/* Added styles for dotlottie-player within preloader */
 #preloader dotlottie-player {
   display: block;
   width: 200px; /* Increased size for more impact */
@@ -262,7 +77,6 @@ ul {
   max-width: 90vw; /* Responsive sizing */
   max-height: 90vh;
 }
-
 
 #preloader.fade-out {
   opacity: 0;
@@ -275,6 +89,7 @@ ul {
   width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
   padding: 3rem 0; /* Removed horizontal padding here, handled by width */
+  transform-style: preserve-3d; /* Enable 3D transforms for children */
 }
 
 /* Ensure sections don't cause overflow */
@@ -287,69 +102,8 @@ section {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
-/* Add these styles to MultipleFiles/style (3).css */
-
-/* Form Validation Feedback */
-.contact-form input.invalid,
-.contact-form textarea.invalid {
-  border-color: #dc3545; /* Red border for invalid fields */
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
-}
-
-.contact-form input.valid,
-.contact-form textarea.valid {
-  border-color: var(--accent); /* Green border for valid fields */
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
-}
-
-/* Back to Top Button Visibility */
-.back-top {
-  /* Existing styles */
-  position: fixed; /* Changed from absolute to fixed */
-  bottom: 20px; /* Adjusted for fixed positioning */
-  right: 20px; /* Adjusted for fixed positioning */
-  background: var(--primary); /* Give it a background */
-  color: var(--card-bg); /* White icon */
-  border-radius: 50%;
-  width: 50px; /* Make it a circle */
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  box-shadow: 0 4px 12px var(--shadow);
-  z-index: 99; /* Ensure it's above most content but below popups */
-  opacity: 0; /* Start hidden */
-  visibility: hidden; /* Start hidden */
-  transform: translateY(20px); /* Start slightly below */
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out, background 0.3s, box-shadow 0.3s;
-}
-
-.back-top.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.back-top:hover {
-  background: var(--accent); /* Hover effect */
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px var(--shadow);
-}
-
-/* Responsive adjustments for fixed back-top button */
-@media (max-width: 480px) {
-  .back-top {
-    width: 45px;
-    height: 45px;
-    font-size: 1.6rem;
-    bottom: 15px;
-    right: 15px;
-  }
-}
 
 /*———————— HEADER & NAV ————————*/
-/* ———————— NAVBAR STYLES (NEW) ———————— */
 .header {
   position: sticky;
   top: 0;
@@ -367,6 +121,7 @@ section {
   align-items: center;
   justify-content: space-between; /* Distribute items */
   padding: 0 1.5rem; /* More horizontal padding for content */
+  transform-style: preserve-3d; /* Enable 3D transforms for children */
 }
 
 .logo {
@@ -412,16 +167,6 @@ section {
   left: 0; /* Align to the left */
 }
 
-/* New active class for navigation links */
-.nav a.active {
-  color: var(--primary); /* Keep primary color */
-}
-
-.nav a.active::after {
-  width: 100%; /* Keep underline visible */
-  left: 0;
-}
-
 /* Profile Info and Nav Toggle (aligned to the right) */
 .profile-info {
   display: none; /* Hidden by default, shown by JS after login */
@@ -431,11 +176,14 @@ section {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   background: var(--border-color);
-  transition: background 0.3s;
-  margin-left: auto; /* Pushes it to the far right if nav is flex-grow:1 */
+  transform-style: preserve-3d; /* Enable 3D transforms */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  will-change: transform, box-shadow;
 }
 
 .profile-info:hover {
+  transform: translateY(-2px) translateZ(5px); /* Lift and push forward */
+  box-shadow: 0 5px 15px var(--shadow);
   background: var(--primary);
   color: var(--card-bg);
 }
@@ -489,6 +237,7 @@ section {
   }
 
   .nav.open {
+    display: flex; /* Make the nav visible when 'open' class is present */
     transform: translateX(0); /* Slide in when open */
   }
 
@@ -534,13 +283,11 @@ section {
   }
 }
 
-
-
 /* Fixed Theme Toggle Button */
 .theme-toggle {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  left: 20px; /* CHANGED: from right to left */
   background: var(--primary);
   color: var(--card-bg);
   border: none;
@@ -552,15 +299,17 @@ section {
   justify-content: center;
   font-size: 1.8rem; /* Icon size */
   cursor: pointer;
-  box-shadow: 0 4px 12px var(--shadow);
+  box-shadow: 0 6px 16px var(--shadow); /* Deeper initial shadow */
   z-index: 100; /* Above most content, below popups */
-  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  transform-style: preserve-3d; /* Ensure 3D transforms work */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
 .theme-toggle:hover {
+  transform: translateY(-5px) translateZ(10px); /* Lift and push forward */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   background: var(--accent);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px var(--shadow);
 }
 
 /* Signout Popup */
@@ -612,12 +361,16 @@ section {
   cursor: pointer;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: background 0.3s, transform 0.2s;
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
 .signout-button:hover {
+  transform: translateY(-4px) translateZ(10px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
   background: var(--primary);
-  transform: translateY(-2px);
 }
 
 /*———————— LOGIN SCREEN ————————*/
@@ -639,6 +392,15 @@ section {
   width: 100%;
   text-align: center;
   animation: fadeInScale 0.8s ease-out forwards;
+  transform-style: preserve-3d; /* Enable 3D transforms */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.login-box:hover { /* Add hover for login box too */
+  transform: translateY(-8px) translateZ(15px) rotateX(2deg); /* Lift, push forward, subtle tilt */
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); /* Stronger shadow */
+  filter: brightness(1.05);
 }
 
 .login-header {
@@ -696,6 +458,7 @@ section {
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
+  transform-style: preserve-3d;
 }
 
 .hero-info h1 {
@@ -721,23 +484,44 @@ section {
   color: var(--card-bg);
   padding: 0.8rem 2rem;
   border-radius: 8px;
-  box-shadow: 0 6px 18px var(--shadow);
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  /* Button 3D styles */
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   font-weight: 600;
   font-size: 1.1rem;
   display: inline-block;
+  will-change: transform, box-shadow;
 }
 
 .hero-info .btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px var(--shadow);
+  transform: translateY(-5px) translateZ(10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
   background: var(--accent);
+}
+
+.hero-info .btn:active {
+  transform: translateY(-2px) translateZ(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .hero-img img {
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 8px 24px var(--shadow);
+  /* Image 3D styles */
+  box-shadow: 0 10px 25px var(--shadow);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.hero-img img:hover {
+  transform: scale(1.02) translateZ(15px) rotateY(2deg);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.05);
 }
 
 /*———————— ABOUT ————————*/
@@ -746,6 +530,7 @@ section {
   grid-template-columns: 1fr 2fr;
   gap: 3rem;
   align-items: center;
+  transform-style: preserve-3d;
 }
 
 .about-grid img {
@@ -753,7 +538,17 @@ section {
   height: auto;
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 8px 24px var(--shadow);
+  /* Image 3D styles */
+  box-shadow: 0 10px 25px var(--shadow);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.about-grid img:hover {
+  transform: scale(1.02) translateZ(15px) rotateY(2deg);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.05);
 }
 
 .about-info h2 {
@@ -776,21 +571,26 @@ section {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+  transform-style: preserve-3d;
 }
 
 .info-cards .card {
   background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 6px 18px var(--shadow);
+  /* Card 3D styles */
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px var(--shadow);
   flex: 1;
   min-width: 220px;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
 .info-cards .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px var(--shadow);
+  transform: translateY(-8px) translateZ(15px) rotateX(2deg);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  filter: brightness(1.05);
 }
 
 /*———————— SKILLS ————————*/
@@ -801,6 +601,7 @@ section {
   background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
+  transform-style: preserve-3d;
 }
 
 .skills h2 {
@@ -850,6 +651,7 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
+  transform-style: preserve-3d;
 }
 
 .item-list li {
@@ -857,18 +659,21 @@ section {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 1.5rem;
-  box-shadow: 0 6px 18px var(--shadow);
+  /* Card 3D styles */
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px var(--shadow);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  perspective: 800px;
-  transform-style: preserve-3d;
-  transition: transform 0.3s, box-shadow 0.3s;
+  perspective: 800px; /* Individual perspective for the flip effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
 .item-list li:hover {
-  transform: rotateY(5deg) rotateX(2deg) translateY(-8px);
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px) translateZ(15px);
   box-shadow: 0 15px 35px var(--shadow);
+  filter: brightness(1.05);
 }
 
 .item-list li span {
@@ -886,11 +691,20 @@ section {
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   font-size: 1rem;
-  transition: background 0.3s;
+  /* Button 3D styles */
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Smaller shadow for internal button */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   font-weight: 500;
+  will-change: transform, box-shadow;
 }
 
 .item-list li a:hover {
+  transform: translateY(-3px) translateZ(5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.1);
   background: var(--primary);
 }
 
@@ -912,10 +726,9 @@ section {
 
 .item-list li.more-card:hover {
   background: var(--accent);
-  transform: translateY(-8px);
+  transform: translateY(-8px) translateZ(15px); /* Lift and push forward */
   box-shadow: 0 15px 35px var(--shadow);
 }
-
 
 /*———————— TESTIMONIALS ————————*/
 .testimonials h2 {
@@ -939,6 +752,7 @@ section {
   -webkit-overflow-scrolling: touch;
   user-select: none;
   padding-bottom: 1.5rem; /* Space for scrollbar */
+  transform-style: preserve-3d;
 }
 
 .testimonial-grid::-webkit-scrollbar {
@@ -966,14 +780,17 @@ section {
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 8px 24px var(--shadow);
+  /* Card 3D styles */
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px var(--shadow);
   font-style: italic;
   user-select: none;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   white-space: normal;
   word-wrap: break-word;
   overflow-wrap: break-word;
   border: 1px solid var(--border-color);
+  will-change: transform, box-shadow;
 }
 
 .testimonial-grid:active {
@@ -981,8 +798,9 @@ section {
 }
 
 .testimonial-card:hover {
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 15px 35px var(--shadow);
+  transform: translateY(-8px) translateZ(15px) rotateX(2deg);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  filter: brightness(1.05);
 }
 
 .testimonial-card p {
@@ -1019,6 +837,7 @@ section {
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
   border: 1px solid var(--border-color);
+  transform-style: preserve-3d;
 }
 
 .form-row {
@@ -1045,6 +864,19 @@ section {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
+/* Form Validation Feedback */
+.contact-form input.invalid,
+.contact-form textarea.invalid {
+  border-color: #dc3545; /* Red border for invalid fields */
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+}
+
+.contact-form input.valid,
+.contact-form textarea.valid {
+  border-color: var(--accent); /* Green border for valid fields */
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+}
+
 .contact-form textarea {
   resize: vertical;
   min-height: 120px;
@@ -1059,13 +891,25 @@ section {
   font-weight: 600;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  /* Button 3D styles */
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 20px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
 }
 
 .contact-form .btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px var(--shadow);
+  transform: translateY(-5px) translateZ(10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
   background: var(--accent);
+}
+
+.contact-form .btn:active {
+  transform: translateY(-2px) translateZ(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 /*———————— FOOTER ————————*/
@@ -1084,6 +928,7 @@ section {
   align-items: center;
   gap: 2rem; /* Increased gap to separate sections */
   padding: 0 1rem;
+  transform-style: preserve-3d;
 }
 
 .footer-content {
@@ -1191,63 +1036,51 @@ section {
   text-align: left; /* Align copyright to left */
 }
 
+/* Back to Top Button Visibility */
 .back-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--card-bg);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.8rem;
-  color: var(--fg);
-  transition: color 0.3s, transform 0.3s;
-  margin-left: auto; /* Push to the right */
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out, background 0.3s, box-shadow 0.3s;
+}
+
+.back-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .back-top:hover {
-  color: var(--primary);
-  transform: translateY(-5px);
-}
-
-/* Responsive adjustments for the new footer content */
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr; /* Stack sections vertically on smaller screens */
-    text-align: center; /* Center content within sections */
-  }
-
-  .footer-section h3::after {
-    left: 50%; /* Center the underline */
-    transform: translateX(-50%);
-  }
-
-  .footer-section.contact-info p {
-    justify-content: center; /* Center contact info icons and text */
-  }
-
-  .social-icons {
-    justify-content: center; /* Center social icons */
-  }
-
-  .footer-bottom {
-    flex-direction: column; /* Stack copyright and back-to-top */
-    gap: 1rem;
-  }
-
-  .footer-bottom p {
-    text-align: center; /* Center copyright text */
-  }
-
-  .back-top {
-    margin-left: 0; /* Remove auto margin */
-  }
+  background: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
 }
 
 /*———————— ANIMATIONS ————————*/
 /* CSS for Intersection Observer based reveals */
 .reveal-item {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) translateZ(0); /* Ensure initial Z is 0 */
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 .reveal-item.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateZ(0);
 }
 
 /* Specific delays for different elements if needed */
@@ -1268,7 +1101,8 @@ section {
 /*———————— GLOBAL TRANSITIONS ————————*/
 * {
   transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
-    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out;
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
+    filter 0.2s ease-out; /* Added filter for subtle depth */
 }
 
 /* Full-screen overlay for "More Notes/Questions" */
@@ -1318,15 +1152,17 @@ section {
   justify-content: center;
   font-size: 2rem; /* Larger icon */
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* 3D shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   z-index: 4001; /* Ensure it's above the content */
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
 }
 
 .full-screen-overlay .close-btn:hover {
+  transform: scale(1.1) translateZ(10px); /* Scale and push forward */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
   background: var(--accent);
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 
@@ -1417,34 +1253,28 @@ section {
     width: 50%;
   }
 
- /* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
-@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
-  .header .container {
-    padding: 0 1rem; /* Slightly less padding on smaller screens */
-  }
-
+  /* Mobile Nav Specifics */
   .nav {
     display: none; /* Hide nav on smaller screens by default */
-    flex-direction: column; /* Stack links vertically */
-    position: fixed; /* Fixed position for mobile menu */
-    top: 70px; /* Below header */
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
     right: 0;
-    background: var(--card-bg); /* Background color for mobile menu */
-    width: 280px; /* Width of the mobile menu */
-    height: calc(100% - 70px); /* Full height minus header */
-    padding: 2rem 1rem; /* Padding for mobile nav */
-    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
-    z-index: 1000; /* Ensure it appears above other content */
-    transform: translateX(100%); /* Hide off-screen initially */
-    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
-    align-items: flex-start; /* Align links to the left */
-    gap: 1rem; /* Smaller gap for stacked links */
-    border-left: 1px solid var(--border-color); /* Subtle border */
+    background: var(--card-bg);
+    width: 280px;
+    height: calc(100% - 70px);
+    padding: 2rem 1rem;
+    box-shadow: -5px 0 15px var(--shadow);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 1px solid var(--border-color);
   }
 
   .nav.open {
-    display: flex; /* ADD THIS LINE: Make the nav visible when 'open' class is present */
-    transform: translateX(0); /* Slide in when open */
+    transform: translateX(0);
   }
 
   .nav-toggle {
@@ -1455,40 +1285,6 @@ section {
     margin-left: 1rem; /* Space between logo and profile info */
   }
 }
-
-@media (max-width: 768px) { /* Further adjustments for mobile */
-  .header .container {
-    justify-content: space-between; /* Logo left, profile/toggle right */
-  }
-
-  .logo {
-    margin-right: 0; /* Remove extra margin on small screens */
-  }
-
-  .profile-info {
-    margin-left: auto; /* Ensure it pushes to the right */
-  }
-}
-
-@media (max-width: 480px) {
-  .logo {
-    height: 40px;
-  }
-
-  .nav-toggle {
-    font-size: 1.8rem;
-  }
-
-  .profile-info img {
-    width: 35px;
-    height: 35px;
-  }
-
-  .profile-info span {
-    font-size: 0.9rem;
-  }
-}
-
 
 @media (max-width: 768px) {
   .container {
@@ -1547,6 +1343,38 @@ section {
   .testimonial-card {
     width: 280px;
   }
+
+  /* Responsive adjustments for the new footer content */
+  .footer-content {
+    grid-template-columns: 1fr; /* Stack sections vertically on smaller screens */
+    text-align: center; /* Center content within sections */
+  }
+
+  .footer-section h3::after {
+    left: 50%; /* Center the underline */
+    transform: translateX(-50%);
+  }
+
+  .footer-section.contact-info p {
+    justify-content: center; /* Center contact info icons and text */
+  }
+
+  .social-icons {
+    justify-content: center; /* Center social icons */
+  }
+
+  .footer-bottom {
+    flex-direction: column; /* Stack copyright and back-to-top */
+    gap: 1rem;
+  }
+
+  .footer-bottom p {
+    text-align: center; /* Center copyright text */
+  }
+
+  .back-top {
+    margin-left: 0; /* Remove auto margin */
+  }
 }
 
 @media (max-width: 480px) {
@@ -1579,16 +1407,19 @@ section {
     width: 260px;
   }
 
-  .back-top {
-    font-size: 1.5rem;
-    bottom: 1rem;
-    right: 1rem;
-  }
-
   /* Adjust fixed theme toggle for smaller screens */
   .theme-toggle {
     width: 50px;
     height: 50px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    left: 15px; /* CHANGED: from right to left */
+  }
+
+  /* Responsive adjustments for fixed back-top button */
+  .back-top {
+    width: 45px;
+    height: 45px;
     font-size: 1.6rem;
     bottom: 15px;
     right: 15px;
