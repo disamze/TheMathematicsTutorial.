@@ -103,6 +103,66 @@ section {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
+/* Add these styles to MultipleFiles/style (3).css */
+
+/* Form Validation Feedback */
+.contact-form input.invalid,
+.contact-form textarea.invalid {
+  border-color: #dc3545; /* Red border for invalid fields */
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+}
+
+.contact-form input.valid,
+.contact-form textarea.valid {
+  border-color: var(--accent); /* Green border for valid fields */
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+}
+
+/* Back to Top Button Visibility */
+.back-top {
+  /* Existing styles */
+  position: fixed; /* Changed from absolute to fixed */
+  bottom: 20px; /* Adjusted for fixed positioning */
+  right: 20px; /* Adjusted for fixed positioning */
+  background: var(--primary); /* Give it a background */
+  color: var(--card-bg); /* White icon */
+  border-radius: 50%;
+  width: 50px; /* Make it a circle */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 99; /* Ensure it's above most content but below popups */
+  opacity: 0; /* Start hidden */
+  visibility: hidden; /* Start hidden */
+  transform: translateY(20px); /* Start slightly below */
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out, background 0.3s, box-shadow 0.3s;
+}
+
+.back-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-top:hover {
+  background: var(--accent); /* Hover effect */
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* Responsive adjustments for fixed back-top button */
+@media (max-width: 480px) {
+  .back-top {
+    width: 45px;
+    height: 45px;
+    font-size: 1.6rem;
+    bottom: 15px;
+    right: 15px;
+  }
+}
 
 /*———————— HEADER & NAV ————————*/
 /* ———————— NAVBAR STYLES (NEW) ———————— */
