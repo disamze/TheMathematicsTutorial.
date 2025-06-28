@@ -13,7 +13,8 @@ window.addEventListener('load', () => {
   }
 
   // Check for user session on load
-  const userData = sessionStorage.getItem('user');
+  // CHANGED: From sessionStorage to localStorage
+  const userData = localStorage.getItem('user');
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -520,8 +521,8 @@ window.handleCredentialResponse = function (response) {
   const data = parseJwt(response.credential);
   if (!data || !data.name || !data.picture) return;
 
-  // Save user data in sessionStorage
-  sessionStorage.setItem('user', JSON.stringify(data));
+  // CHANGED: Save user data in localStorage instead of sessionStorage
+  localStorage.setItem('user', JSON.stringify(data));
   showMainUI(data);
 };
 
@@ -568,12 +569,17 @@ function showMainUI(data) {
 const signoutBtn = document.getElementById('signout-btn');
 if (signoutBtn) {
   signoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem('user');
-    // Google Sign-out (if using Google's JS API for sign-out)
-    // google.accounts.id.disableAutoSelect(); // This might be needed depending on your GSI setup
-    // google.accounts.id.revoke(data.email, done => {
-    //   console.log('consent revoked', done);
-    // });
+    // CHANGED: Remove user data from localStorage instead of sessionStorage
+    localStorage.removeItem('user');
+
+    // IMPORTANT: For Google Sign-In, if you want a full Google-side logout
+    // (e.g., so the user has to re-select their account next time),
+    // you would typically use Google's JavaScript API for sign-out.
+    // However, this requires the Google API client library to be fully loaded
+    // and initialized, which is beyond the scope of just changing storage.
+    // For a simple client-side "logout" from your app's perspective,
+    // removing the local storage item is sufficient.
+    // If you had a backend, you'd also send a request to invalidate the session there.
 
     const popupOverlay = document.getElementById('popup-overlay');
     const signoutPopup = document.getElementById('signout-popup');
@@ -598,7 +604,8 @@ document.addEventListener('click', (e) => {
   const signoutPopup = document.getElementById('signout-popup');
 
   if (profileInfo) {
-    const data = JSON.parse(sessionStorage.getItem('user'));
+    // CHANGED: Get user data from localStorage
+    const data = JSON.parse(localStorage.getItem('user'));
     if (data && popupOverlay && signoutPopup) {
       document.getElementById('popup-name').textContent = data.name;
       document.getElementById('popup-pic').src = data.picture;
