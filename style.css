@@ -18,6 +18,190 @@ html {
   width: 0;
   height: 0;
 }
+/* Add/Modify these styles in MultipleFiles/style (3).css */
+
+/* Global transitions for smooth effects */
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
+    filter 0.2s ease-out; /* Added filter for subtle depth */
+}
+
+/* Buttons - General 3D & Interactive Style */
+.btn {
+  position: relative; /* Needed for pseudo-elements or deeper shadows */
+  overflow: hidden; /* Ensures shadow/glow stays within bounds */
+  transform-style: preserve-3d; /* Enable 3D transforms for children */
+  box-shadow: 0 8px 20px var(--shadow); /* Deeper initial shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow; /* Optimize for animation */
+}
+
+.btn:hover {
+  transform: translateY(-5px) translateZ(10px); /* Lift and push forward */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+  filter: brightness(1.1); /* Slightly brighten on hover */
+}
+
+.btn:active {
+  transform: translateY(-2px) translateZ(5px); /* Slightly press down */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Specific Button Overrides (e.g., Contact button in nav) */
+.nav a.btn.small {
+  padding: 0.6rem 1.2rem; /* Adjust padding for smaller button */
+  font-size: 0.9rem;
+  transform: none; /* Reset transform for nav button if it's not meant to lift */
+  box-shadow: none; /* Remove shadow if it's part of the nav */
+}
+
+.nav a.btn.small:hover {
+  transform: none; /* No lift for nav button */
+  box-shadow: none; /* No shadow for nav button */
+  filter: none; /* No brightness filter */
+  color: var(--card-bg); /* Ensure text color changes */
+}
+
+
+/* Images - General 3D & Interactive Style */
+.hero-img img,
+.about-grid img {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px var(--shadow); /* Deeper initial shadow */
+  transform-style: preserve-3d; /* Enable 3D transforms */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.hero-img img:hover,
+.about-grid img:hover {
+  transform: scale(1.02) translateZ(15px) rotateY(2deg); /* Slightly enlarge, push forward, subtle rotate */
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+  filter: brightness(1.05); /* Subtle brightness */
+}
+
+/* Cards - General 3D & Interactive Style */
+.info-cards .card,
+.item-list li,
+.testimonial-card,
+.login-box { /* Apply to login box as well */
+  transform-style: preserve-3d; /* Enable 3D transforms */
+  box-shadow: 0 8px 20px var(--shadow); /* Deeper initial shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.info-cards .card:hover,
+.item-list li:hover,
+.testimonial-card:hover,
+.login-box:hover { /* Add hover for login box too */
+  transform: translateY(-8px) translateZ(15px) rotateX(2deg); /* Lift, push forward, subtle tilt */
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); /* Stronger shadow */
+  filter: brightness(1.05);
+}
+
+/* Specific overrides for item-list li (download cards) */
+.item-list li:hover {
+  /* Keep existing rotateY/rotateX for a distinct effect, but combine with translateZ */
+  transform: rotateY(5deg) rotateX(2deg) translateY(-8px) translateZ(15px);
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+/* More Card specific hover */
+.item-list li.more-card:hover {
+  background: var(--accent); /* Keep background change */
+  transform: translateY(-8px) translateZ(15px); /* Lift and push forward */
+  box-shadow: 0 15px 35px var(--shadow);
+}
+
+
+/* Profile Info - subtle 3D */
+.profile-info {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+.profile-info:hover {
+  transform: translateY(-2px) translateZ(5px);
+  box-shadow: 0 5px 15px var(--shadow);
+  background: var(--primary); /* Keep existing background change */
+  color: var(--card-bg); /* Keep existing color change */
+}
+
+/* Theme Toggle Button - 3D */
+.theme-toggle {
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 16px var(--shadow); /* Deeper initial shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-5px) translateZ(10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  background: var(--accent);
+}
+
+/* Signout Button - 3D */
+.signout-button {
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.signout-button:hover {
+  transform: translateY(-4px) translateZ(10px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  background: var(--primary);
+}
+
+/* Close Button (Overlay) - 3D */
+.full-screen-overlay .close-btn {
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.full-screen-overlay .close-btn:hover {
+  transform: scale(1.1) translateZ(10px); /* Scale and push forward */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  background: var(--accent);
+}
+
+/* Ensure reveal animations play nicely with 3D transforms */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px) translateZ(0); /* Ensure initial Z is 0 */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+/* Add a perspective to the body or a common parent for 3D effects to be visible */
+body {
+  perspective: 1000px; /* Apply perspective to the body */
+}
+
+/* Ensure elements that are children of a 3D transformed parent also preserve 3D */
+.header .container,
+.hero-grid,
+.about-grid,
+.info-cards,
+.skills-list,
+.item-list,
+.testimonial-grid,
+.contact-form,
+.footer .container {
+  transform-style: preserve-3d;
+}
+
 
 body {
   background: var(--bg);
