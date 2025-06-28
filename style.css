@@ -168,6 +168,16 @@ section {
   left: 0; /* Align to the left */
 }
 
+/* New active class for navigation links */
+.nav a.active {
+  color: var(--primary); /* Keep primary color */
+}
+
+.nav a.active::after {
+  width: 100%; /* Keep underline visible */
+  left: 0;
+}
+
 /* Profile Info and Nav Toggle (aligned to the right) */
 .profile-info {
   display: none; /* Hidden by default, shown by JS after login */
@@ -279,6 +289,7 @@ section {
     font-size: 0.9rem;
   }
 }
+
 
 
 /* Fixed Theme Toggle Button */
