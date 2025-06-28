@@ -294,11 +294,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ——— THEME TOGGLE ———
   const themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) {
-    // Set initial icon based on current theme (already handled on window load)
-    // themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
-    //   ? '<i class="bx bx-sun"></i>'
-    //   : '<i class="bx bx-moon"></i>';
-
     themeBtn.addEventListener('click', () => {
       const isDark = document.documentElement.dataset.theme === 'dark';
       const newTheme = isDark ? 'light' : 'dark';
@@ -431,23 +426,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— CONTACT FORM SUBMISSION ———
+  // ——— CONTACT FORM SUBMISSION & VALIDATION ———
   const contactForm = document.getElementById('contact-form');
   const formMessage = document.getElementById('form-message');
+  const formInputs = contactForm ? contactForm.querySelectorAll('input[required], textarea[required]') : [];
+
+  // Function to validate a single input
+  const validateInput = (input) => {
+    if (input.checkValidity()) {
+      input.classList.remove('invalid');
+      input.classList.add('valid');
+      return true;
+    } else {
+      input.classList.remove('valid');
+      input.classList.add('invalid');
+      return false;
+    }
+  };
+
+  // Add real-time validation on input change/blur
+  formInputs.forEach(input => {
+    input.addEventListener('input', () => validateInput(input));
+    input.addEventListener('blur', () => validateInput(input));
+  });
+
 
   if (contactForm && formMessage) {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault(); // Prevent default form submission
 
-      // Basic client-side validation
-      const name = contactForm.querySelector('[name="name"]').value;
-      const email = contactForm.querySelector('[name="email"]').value;
-      const phone = contactForm.querySelector('[name="phone"]').value;
-      const message = contactForm.querySelector('[name="message"]').value;
+      let allInputsValid = true;
+      formInputs.forEach(input => {
+        if (!validateInput(input)) {
+          allInputsValid = false;
+        }
+      });
 
-      if (!name || !email || !phone || !message) {
+      if (!allInputsValid) {
         formMessage.style.color = 'red';
-        formMessage.textContent = 'Please fill in all required fields.';
+        formMessage.textContent = 'Please fill in all required fields correctly.';
         return;
       }
 
@@ -467,6 +484,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           formMessage.style.color = 'var(--accent)';
           formMessage.textContent = 'Message sent successfully! We will get back to you soon.';
           contactForm.reset(); // Clear the form
+          // Remove validation classes after successful submission
+          formInputs.forEach(input => {
+            input.classList.remove('valid', 'invalid');
+          });
         } else {
           const data = await response.json();
           formMessage.style.color = 'red';
@@ -494,12 +515,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // Initial check on load
-  // Find the first section that is mostly visible
   let currentActiveSection = '';
   for (let i = 0; i < sections.length; i++) {
     const rect = sections[i].getBoundingClientRect();
-    // Check if the top of the section is within the viewport and below the header
-    // And if a significant portion of the section is visible
     if (rect.top <= headerHeight + 50 && rect.bottom >= headerHeight + 50) {
       currentActiveSection = sections[i].id;
       break;
@@ -508,20 +526,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (currentActiveSection) {
     activateNavLink(currentActiveSection);
   } else if (sections.length > 0) {
-    // If no section is clearly in view (e.g., at the very top), activate the first one
     activateNavLink(sections[0].id);
   }
 
 
   const sectionObserverOptions = {
     root: null,
-    // Adjust rootMargin to activate the link when the section is near the top of the viewport,
-    // considering the fixed header. A negative top margin effectively shrinks the viewport
-    // from the top, making the intersection happen earlier.
-    // The bottom margin can be 0 or slightly negative to ensure the link changes
-    // before the next section fully covers the current one.
     rootMargin: `-${headerHeight + 1}px 0px -${window.innerHeight - headerHeight - 1}px 0px`,
-    threshold: 0 // We are using rootMargin to define the active area
+    threshold: 0
   };
 
   const sectionObserver = new IntersectionObserver((entries) => {
@@ -535,6 +547,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   sections.forEach(section => {
     sectionObserver.observe(section);
   });
+
+  // ——— BACK TO TOP BUTTON VISIBILITY ———
+  const backToTopBtn = document.querySelector('.back-top');
+  if (backToTopBtn) {
+    const toggleBackToTop = () => {
+      if (window.scrollY > window.innerHeight / 2) { // Show after scrolling half a viewport
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    };
+
+    window.addEventListener('scroll', toggleBackToTop);
+    toggleBackToTop(); // Initial check on load
+  }
 
 });
 
