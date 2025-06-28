@@ -24,9 +24,18 @@ body {
   color: var(--fg);
   line-height: 1.6;
   overflow-x: hidden; /* Crucial: Prevent horizontal scroll for the entire body */
-  position: relative; /* Needed for fixed elements within body */
-  perspective: 1000px; /* Apply perspective to the body for 3D effects */
+  /* Removed position: relative; here as it can interfere with fixed positioning of children */
+  /* Removed perspective: 1000px; from body. Apply perspective to specific 3D containers instead. */
 }
+
+/* Global transitions for smooth effects */
+/* Moved this up to ensure it applies broadly */
+* {
+  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
+    filter 0.2s ease-out;
+}
+
 
 a {
   text-decoration: none;
@@ -67,10 +76,10 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000; /* Ensure it's on top */
-  /* Ensure it's visible initially */
-  opacity: 1;
-  visibility: visible;
+  z-index: 9999; /* Highest z-index to ensure it's on top */
+  opacity: 1; /* Ensure it starts visible */
+  visibility: visible; /* Ensure it starts visible */
+  transition: opacity 0.8s ease, visibility 0.8s ease; /* Keep transition for fade-out */
 }
 
 #preloader dotlottie-player {
@@ -84,7 +93,6 @@ ul {
 #preloader.fade-out {
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.8s ease, visibility 0.8s ease;
 }
 
 /*———————— CONTAINERS & GRID ————————*/
@@ -92,7 +100,7 @@ ul {
   width: min(100% - 2rem, 1100px); /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
   padding: 3rem 0; /* Removed horizontal padding here, handled by width */
-  transform-style: preserve-3d; /* Enable 3D transforms for children */
+  /* Removed transform-style: preserve-3d; from here. Apply to specific 3D elements. */
 }
 
 /* Ensure sections don't cause overflow */
@@ -124,7 +132,7 @@ section {
   align-items: center;
   justify-content: space-between; /* Distribute items */
   padding: 0 1.5rem; /* More horizontal padding for content */
-  transform-style: preserve-3d; /* Enable 3D transforms for children */
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .logo {
@@ -461,7 +469,7 @@ section {
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .hero-info h1 {
@@ -533,7 +541,7 @@ section {
   grid-template-columns: 1fr 2fr;
   gap: 3rem;
   align-items: center;
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .about-grid img {
@@ -574,7 +582,7 @@ section {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .info-cards .card {
@@ -604,7 +612,7 @@ section {
   background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .skills h2 {
@@ -654,7 +662,7 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .item-list li {
@@ -755,7 +763,7 @@ section {
   -webkit-overflow-scrolling: touch;
   user-select: none;
   padding-bottom: 1.5rem; /* Space for scrollbar */
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .testimonial-grid:active {
@@ -822,7 +830,7 @@ section {
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
   border: 1px solid var(--border-color);
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .form-row {
@@ -913,7 +921,7 @@ section {
   align-items: center;
   gap: 2rem; /* Increased gap to separate sections */
   padding: 0 1rem;
-  transform-style: preserve-3d;
+  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .footer-content {
@@ -1036,7 +1044,7 @@ section {
   justify-content: center;
   font-size: 1.8rem;
   box-shadow: 0 4px 12px var(--shadow);
-  z-index: 99; /* Ensure it's above content but below popups/overlays */
+  z-index: 999; /* Increased z-index to be above most content */
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
@@ -1083,13 +1091,6 @@ section {
 .contact-form.reveal-item { transition-delay: 0.1s; }
 
 
-/*———————— GLOBAL TRANSITIONS ————————*/
-* {
-  transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
-    transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
-    filter 0.2s ease-out; /* Added filter for subtle depth */
-}
-
 /* Full-screen overlay for "More Notes/Questions" */
 .full-screen-overlay {
   position: fixed;
@@ -1123,7 +1124,7 @@ section {
 
 /* New styles for the close button, positioned relative to the overlay */
 .full-screen-overlay .close-btn {
-  position: absolute;
+  position: absolute; /* Position relative to .full-screen-content */
   top: 1.5rem; /* Adjust as needed */
   right: 1.5rem; /* Adjust as needed */
   background: var(--primary);
