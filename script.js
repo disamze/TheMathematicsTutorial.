@@ -75,6 +75,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           // This is a common pattern for fixed headers
           const headerOffset = header ? header.offsetHeight : 0;
           window.scrollBy(0, -headerOffset);
+
+          // Manually set active class when clicking a nav link
+          navLinks.forEach(navLink => navLink.classList.remove('active'));
+          this.classList.add('active');
         }
       }
     });
@@ -451,6 +455,63 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
+
+  // ——— ACTIVE NAVIGATION LINK ON SCROLL ———
+  const sections = document.querySelectorAll('section[id]'); // Get all sections with an ID
+  const headerHeight = header ? header.offsetHeight : 0; // Get header height for offset
+
+  const activateNavLink = (id) => {
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === `#${id}`) {
+        link.classList.add('active');
+      }
+    });
+  };
+
+  // Initial check on load
+  // Find the first section that is mostly visible
+  let currentActiveSection = '';
+  for (let i = 0; i < sections.length; i++) {
+    const rect = sections[i].getBoundingClientRect();
+    // Check if the top of the section is within the viewport and below the header
+    // And if a significant portion of the section is visible
+    if (rect.top <= headerHeight + 50 && rect.bottom >= headerHeight + 50) {
+      currentActiveSection = sections[i].id;
+      break;
+    }
+  }
+  if (currentActiveSection) {
+    activateNavLink(currentActiveSection);
+  } else if (sections.length > 0) {
+    // If no section is clearly in view (e.g., at the very top), activate the first one
+    activateNavLink(sections[0].id);
+  }
+
+
+  const sectionObserverOptions = {
+    root: null,
+    // Adjust rootMargin to activate the link when the section is near the top of the viewport,
+    // considering the fixed header. A negative top margin effectively shrinks the viewport
+    // from the top, making the intersection happen earlier.
+    // The bottom margin can be 0 or slightly negative to ensure the link changes
+    // before the next section fully covers the current one.
+    rootMargin: `-${headerHeight + 1}px 0px -${window.innerHeight - headerHeight - 1}px 0px`,
+    threshold: 0 // We are using rootMargin to define the active area
+  };
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        activateNavLink(entry.target.id);
+      }
+    });
+  }, sectionObserverOptions);
+
+  sections.forEach(section => {
+    sectionObserver.observe(section);
+  });
+
 });
 
 // ——— GOOGLE SIGN-IN LOGIC ———
