@@ -1173,28 +1173,34 @@ section {
     width: 50%;
   }
 
-  /* Mobile Nav Specifics */
+ /* ———————— RESPONSIVE NAVBAR (NEW) ———————— */
+@media (max-width: 992px) { /* Adjusted breakpoint for tablet/smaller desktop */
+  .header .container {
+    padding: 0 1rem; /* Slightly less padding on smaller screens */
+  }
+
   .nav {
     display: none; /* Hide nav on smaller screens by default */
-    flex-direction: column;
-    position: fixed;
-    top: 70px;
+    flex-direction: column; /* Stack links vertically */
+    position: fixed; /* Fixed position for mobile menu */
+    top: 70px; /* Below header */
     right: 0;
-    background: var(--card-bg);
-    width: 280px;
-    height: calc(100% - 70px);
-    padding: 2rem 1rem;
-    box-shadow: -5px 0 15px var(--shadow);
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.4s ease-in-out;
-    align-items: flex-start;
-    gap: 1rem;
-    border-left: 1px solid var(--border-color);
+    background: var(--card-bg); /* Background color for mobile menu */
+    width: 280px; /* Width of the mobile menu */
+    height: calc(100% - 70px); /* Full height minus header */
+    padding: 2rem 1rem; /* Padding for mobile nav */
+    box-shadow: -5px 0 15px var(--shadow); /* Shadow for dropdown */
+    z-index: 1000; /* Ensure it appears above other content */
+    transform: translateX(100%); /* Hide off-screen initially */
+    transition: transform 0.4s ease-in-out; /* Smooth slide-in/out */
+    align-items: flex-start; /* Align links to the left */
+    gap: 1rem; /* Smaller gap for stacked links */
+    border-left: 1px solid var(--border-color); /* Subtle border */
   }
 
   .nav.open {
-    transform: translateX(0);
+    display: flex; /* ADD THIS LINE: Make the nav visible when 'open' class is present */
+    transform: translateX(0); /* Slide in when open */
   }
 
   .nav-toggle {
@@ -1205,6 +1211,40 @@ section {
     margin-left: 1rem; /* Space between logo and profile info */
   }
 }
+
+@media (max-width: 768px) { /* Further adjustments for mobile */
+  .header .container {
+    justify-content: space-between; /* Logo left, profile/toggle right */
+  }
+
+  .logo {
+    margin-right: 0; /* Remove extra margin on small screens */
+  }
+
+  .profile-info {
+    margin-left: auto; /* Ensure it pushes to the right */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 40px;
+  }
+
+  .nav-toggle {
+    font-size: 1.8rem;
+  }
+
+  .profile-info img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-info span {
+    font-size: 0.9rem;
+  }
+}
+
 
 @media (max-width: 768px) {
   .container {
