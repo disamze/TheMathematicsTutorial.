@@ -67,7 +67,10 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 2000; /* Ensure it's on top */
+  /* Ensure it's visible initially */
+  opacity: 1;
+  visibility: visible;
 }
 
 #preloader dotlottie-player {
@@ -105,13 +108,13 @@ section {
 
 /*———————— HEADER & NAV ————————*/
 .header {
-  position: sticky;
+  position: sticky; /* Keep sticky for header */
   top: 0;
   left: 0;
   right: 0;
   background: var(--card-bg); /* Use card background for a cleaner look */
   box-shadow: 0 4px 20px var(--shadow); /* Soft shadow */
-  z-index: 1000;
+  z-index: 1000; /* Ensure it's above content */
   padding: 0.8rem 0; /* Vertical padding */
   transition: background 0.3s, box-shadow 0.3s; /* Smooth transition */
 }
@@ -285,9 +288,9 @@ section {
 
 /* Fixed Theme Toggle Button */
 .theme-toggle {
-  position: fixed;
+  position: fixed; /* Ensure it's fixed */
   bottom: 20px;
-  left: 20px; /* CHANGED: from right to left */
+  left: 20px; /* Positioned to the left */
   background: var(--primary);
   color: var(--card-bg);
   border: none;
@@ -755,22 +758,8 @@ section {
   transform-style: preserve-3d;
 }
 
-.testimonial-grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.testimonial-grid::-webkit-scrollbar-track {
-  background: var(--border-color);
-  border-radius: 10px;
-}
-
-.testimonial-grid::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
-}
-
-.testimonial-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+.testimonial-grid:active {
+  cursor: grabbing;
 }
 
 .testimonial-card {
@@ -791,10 +780,6 @@ section {
   overflow-wrap: break-word;
   border: 1px solid var(--border-color);
   will-change: transform, box-shadow;
-}
-
-.testimonial-grid:active {
-  cursor: grabbing;
 }
 
 .testimonial-card:hover {
@@ -1038,7 +1023,7 @@ section {
 
 /* Back to Top Button Visibility */
 .back-top {
-  position: fixed;
+  position: fixed; /* Ensure it's fixed */
   bottom: 20px;
   right: 20px;
   background: var(--primary);
@@ -1051,7 +1036,7 @@ section {
   justify-content: center;
   font-size: 1.8rem;
   box-shadow: 0 4px 12px var(--shadow);
-  z-index: 99;
+  z-index: 99; /* Ensure it's above content but below popups/overlays */
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
@@ -1130,8 +1115,8 @@ section {
   border-radius: 12px;
   box-shadow: 0 15px 40px var(--shadow);
   max-width: 90%;
-  max-height: 90%;
-  overflow-y: auto;
+  max-height: 90vh; /* Ensure max-height is set to allow scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
   position: relative; /* Keep relative for h2 positioning */
   animation: fadeInScale 0.5s ease-out forwards;
 }
@@ -1413,7 +1398,7 @@ section {
     height: 50px;
     font-size: 1.6rem;
     bottom: 15px;
-    left: 15px; /* CHANGED: from right to left */
+    left: 15px; /* Positioned to the left */
   }
 
   /* Responsive adjustments for fixed back-top button */
