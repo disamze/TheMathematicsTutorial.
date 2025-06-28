@@ -13,7 +13,6 @@ window.addEventListener('load', () => {
   }
 
   // Check for user session on load
-  // CHANGED: From sessionStorage to localStorage
   const userData = localStorage.getItem('user');
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
@@ -27,6 +26,28 @@ window.addEventListener('load', () => {
     if (loginScreen) loginScreen.style.display = 'flex';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
+  }
+
+  // ——— AUTOMATIC THEME DETECTION ON LOAD ———
+  // Check for a saved theme preference first
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.dataset.theme = savedTheme;
+  } else {
+    // If no saved theme, detect system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.dataset.theme = 'dark';
+    } else {
+      document.documentElement.dataset.theme = 'light';
+    }
+  }
+
+  // Update theme toggle button icon based on initial theme
+  const themeBtn = document.querySelector('.theme-toggle');
+  if (themeBtn) {
+    themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+      ? '<i class="bx bx-sun"></i>'
+      : '<i class="bx bx-moon"></i>';
   }
 });
 
@@ -273,14 +294,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ——— THEME TOGGLE ———
   const themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) {
-    // Set initial icon based on current theme
-    themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
-      ? '<i class="bx bx-sun"></i>'
-      : '<i class="bx bx-moon"></i>';
+    // Set initial icon based on current theme (already handled on window load)
+    // themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
+    //   ? '<i class="bx bx-sun"></i>'
+    //   : '<i class="bx bx-moon"></i>';
 
     themeBtn.addEventListener('click', () => {
       const isDark = document.documentElement.dataset.theme === 'dark';
-      document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      document.documentElement.dataset.theme = newTheme;
+      localStorage.setItem('theme', newTheme); // Save user's preference
       themeBtn.setAttribute('aria-expanded', String(isDark));
       themeBtn.innerHTML = isDark
         ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
@@ -521,7 +544,6 @@ window.handleCredentialResponse = function (response) {
   const data = parseJwt(response.credential);
   if (!data || !data.name || !data.picture) return;
 
-  // CHANGED: Save user data in localStorage instead of sessionStorage
   localStorage.setItem('user', JSON.stringify(data));
   showMainUI(data);
 };
@@ -569,17 +591,7 @@ function showMainUI(data) {
 const signoutBtn = document.getElementById('signout-btn');
 if (signoutBtn) {
   signoutBtn.addEventListener('click', () => {
-    // CHANGED: Remove user data from localStorage instead of sessionStorage
     localStorage.removeItem('user');
-
-    // IMPORTANT: For Google Sign-In, if you want a full Google-side logout
-    // (e.g., so the user has to re-select their account next time),
-    // you would typically use Google's JavaScript API for sign-out.
-    // However, this requires the Google API client library to be fully loaded
-    // and initialized, which is beyond the scope of just changing storage.
-    // For a simple client-side "logout" from your app's perspective,
-    // removing the local storage item is sufficient.
-    // If you had a backend, you'd also send a request to invalidate the session there.
 
     const popupOverlay = document.getElementById('popup-overlay');
     const signoutPopup = document.getElementById('signout-popup');
@@ -604,7 +616,6 @@ document.addEventListener('click', (e) => {
   const signoutPopup = document.getElementById('signout-popup');
 
   if (profileInfo) {
-    // CHANGED: Get user data from localStorage
     const data = JSON.parse(localStorage.getItem('user'));
     if (data && popupOverlay && signoutPopup) {
       document.getElementById('popup-name').textContent = data.name;
