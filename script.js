@@ -548,7 +548,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     sectionObserver.observe(section);
   });
 
-  // ——— BACK TO TOP BUTTON VISIBILITY ———
+  // ——— BACK TO TOP BUTTON VISIBILITY & SCROLL ———
   const backToTopBtn = document.querySelector('.back-top');
   if (backToTopBtn) {
     const toggleBackToTop = () => {
@@ -558,6 +558,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         backToTopBtn.classList.remove('show');
       }
     };
+
+    // Smooth scroll to top when clicked
+    backToTopBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default anchor behavior
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
 
     window.addEventListener('scroll', toggleBackToTop);
     toggleBackToTop(); // Initial check on load
