@@ -66,15 +66,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
           }
 
-          // Scroll to the target element smoothly
-          targetElement.scrollIntoView({
-            behavior: 'smooth'
-          });
-
-          // Adjust scroll position for fixed header if necessary
-          // This is a common pattern for fixed headers
+          // Calculate the target scroll position
           const headerOffset = header ? header.offsetHeight : 0;
-          window.scrollBy(0, -headerOffset);
+          const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
 
           // Manually set active class when clicking a nav link
           navLinks.forEach(navLink => navLink.classList.remove('active'));
