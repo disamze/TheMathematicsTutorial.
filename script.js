@@ -311,26 +311,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     observer.observe(element);
   });
 
-  // Testimonial Slider (Drag functionality)
+  // ——— TESTIMONIAL SLIDER (AUTOMATIC SCROLL & LOOP) ———
   const slider = document.querySelector('.testimonial-grid');
   let isDown = false;
   let startX;
   let scrollLeft;
+  let scrollInterval;
+  const scrollSpeed = 1; // Adjust for faster/slower scroll
+  const scrollDelay = 50; // Milliseconds between scroll steps
 
   if (slider) {
+    // Duplicate cards for seamless looping
+    const cards = Array.from(slider.children);
+    cards.forEach(card => {
+      slider.appendChild(card.cloneNode(true));
+    });
+
+    const startAutoScroll = () => {
+      if (scrollInterval) clearInterval(scrollInterval); // Clear any existing interval
+      scrollInterval = setInterval(() => {
+        slider.scrollLeft += scrollSpeed;
+
+        // If scrolled past the original content, reset to the beginning of the duplicated content
+        if (slider.scrollLeft >= slider.scrollWidth / 2) {
+          slider.scrollLeft = 0;
+        }
+      }, scrollDelay);
+    };
+
+    const stopAutoScroll = () => {
+      clearInterval(scrollInterval);
+    };
+
+    // Start auto-scroll when the page loads
+    startAutoScroll();
+
+    // Pause auto-scroll on mouse hover/touch
+    slider.addEventListener('mouseenter', stopAutoScroll);
+    slider.addEventListener('mouseleave', startAutoScroll);
+    slider.addEventListener('touchstart', stopAutoScroll);
+    slider.addEventListener('touchend', startAutoScroll);
+
+    // Existing drag functionality (modified to interact with auto-scroll)
     slider.addEventListener('mousedown', (e) => {
       isDown = true;
       slider.classList.add('active');
       startX = e.pageX - slider.offsetLeft;
       scrollLeft = slider.scrollLeft;
+      stopAutoScroll(); // Stop auto-scroll when dragging starts
     });
     slider.addEventListener('mouseleave', () => {
       isDown = false;
       slider.classList.remove('active');
+      startAutoScroll(); // Resume auto-scroll when mouse leaves
     });
     slider.addEventListener('mouseup', () => {
       isDown = false;
       slider.classList.remove('active');
+      startAutoScroll(); // Resume auto-scroll when drag ends
     });
     slider.addEventListener('mousemove', (e) => {
       if (!isDown) return;
@@ -346,10 +384,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       slider.classList.add('active');
       startX = e.touches[0].pageX - slider.offsetLeft;
       scrollLeft = slider.scrollLeft; // Store current scroll position
+      stopAutoScroll(); // Stop auto-scroll when dragging starts
     });
     slider.addEventListener('touchend', () => {
       isDown = false;
       slider.classList.remove('active');
+      startAutoScroll(); // Resume auto-scroll when drag ends
     });
     slider.addEventListener('touchmove', (e) => {
       if (!isDown) return;
