@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS ———
+  // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS (INFINITE) ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
     '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message'
@@ -295,11 +295,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     threshold: 0.1 // Trigger when 10% of the item is visible
   };
 
-  const observer = new IntersectionObserver((entries, observer) => {
+  const observer = new IntersectionObserver((entries) => { // Removed 'observer' from parameters
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target); // Stop observing once visible
+        // Removed: observer.unobserve(entry.target); // Stop observing once visible
+      } else {
+        // If not intersecting, remove the class to reset the animation
+        entry.target.classList.remove('is-visible');
       }
     });
   }, observerOptions);
