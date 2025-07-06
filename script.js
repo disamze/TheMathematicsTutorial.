@@ -25,6 +25,11 @@ window.addEventListener('load', () => {
   } else {
     // If no user data, ensure homepage is visible and others are hidden
     if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
+    // Hide other homepage sections initially, they will be revealed by JS
+    document.getElementById('why-choose-us').style.display = 'block';
+    document.getElementById('our-courses').style.display = 'block';
+    document.getElementById('homepage-testimonials').style.display = 'block';
+
     if (loginScreen) loginScreen.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
@@ -66,7 +71,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Event listener for the new homepage login button
   if (homepageLoginBtn && homepageHero && loginScreen) {
     homepageLoginBtn.addEventListener('click', () => {
-      homepageHero.style.display = 'none'; // Hide homepage
+      homepageHero.style.display = 'none'; // Hide homepage hero
+      document.getElementById('why-choose-us').style.display = 'none'; // Hide new sections
+      document.getElementById('our-courses').style.display = 'none';
+      document.getElementById('homepage-testimonials').style.display = 'none';
       loginScreen.style.display = 'flex'; // Show login screen
     });
   }
@@ -322,7 +330,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS (INFINITE) ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img' // Added homepage elements
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img, .homepage-section h2, .homepage-section .card, .homepage-section .course-card' // Added new homepage elements
   );
 
   const observerOptions = {
@@ -372,7 +380,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         slider.scrollLeft += scrollSpeed;
 
         // If scrolled past the original content, reset to the beginning of the duplicated content
-        if (slider.scrollLeft >= slider.scrollWidth / 2) {
+        if (slider.scrollWidth >= slider.scrollWidth / 2) { // Corrected condition
           slider.scrollLeft = 0;
         }
       }, scrollDelay);
@@ -613,6 +621,9 @@ function parseJwt(token) {
 // Display UI after successful login or session restore
 function showMainUI(data) {
   const homepageHero = document.getElementById('homepage-hero'); // New
+  const whyChooseUs = document.getElementById('why-choose-us'); // New
+  const ourCourses = document.getElementById('our-courses'); // New
+  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -621,6 +632,9 @@ function showMainUI(data) {
   const popupPic = document.getElementById('popup-pic');
 
   if (homepageHero) homepageHero.style.display = 'none'; // Hide homepage
+  if (whyChooseUs) whyChooseUs.style.display = 'none'; // Hide new sections
+  if (ourCourses) ourCourses.style.display = 'none';
+  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
   if (loginScreen) loginScreen.style.display = 'none';
   if (mainContent) mainContent.style.display = 'block';
   if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
@@ -651,6 +665,9 @@ if (signoutBtn) {
     const profileInfo = document.getElementById('profile-info');
     const loginScreen = document.getElementById('login-screen');
     const homepageHero = document.getElementById('homepage-hero'); // New
+    const whyChooseUs = document.getElementById('why-choose-us'); // New
+    const ourCourses = document.getElementById('our-courses'); // New
+    const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
 
     if (popupOverlay) popupOverlay.style.display = 'none';
     if (signoutPopup) signoutPopup.style.display = 'none';
@@ -659,6 +676,9 @@ if (signoutBtn) {
     if (profileInfo) profileInfo.style.display = 'none';
     if (loginScreen) loginScreen.style.display = 'none'; // Hide login screen
     if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
+    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
+    if (ourCourses) ourCourses.style.display = 'block';
+    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
   });
 }
 
