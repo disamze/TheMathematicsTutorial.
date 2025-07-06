@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     { title: 'Geometry Problems', file: 'geometry_problems.pdf' }, // Added for testing 'More'
   ];
   const initialBooks = [ // New array for books
-    { title: 'NCERT Maths Class 10', file: 'ncert_maths_class10.pdf' },
+    { title: 'NCERT Maths Class 10', url: 'https://ncert.nic.in/textbook.php?jemh1=1-15' },
     { title: 'RD Sharma Class 11', file: 'rd_sharma_class11.pdf' },
     { title: 'Concepts of Physics Vol 1', file: 'hc_verma_physics_vol1.pdf' },
     { title: 'Advanced Math for Engineers', file: 'advanced_math_engineers.pdf' }, // Added for testing 'More'
