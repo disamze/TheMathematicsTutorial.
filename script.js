@@ -14,6 +14,7 @@ window.addEventListener('load', () => {
 
   // Check for user session on load
   const userData = localStorage.getItem('user');
+  const homepageHero = document.getElementById('homepage-hero'); // New
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -22,8 +23,9 @@ window.addEventListener('load', () => {
     const data = JSON.parse(userData);
     showMainUI(data);
   } else {
-    // If no user data, ensure login screen is visible
-    if (loginScreen) loginScreen.style.display = 'flex';
+    // If no user data, ensure homepage is visible and others are hidden
+    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
+    if (loginScreen) loginScreen.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
   }
@@ -57,6 +59,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const navToggle = document.querySelector('.nav-toggle');
   const header = document.getElementById('main-header');
   const navLinks = document.querySelectorAll('.nav a');
+  const homepageLoginBtn = document.getElementById('homepage-login-btn'); // New
+  const homepageHero = document.getElementById('homepage-hero'); // New
+  const loginScreen = document.getElementById('login-screen'); // New
+
+  // Event listener for the new homepage login button
+  if (homepageLoginBtn && homepageHero && loginScreen) {
+    homepageLoginBtn.addEventListener('click', () => {
+      homepageHero.style.display = 'none'; // Hide homepage
+      loginScreen.style.display = 'flex'; // Show login screen
+    });
+  }
 
   if (nav && navToggle && header) {
     navToggle.addEventListener('click', () => {
@@ -309,7 +322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS (INFINITE) ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message'
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img' // Added homepage elements
   );
 
   const observerOptions = {
@@ -599,6 +612,7 @@ function parseJwt(token) {
 
 // Display UI after successful login or session restore
 function showMainUI(data) {
+  const homepageHero = document.getElementById('homepage-hero'); // New
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -606,6 +620,7 @@ function showMainUI(data) {
   const popupName = document.getElementById('popup-name');
   const popupPic = document.getElementById('popup-pic');
 
+  if (homepageHero) homepageHero.style.display = 'none'; // Hide homepage
   if (loginScreen) loginScreen.style.display = 'none';
   if (mainContent) mainContent.style.display = 'block';
   if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
@@ -635,13 +650,15 @@ if (signoutBtn) {
     const mainHeader = document.getElementById('main-header');
     const profileInfo = document.getElementById('profile-info');
     const loginScreen = document.getElementById('login-screen');
+    const homepageHero = document.getElementById('homepage-hero'); // New
 
     if (popupOverlay) popupOverlay.style.display = 'none';
     if (signoutPopup) signoutPopup.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
     if (profileInfo) profileInfo.style.display = 'none';
-    if (loginScreen) loginScreen.style.display = 'flex'; // Show login screen
+    if (loginScreen) loginScreen.style.display = 'none'; // Hide login screen
+    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
   });
 }
 
