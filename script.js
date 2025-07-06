@@ -131,15 +131,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initial static lists (these will be augmented by fetched files)
   const initialNotes = [
     { title: 'SST', file: 'SST99days.pdf' },
-    { title: 'Algebra Basics', file: 'algebra_basics.pdf' },
-    { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
+    { title: 'Light Notes', file: 'light notes.pdf' },
+    { title: 'Trigonometry -12th', file: 'trigo.pdf' },
     { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
     { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
     { title: 'Advanced Calculus', file: 'advanced_calculus.pdf' }, // Added for testing 'More'
   ];
   const initialQuestions = [
-    { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
-    { title: 'Advanced Algebra Problems', file: 'advanced_algebra.pdf' },
+    { title: 'AP', file: 'AP.pdf' },
+    { title: 'Light', file: 'light.pdf' },
     { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
     { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
