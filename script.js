@@ -15,6 +15,9 @@ window.addEventListener('load', () => {
   // Check for user session on load
   const userData = localStorage.getItem('user');
   const homepageHero = document.getElementById('homepage-hero'); // New
+  const whyChooseUs = document.getElementById('why-choose-us'); // New
+  const ourCourses = document.getElementById('our-courses'); // New
+  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -25,10 +28,9 @@ window.addEventListener('load', () => {
   } else {
     // If no user data, ensure homepage is visible and others are hidden
     if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
-    // Hide other homepage sections initially, they will be revealed by JS
-    document.getElementById('why-choose-us').style.display = 'block';
-    document.getElementById('our-courses').style.display = 'block';
-    document.getElementById('homepage-testimonials').style.display = 'block';
+    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
+    if (ourCourses) ourCourses.style.display = 'block';
+    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
 
     if (loginScreen) loginScreen.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
@@ -131,22 +133,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initial static lists (these will be augmented by fetched files)
   const initialNotes = [
     { title: 'SST', file: 'SST99days.pdf' },
-    { title: 'Light Notes', file: 'light notes.pdf' },
-    { title: 'Trigonometry -12th', file: 'trigo.pdf' },
+    { title: 'Algebra Basics', file: 'algebra_basics.pdf' },
+    { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
     { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
     { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
     { title: 'Advanced Calculus', file: 'advanced_calculus.pdf' }, // Added for testing 'More'
   ];
   const initialQuestions = [
-    { title: 'AP', file: 'AP.pdf' },
-    { title: 'Light', file: 'light.pdf' },
+    { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
+    { title: 'Advanced Algebra Problems', file: 'advanced_algebra.pdf' },
     { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
     { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
     { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
     { title: 'Geometry Problems', file: 'geometry_problems.pdf' }, // Added for testing 'More'
   ];
   const initialBooks = [ // New array for books
-    { title: 'NCERT Maths Class 10', url: 'https://ncert.nic.in/textbook.php?jemh1=1-15' },
+    { title: 'NCERT Maths Class 10', file: 'ncert_maths_class10.pdf' },
     { title: 'RD Sharma Class 11', file: 'rd_sharma_class11.pdf' },
     { title: 'Concepts of Physics Vol 1', file: 'hc_verma_physics_vol1.pdf' },
     { title: 'Advanced Math for Engineers', file: 'advanced_math_engineers.pdf' }, // Added for testing 'More'
@@ -330,7 +332,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS (INFINITE) ———
   // Select all elements that should be revealed
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img, .homepage-section h2, .homepage-section .card, .homepage-section .course-card' // Added new homepage elements
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img, .homepage-section h2, .homepage-section .card, .homepage-section .course-card, .homepage-testimonials .testimonial-card' // Added new homepage elements
   );
 
   const observerOptions = {
