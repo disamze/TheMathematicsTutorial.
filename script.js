@@ -38,14 +38,7 @@ window.addEventListener('load', () => {
 
     // NEW: Load ads for the homepage immediately if not logged in
     // Give a small delay to ensure initial layout is done
-    setTimeout(() => {
-        if (window.adsbygoogle) {
-            loadAdsenseAds();
-        } else {
-            console.warn('adsbygoogle script not yet loaded on initial page load.');
-        }
-    }, 500); // Delay for initial homepage ad load
-  }
+    
 
   // ——— AUTOMATIC THEME DETECTION ON LOAD ———
   // Check for a saved theme preference first
@@ -647,31 +640,7 @@ function parseJwt(token) {
 }
 
 // Function to load AdSense ads with a retry mechanism
-function loadAdsenseAds(retries = 5) { // Added retries parameter
-  const adSlots = document.querySelectorAll('ins.adsbygoogle');
-  let allSlotsReady = true; // Flag to track if all slots are ready
 
-  adSlots.forEach(slot => {
-    // Check if the slot is actually visible and has a width
-    // We also check if it hasn't been processed by this function before
-    if (slot.offsetWidth > 0 && slot.offsetHeight > 0 && !slot.dataset.adsbygoogleDone) {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-      slot.dataset.adsbygoogleDone = 'true'; // Mark as processed
-      console.log('AdSense ad pushed for rendering:', slot.dataset.adSlot);
-    } else if (!slot.dataset.adsbygoogleDone) { // Only warn/retry if not yet processed
-      allSlotsReady = false;
-      console.warn('AdSense slot not yet visible or has zero dimensions:', slot.dataset.adSlot);
-    }
-  });
-
-  // If not all slots are ready and we have retries left, try again after a delay
-  if (!allSlotsReady && retries > 0) {
-    console.log(`Retrying AdSense ad loading. Retries left: ${retries - 1}`);
-    setTimeout(() => loadAdsenseAds(retries - 1), 500); // Retry after 500ms
-  } else if (!allSlotsReady && retries === 0) {
-    console.error('Failed to load all AdSense ads after multiple retries. Some ad slots may not be visible.');
-  }
-}
 
 
 // Display UI after successful login or session restore
