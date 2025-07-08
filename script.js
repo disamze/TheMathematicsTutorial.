@@ -620,6 +620,34 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
+// Function to load AdSense ads
+// This function will be called when the main content becomes visible
+function loadAdsenseAds() {
+  // Find all ad slots
+  const adSlots = document.querySelectorAll('ins.adsbygoogle');
+
+  adSlots.forEach(slot => {
+    // Check if the slot is actually visible and has a width
+    // This check is crucial to prevent the "availableWidth=0" error
+    if (slot.offsetWidth > 0 && slot.offsetHeight > 0) {
+      // Only push if it hasn't been pushed already for this slot
+      if (!slot.dataset.adsbygoogleDone) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        slot.dataset.adsbygoogleDone = 'true'; // Mark as processed
+        console.log('AdSense ad pushed for rendering:', slot.dataset.adSlot);
+      }
+    } else {
+      console.warn('AdSense slot not yet visible or has zero dimensions:', slot.dataset.adSlot);
+      // If the slot is not visible, we might want to retry later.
+      // For this specific case, since it's tied to main-content visibility,
+      // the initial call in showMainUI should be sufficient.
+      // If you have ads that become visible at different times (e.g., in tabs),
+      // you might need a MutationObserver or IntersectionObserver for those specific ads.
+    }
+  });
+}
+
+
 // Display UI after successful login or session restore
 function showMainUI(data) {
   const homepageHero = document.getElementById('homepage-hero'); // New
@@ -638,7 +666,16 @@ function showMainUI(data) {
   if (ourCourses) ourCourses.style.display = 'none';
   if (homepageTestimonials) homepageTestimonials.style.display = 'none';
   if (loginScreen) loginScreen.style.display = 'none';
-  if (mainContent) mainContent.style.display = 'block';
+
+  if (mainContent) {
+    mainContent.style.display = 'block';
+    if (window.adsbygoogle) { // Check if AdSense script is loaded
+        // Give a small delay to ensure the browser has rendered the display: block change
+        setTimeout(loadAdsenseAds, 100); // Call after a short delay
+    } else {
+        console.warn('adsbygoogle script not yet loaded. Ads may not render.');
+    }
+  }
   if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
 
   if (profileDiv && data.picture && data.name) {
@@ -708,71 +745,12 @@ if (popupOverlay) {
     const signoutPopup = document.getElementById('signout-popup');
     // Only close if the click is directly on the overlay, not its children
     if (e.target === popupOverlay && signoutPopup) {
+      popupOverlay.classList.remove('active'); // Use class for transition
+      signoutPopup.classList.remove('active'); // Use class for transition
+      // For immediate removal, you can set display: 'none' after a short delay
+      // to allow transition to complete, or just set it directly if no transition.
       popupOverlay.style.display = 'none';
       signoutPopup.style.display = 'none';
     }
   });
 }
-
-
-// In MultipleFiles/script (5).js
-
-// ... (existing code) ...
-
-// Function to load AdSense ads
-function loadAdsenseAds() {
-  // Check if the adsbygoogle array exists and if the ad container is visible
-  const adContainer = document.querySelector('.adsbygoogle');
-  if (window.adsbygoogle && adContainer && adContainer.offsetWidth > 0 && adContainer.offsetHeight > 0) {
-    // Push an empty object to the adsbygoogle array to trigger ad loading
-    // This should only happen once per ad slot after it becomes visible
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
-    console.log('AdSense ad pushed for rendering.');
-  } else {
-    console.warn('AdSense container not visible or adsbygoogle not ready. Retrying in 500ms.');
-    // Retry after a short delay if the container isn't ready yet
-    setTimeout(loadAdsenseAds, 500);
-  }
-}
-
-
-// Display UI after successful login or session restore
-function showMainUI(data) {
-  const homepageHero = document.getElementById('homepage-hero');
-  const whyChooseUs = document.getElementById('why-choose-us');
-  const ourCourses = document.getElementById('our-courses');
-  const homepageTestimonials = document.getElementById('homepage-testimonials');
-  const loginScreen = document.getElementById('login-screen');
-  const mainContent = document.getElementById('main-content');
-  const mainHeader = document.getElementById('main-header');
-  const profileDiv = document.getElementById('profile-info');
-  const popupName = document.getElementById('popup-name');
-  const popupPic = document.getElementById('popup-pic');
-
-  if (homepageHero) homepageHero.style.display = 'none';
-  if (whyChooseUs) whyChooseUs.style.display = 'none';
-  if (ourCourses) ourCourses.style.display = 'none';
-  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
-  if (loginScreen) loginScreen.style.display = 'none';
-
-  if (mainContent) {
-    mainContent.style.display = 'block';
-    // Call loadAdsenseAds after mainContent is displayed
-    loadAdsenseAds();
-  }
-  if (mainHeader) mainHeader.style.display = 'flex';
-
-  if (profileDiv && data.picture && data.name) {
-    profileDiv.innerHTML = `
-      <img src="${data.picture}" alt="Profile Picture">
-      <span>${data.name.split(' ')[0]}</span>
-    `;
-    profileDiv.style.display = 'flex';
-  }
-
-  if (popupName) popupName.textContent = data.name;
-  if (popupPic) popupPic.src = data.picture;
-}
-
-// ... (rest of the script) ...
-
