@@ -620,6 +620,7 @@ section {
 .homepage-hero {
   min-height: 100vh;
   display: flex;
+  flex-direction: column; /* Allow content and ad to stack */
   align-items: center;
   background: var(--bg);
   padding-top: 6rem;
@@ -1522,7 +1523,7 @@ section {
   transition-delay: calc(var(--item-index) * 0.05s);
 }
 
-/* Dynamic delay for list items */
+/* Dynamic delay for cards */
 .testimonial-card.reveal-item {
   transition-delay: calc(var(--item-index) * 0.08s);
 }
@@ -1905,5 +1906,48 @@ section {
     font-size: 1.6rem;
     bottom: 15px;
     right: 15px;
+  }
+}
+
+/* AdSense Specific CSS for fixed sizes */
+/* Homepage Ad (e.g., 320x100 or 320x50 for mobile, 728x90 for desktop) */
+.homepage-ad {
+  width: 320px;
+  height: 100px;
+  margin: 0 auto; /* Center the ad */
+}
+
+/* Extra Ad Section on Main Site (e.g., 300x250 or 336x280) */
+.main-content-ad-extra {
+  width: 336px;
+  height: 280px;
+  margin: 0 auto; /* Center the ad */
+}
+
+/* Original Ad at the bottom of main content (e.g., 728x90) */
+.main-content-ad-bottom {
+  width: 728px;
+  height: 90px;
+  margin: 0 auto; /* Center the ad */
+}
+
+/* Responsive adjustments for ads */
+@media (min-width: 768px) {
+  .homepage-ad {
+    width: 728px;
+    height: 90px;
+  }
+  .main-content-ad-extra {
+    width: 728px;
+    height: 90px; /* Or keep it larger like 336x280 if you prefer */
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage-ad,
+  .main-content-ad-extra,
+  .main-content-ad-bottom {
+    width: 300px; /* Smaller width for very small screens */
+    height: 50px; /* Smaller height for very small screens */
   }
 }
