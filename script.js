@@ -11,7 +11,7 @@ window.addEventListener('load', () => {
       }, { once: true });
     }, 3000); // Show loader for at least 3 seconds
   }
-};
+});
 
   // Check for user session on load
   const userData = localStorage.getItem('user');
