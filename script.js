@@ -713,3 +713,66 @@ if (popupOverlay) {
     }
   });
 }
+
+
+// In MultipleFiles/script (5).js
+
+// ... (existing code) ...
+
+// Function to load AdSense ads
+function loadAdsenseAds() {
+  // Check if the adsbygoogle array exists and if the ad container is visible
+  const adContainer = document.querySelector('.adsbygoogle');
+  if (window.adsbygoogle && adContainer && adContainer.offsetWidth > 0 && adContainer.offsetHeight > 0) {
+    // Push an empty object to the adsbygoogle array to trigger ad loading
+    // This should only happen once per ad slot after it becomes visible
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+    console.log('AdSense ad pushed for rendering.');
+  } else {
+    console.warn('AdSense container not visible or adsbygoogle not ready. Retrying in 500ms.');
+    // Retry after a short delay if the container isn't ready yet
+    setTimeout(loadAdsenseAds, 500);
+  }
+}
+
+
+// Display UI after successful login or session restore
+function showMainUI(data) {
+  const homepageHero = document.getElementById('homepage-hero');
+  const whyChooseUs = document.getElementById('why-choose-us');
+  const ourCourses = document.getElementById('our-courses');
+  const homepageTestimonials = document.getElementById('homepage-testimonials');
+  const loginScreen = document.getElementById('login-screen');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
+  const profileDiv = document.getElementById('profile-info');
+  const popupName = document.getElementById('popup-name');
+  const popupPic = document.getElementById('popup-pic');
+
+  if (homepageHero) homepageHero.style.display = 'none';
+  if (whyChooseUs) whyChooseUs.style.display = 'none';
+  if (ourCourses) ourCourses.style.display = 'none';
+  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
+  if (loginScreen) loginScreen.style.display = 'none';
+
+  if (mainContent) {
+    mainContent.style.display = 'block';
+    // Call loadAdsenseAds after mainContent is displayed
+    loadAdsenseAds();
+  }
+  if (mainHeader) mainHeader.style.display = 'flex';
+
+  if (profileDiv && data.picture && data.name) {
+    profileDiv.innerHTML = `
+      <img src="${data.picture}" alt="Profile Picture">
+      <span>${data.name.split(' ')[0]}</span>
+    `;
+    profileDiv.style.display = 'flex';
+  }
+
+  if (popupName) popupName.textContent = data.name;
+  if (popupPic) popupPic.src = data.picture;
+}
+
+// ... (rest of the script) ...
+
