@@ -622,13 +622,17 @@ function parseJwt(token) {
 
 // Function to load AdSense ads
 // This function will be called when the main content becomes visible
-function loadAdsenseAds() {
-  // Find all ad slots
+// In MultipleFiles/script (5).js
+
+// ... (existing code) ...
+
+// Function to load AdSense ads with a retry mechanism
+function loadAdsenseAds(retries = 5) { // Added retries parameter
   const adSlots = document.querySelectorAll('ins.adsbygoogle');
+  let allSlotsReady = true; // Flag to track if all slots are ready
 
   adSlots.forEach(slot => {
     // Check if the slot is actually visible and has a width
-    // This check is crucial to prevent the "availableWidth=0" error
     if (slot.offsetWidth > 0 && slot.offsetHeight > 0) {
       // Only push if it hasn't been pushed already for this slot
       if (!slot.dataset.adsbygoogleDone) {
@@ -637,15 +641,74 @@ function loadAdsenseAds() {
         console.log('AdSense ad pushed for rendering:', slot.dataset.adSlot);
       }
     } else {
+      // If a slot is not ready, set flag to false
+      allSlotsReady = false;
       console.warn('AdSense slot not yet visible or has zero dimensions:', slot.dataset.adSlot);
-      // If the slot is not visible, we might want to retry later.
-      // For this specific case, since it's tied to main-content visibility,
-      // the initial call in showMainUI should be sufficient.
-      // If you have ads that become visible at different times (e.g., in tabs),
-      // you might need a MutationObserver or IntersectionObserver for those specific ads.
     }
   });
+
+  // If not all slots are ready and we have retries left, try again after a delay
+  if (!allSlotsReady && retries > 0) {
+    console.log(`Retrying AdSense ad loading. Retries left: ${retries - 1}`);
+    setTimeout(() => loadAdsenseAds(retries - 1), 500); // Retry after 500ms
+  } else if (!allSlotsReady && retries === 0) {
+    console.error('Failed to load all AdSense ads after multiple retries. Some ad slots may not be visible.');
+  }
 }
+
+
+// Display UI after successful login or session restore
+function showMainUI(data) {
+  const homepageHero = document.getElementById('homepage-hero'); // New
+  const whyChooseUs = document.getElementById('why-choose-us'); // New
+  const ourCourses = document.getElementById('our-courses'); // New
+  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
+  const loginScreen = document.getElementById('login-screen');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
+  const profileDiv = document.getElementById('profile-info');
+  const popupName = document.getElementById('popup-name');
+  const popupPic = document.getElementById('popup-pic');
+
+  if (homepageHero) homepageHero.style.display = 'none'; // Hide homepage
+  if (whyChooseUs) whyChooseUs.style.display = 'none'; // Hide new sections
+  if (ourCourses) ourCourses.style.display = 'none';
+  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
+  if (loginScreen) loginScreen.style.display = 'none';
+
+  if (mainContent) {
+    mainContent.style.display = 'block';
+    // Ensure the browser has rendered the display: block change
+    // before trying to measure the ad slot.
+    // Call loadAdsenseAds with initial retries.
+    if (window.adsbygoogle) { // Check if AdSense script is loaded
+        // Give a very short initial delay to allow DOM to update, then let retry handle it
+        setTimeout(() => loadAdsenseAds(), 50);
+    } else {
+        console.warn('adsbygoogle script not yet loaded. Ads may not render.');
+        // If adsbygoogle is not defined, it means the external script hasn't loaded.
+        // You might need a more robust loading mechanism for the AdSense script itself
+        // if it's not guaranteed to be available when showMainUI is called.
+        // For now, we assume it will load eventually.
+    }
+  }
+  if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
+
+  if (profileDiv && data.picture && data.name) {
+    profileDiv.innerHTML = `
+      <img src="${data.picture}" alt="Profile Picture">
+      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
+    `;
+    profileDiv.style.display = 'flex';
+  }
+
+  // Set data for signout popup
+  if (popupName) popupName.textContent = data.name;
+  if (popupPic) popupPic.src = data.picture;
+}
+
+// ... (rest of the script) ...
+
 
 
 // Display UI after successful login or session restore
