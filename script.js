@@ -11,35 +11,6 @@ window.addEventListener('load', () => {
       }, { once: true });
     }, 3000); // Show loader for at least 3 seconds
   }
-});
-
-  // Check for user session on load
-  const userData = localStorage.getItem('user');
-  const homepageHero = document.getElementById('homepage-hero'); // New
-  const whyChooseUs = document.getElementById('why-choose-us'); // New
-  const ourCourses = document.getElementById('our-courses'); // New
-  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
-  const loginScreen = document.getElementById('login-screen');
-  const mainContent = document.getElementById('main-content');
-  const mainHeader = document.getElementById('main-header');
-
-  if (userData) {
-    const data = JSON.parse(userData);
-    showMainUI(data);
-  } else {
-    // If no user data, ensure homepage is visible and others are hidden
-    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
-    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
-    if (ourCourses) ourCourses.style.display = 'block';
-    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
-
-    if (loginScreen) loginScreen.style.display = 'none';
-    if (mainContent) mainContent.style.display = 'none';
-    if (mainHeader) mainHeader.style.display = 'none';
-
-    // NEW: Load ads for the homepage immediately if not logged in
-    // Give a small delay to ensure initial layout is done
-    
 
   // ——— AUTOMATIC THEME DETECTION ON LOAD ———
   // Check for a saved theme preference first
@@ -62,29 +33,60 @@ window.addEventListener('load', () => {
       ? '<i class="bx bx-sun"></i>'
       : '<i class="bx bx-moon"></i>';
   }
+
+  // Check for user session on load and display appropriate UI
+  const userData = localStorage.getItem('user');
+  if (userData) {
+    const data = JSON.parse(userData);
+    showMainUI(data);
+  } else {
+    // If no user data, ensure homepage is visible and others are hidden
+    const homepageHero = document.getElementById('homepage-hero');
+    const whyChooseUs = document.getElementById('why-choose-us');
+    const ourCourses = document.getElementById('our-courses');
+    const homepageTestimonials = document.getElementById('homepage-testimonials');
+    const loginScreen = document.getElementById('login-screen');
+    const mainContent = document.getElementById('main-content');
+    const mainHeader = document.getElementById('main-header');
+
+    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
+    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
+    if (ourCourses) ourCourses.style.display = 'block';
+    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
+
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'none';
+    if (mainHeader) mainHeader.style.display = 'none';
+  }
 });
 
-// ——— MOBILE MENU TOGGLE & SMOOTH SCROLLING ———
+
+// ——— MAIN DOM CONTENT LOADED LOGIC ———
 document.addEventListener('DOMContentLoaded', async () => {
   const nav = document.querySelector('.nav');
   const navToggle = document.querySelector('.nav-toggle');
   const header = document.getElementById('main-header');
   const navLinks = document.querySelectorAll('.nav a');
-  const homepageLoginBtn = document.getElementById('homepage-login-btn'); // New
-  const homepageHero = document.getElementById('homepage-hero'); // New
-  const loginScreen = document.getElementById('login-screen'); // New
+  const homepageLoginBtn = document.getElementById('homepage-login-btn');
+  const homepageHero = document.getElementById('homepage-hero');
+  const loginScreen = document.getElementById('login-screen');
+  const whyChooseUs = document.getElementById('why-choose-us');
+  const ourCourses = document.getElementById('our-courses');
+  const homepageTestimonials = document.getElementById('homepage-testimonials');
+
 
   // Event listener for the new homepage login button
-  if (homepageLoginBtn && homepageHero && loginScreen) {
+  if (homepageLoginBtn && homepageHero && loginScreen && whyChooseUs && ourCourses && homepageTestimonials) {
     homepageLoginBtn.addEventListener('click', () => {
       homepageHero.style.display = 'none'; // Hide homepage hero
-      document.getElementById('why-choose-us').style.display = 'none'; // Hide new sections
-      document.getElementById('our-courses').style.display = 'none';
-      document.getElementById('homepage-testimonials').style.display = 'none';
+      whyChooseUs.style.display = 'none'; // Hide new sections
+      ourCourses.style.display = 'none';
+      homepageTestimonials.style.display = 'none';
       loginScreen.style.display = 'flex'; // Show login screen
     });
   }
 
+  // ——— MOBILE MENU TOGGLE & SMOOTH SCROLLING ———
   if (nav && navToggle && header) {
     navToggle.addEventListener('click', () => {
       const expanded = navToggle.getAttribute('aria-expanded') === 'true';
@@ -345,11 +347,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     threshold: 0.1 // Trigger when 10% of the item is visible
   };
 
-  const observer = new IntersectionObserver((entries) => { // Removed 'observer' from parameters
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        // Removed: observer.unobserve(entry.target); // Stop observing once visible
+        // If you want the animation to play only once, uncomment the line below:
+        // observer.unobserve(entry.target);
+        // If you want the animation to reset when out of view and replay when in view, keep it commented.
       } else {
         // If not intersecting, remove the class to reset the animation
         entry.target.classList.remove('is-visible');
@@ -430,7 +434,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         isDown = false;
         slider.classList.remove('active');
         // Only resume if not currently dragging (mouse up hasn't fired)
-        if (!isDown) startAutoScroll();
+        if (!isDown) startAutoScroll(); // This condition might be tricky, better to always resume on mouseup/touchend
       });
       slider.addEventListener('mouseup', () => {
         isDown = false;
@@ -561,6 +565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let currentActiveSection = '';
   for (let i = 0; i < sections.length; i++) {
     const rect = sections[i].getBoundingClientRect();
+    // Adjust the offset for header height and a small buffer
     if (rect.top <= headerHeight + 50 && rect.bottom >= headerHeight + 50) {
       currentActiveSection = sections[i].id;
       break;
@@ -569,14 +574,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (currentActiveSection) {
     activateNavLink(currentActiveSection);
   } else if (sections.length > 0) {
+    // If no section is perfectly in view, activate the first one
     activateNavLink(sections[0].id);
   }
 
 
   const sectionObserverOptions = {
     root: null,
-    rootMargin: `-${headerHeight + 1}px 0px -${window.innerHeight - headerHeight - 1}px 0px`,
-    threshold: 0
+    // A simpler rootMargin that triggers when the top of the section hits the bottom of the header
+    rootMargin: `-${headerHeight}px 0px 0px 0px`,
+    threshold: 0 // Trigger as soon as any part of the target enters the root
   };
 
   const sectionObserver = new IntersectionObserver((entries) => {
@@ -615,7 +622,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleBackToTop(); // Initial check on load
   }
 
-});
+}); // End of DOMContentLoaded
 
 // ——— GOOGLE SIGN-IN LOGIC ———
 // Google Sign-In callback must be globally accessible
@@ -640,16 +647,12 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-// Function to load AdSense ads with a retry mechanism
-
-
-
 // Display UI after successful login or session restore
 function showMainUI(data) {
-  const homepageHero = document.getElementById('homepage-hero'); // New
-  const whyChooseUs = document.getElementById('why-choose-us'); // New
-  const ourCourses = document.getElementById('our-courses'); // New
-  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
+  const homepageHero = document.getElementById('homepage-hero');
+  const whyChooseUs = document.getElementById('why-choose-us');
+  const ourCourses = document.getElementById('our-courses');
+  const homepageTestimonials = document.getElementById('homepage-testimonials');
   const loginScreen = document.getElementById('login-screen');
   const mainContent = document.getElementById('main-content');
   const mainHeader = document.getElementById('main-header');
@@ -667,12 +670,6 @@ function showMainUI(data) {
   // Show main content
   if (mainContent) {
     mainContent.style.display = 'block';
-    // Load ads for the main content after it becomes visible
-    if (window.adsbygoogle) {
-        setTimeout(() => loadAdsenseAds(), 50); // Initial call with a small delay
-    } else {
-        console.warn('adsbygoogle script not yet loaded when main content is displayed.');
-    }
   }
   if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
 
@@ -701,10 +698,10 @@ if (signoutBtn) {
     const mainHeader = document.getElementById('main-header');
     const profileInfo = document.getElementById('profile-info');
     const loginScreen = document.getElementById('login-screen');
-    const homepageHero = document.getElementById('homepage-hero'); // New
-    const whyChooseUs = document.getElementById('why-choose-us'); // New
-    const ourCourses = document.getElementById('our-courses'); // New
-    const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
+    const homepageHero = document.getElementById('homepage-hero');
+    const whyChooseUs = document.getElementById('why-choose-us');
+    const ourCourses = document.getElementById('our-courses');
+    const homepageTestimonials = document.getElementById('homepage-testimonials');
 
     if (popupOverlay) popupOverlay.style.display = 'none';
     if (signoutPopup) signoutPopup.style.display = 'none';
@@ -718,19 +715,6 @@ if (signoutBtn) {
     if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
     if (ourCourses) ourCourses.style.display = 'block';
     if (homepageTestimonials) homepageTestimonials.style.display = 'block';
-
-    // NEW: Load ads for the homepage again after sign out
-    setTimeout(() => {
-        if (window.adsbygoogle) {
-            // Reset adsbygoogleDone for all slots to allow them to be re-rendered
-            document.querySelectorAll('ins.adsbygoogle').forEach(slot => {
-                delete slot.dataset.adsbygoogleDone;
-            });
-            loadAdsenseAds();
-        } else {
-            console.warn('adsbygoogle script not yet loaded on sign out.');
-        }
-    }, 500);
   });
 }
 
