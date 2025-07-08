@@ -371,93 +371,109 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ——— TESTIMONIAL SLIDER (AUTOMATIC SCROLL & LOOP) ———
-  const slider = document.querySelector('.testimonial-grid');
-  let isDown = false;
-  let startX;
-  let scrollLeft;
-  let scrollInterval;
-  const scrollSpeed = 1; // Adjust for faster/slower scroll
-  const scrollDelay = 50; // Milliseconds between scroll steps
+  // Select both testimonial grids
+  const sliders = document.querySelectorAll('.testimonial-grid');
 
-  if (slider) {
-    // Duplicate cards for seamless looping
-    const cards = Array.from(slider.children);
-    cards.forEach(card => {
-      slider.appendChild(card.cloneNode(true));
-    });
+  sliders.forEach(slider => { // Iterate over each slider
+    if (slider) {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let scrollInterval;
+      const scrollSpeed = 1; // Adjust for faster/slower scroll
+      const scrollDelay = 50; // Milliseconds between scroll steps
 
-    const startAutoScroll = () => {
-      if (scrollInterval) clearInterval(scrollInterval); // Clear any existing interval
-      scrollInterval = setInterval(() => {
-        slider.scrollLeft += scrollSpeed;
+      // Duplicate cards for seamless looping
+      const cards = Array.from(slider.children);
+      // Only duplicate if there are enough cards to scroll
+      if (cards.length > 0) {
+        cards.forEach(card => {
+          slider.appendChild(card.cloneNode(true));
+        });
+      }
 
-        // If scrolled past the original content, reset to the beginning of the duplicated content
-        if (slider.scrollWidth >= slider.scrollWidth / 2) { // Corrected condition
-          slider.scrollLeft = 0;
-        }
-      }, scrollDelay);
-    };
+      const startAutoScroll = () => {
+        if (scrollInterval) clearInterval(scrollInterval); // Clear any existing interval
+        scrollInterval = setInterval(() => {
+          slider.scrollLeft += scrollSpeed;
 
-    const stopAutoScroll = () => {
-      clearInterval(scrollInterval);
-    };
+          // Corrected loop condition:
+          // If scrolled past the original content (which is half the total scrollWidth after duplication),
+          // reset to the beginning of the duplicated content.
+          // Use scrollWidth / 2 as the threshold for resetting.
+          if (slider.scrollLeft >= slider.scrollWidth / 2) {
+            slider.scrollLeft = 0;
+          }
+        }, scrollDelay);
+      };
 
-    // Start auto-scroll when the page loads
-    startAutoScroll();
+      const stopAutoScroll = () => {
+        clearInterval(scrollInterval);
+      };
 
-    // Pause auto-scroll on mouse hover/touch
-    slider.addEventListener('mouseenter', stopAutoScroll);
-    slider.addEventListener('mouseleave', startAutoScroll);
-    slider.addEventListener('touchstart', stopAutoScroll);
-    slider.addEventListener('touchend', startAutoScroll);
+      // Start auto-scroll when the page loads
+      // Only start if the slider actually has scrollable content
+      if (slider.scrollWidth > slider.clientWidth) { // Check if content overflows
+        startAutoScroll();
+      }
 
-    // Existing drag functionality (modified to interact with auto-scroll)
-    slider.addEventListener('mousedown', (e) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-      stopAutoScroll(); // Stop auto-scroll when dragging starts
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-      startAutoScroll(); // Resume auto-scroll when mouse leaves
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-      startAutoScroll(); // Resume auto-scroll when drag ends
-    });
-    slider.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 2; // scroll speed
-      slider.scrollLeft = scrollLeft - walk;
-    });
 
-    // Touch events for mobile
-    slider.addEventListener('touchstart', (e) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.touches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft; // Store current scroll position
-      stopAutoScroll(); // Stop auto-scroll when dragging starts
-    });
-    slider.addEventListener('touchend', () => {
-      isDown = false;
-      slider.classList.remove('active');
-      startAutoScroll(); // Resume auto-scroll when drag ends
-    });
-    slider.addEventListener('touchmove', (e) => {
-      if (!isDown) return;
-      e.preventDefault(); // Prevent scrolling the page
-      const x = e.touches[0].pageX - slider.offsetLeft;
-      const walk = (x - startX) * 2;
-      slider.scrollLeft = scrollLeft - walk;
-    });
-  }
+      // Pause auto-scroll on mouse hover/touch
+      slider.addEventListener('mouseenter', stopAutoScroll);
+      slider.addEventListener('mouseleave', startAutoScroll);
+      slider.addEventListener('touchstart', stopAutoScroll);
+      slider.addEventListener('touchend', startAutoScroll);
+
+      // Existing drag functionality (modified to interact with auto-scroll)
+      slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+        stopAutoScroll(); // Stop auto-scroll when dragging starts
+      });
+      slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.classList.remove('active');
+        // Only resume if not currently dragging (mouse up hasn't fired)
+        if (!isDown) startAutoScroll();
+      });
+      slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.classList.remove('active');
+        startAutoScroll(); // Resume auto-scroll when drag ends
+      });
+      slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // scroll speed
+        slider.scrollLeft = scrollLeft - walk;
+      });
+
+      // Touch events for mobile
+      slider.addEventListener('touchstart', (e) => {
+        isDown = true;
+        slider.classList.add('active');
+        startX = e.touches[0].pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft; // Store current scroll position
+        stopAutoScroll(); // Stop auto-scroll when dragging starts
+      });
+      slider.addEventListener('touchend', () => {
+        isDown = false;
+        slider.classList.remove('active');
+        startAutoScroll(); // Resume auto-scroll when drag ends
+      });
+      slider.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        e.preventDefault(); // Prevent scrolling the page
+        const x = e.touches[0].pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+      });
+    }
+  }); // End of forEach(slider => { ... })
+
 
   // ——— CONTACT FORM SUBMISSION & VALIDATION ———
   const contactForm = document.getElementById('contact-form');
