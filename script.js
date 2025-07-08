@@ -35,6 +35,16 @@ window.addEventListener('load', () => {
     if (loginScreen) loginScreen.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
+
+    // NEW: Load ads for the homepage immediately if not logged in
+    // Give a small delay to ensure initial layout is done
+    setTimeout(() => {
+        if (window.adsbygoogle) {
+            loadAdsenseAds();
+        } else {
+            console.warn('adsbygoogle script not yet loaded on initial page load.');
+        }
+    }, 500); // Delay for initial homepage ad load
   }
 
   // ——— AUTOMATIC THEME DETECTION ON LOAD ———
@@ -620,12 +630,6 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-// Function to load AdSense ads
-// This function will be called when the main content becomes visible
-// In MultipleFiles/script (5).js
-
-// ... (existing code) ...
-
 // Function to load AdSense ads with a retry mechanism
 function loadAdsenseAds(retries = 5) { // Added retries parameter
   const adSlots = document.querySelectorAll('ins.adsbygoogle');
@@ -633,15 +637,12 @@ function loadAdsenseAds(retries = 5) { // Added retries parameter
 
   adSlots.forEach(slot => {
     // Check if the slot is actually visible and has a width
-    if (slot.offsetWidth > 0 && slot.offsetHeight > 0) {
-      // Only push if it hasn't been pushed already for this slot
-      if (!slot.dataset.adsbygoogleDone) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        slot.dataset.adsbygoogleDone = 'true'; // Mark as processed
-        console.log('AdSense ad pushed for rendering:', slot.dataset.adSlot);
-      }
-    } else {
-      // If a slot is not ready, set flag to false
+    // We also check if it hasn't been processed by this function before
+    if (slot.offsetWidth > 0 && slot.offsetHeight > 0 && !slot.dataset.adsbygoogleDone) {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      slot.dataset.adsbygoogleDone = 'true'; // Mark as processed
+      console.log('AdSense ad pushed for rendering:', slot.dataset.adSlot);
+    } else if (!slot.dataset.adsbygoogleDone) { // Only warn/retry if not yet processed
       allSlotsReady = false;
       console.warn('AdSense slot not yet visible or has zero dimensions:', slot.dataset.adSlot);
     }
@@ -670,73 +671,21 @@ function showMainUI(data) {
   const popupName = document.getElementById('popup-name');
   const popupPic = document.getElementById('popup-pic');
 
-  if (homepageHero) homepageHero.style.display = 'none'; // Hide homepage
-  if (whyChooseUs) whyChooseUs.style.display = 'none'; // Hide new sections
+  // Hide homepage sections
+  if (homepageHero) homepageHero.style.display = 'none';
+  if (whyChooseUs) whyChooseUs.style.display = 'none';
   if (ourCourses) ourCourses.style.display = 'none';
   if (homepageTestimonials) homepageTestimonials.style.display = 'none';
   if (loginScreen) loginScreen.style.display = 'none';
 
+  // Show main content
   if (mainContent) {
     mainContent.style.display = 'block';
-    // Ensure the browser has rendered the display: block change
-    // before trying to measure the ad slot.
-    // Call loadAdsenseAds with initial retries.
-    if (window.adsbygoogle) { // Check if AdSense script is loaded
-        // Give a very short initial delay to allow DOM to update, then let retry handle it
-        setTimeout(() => loadAdsenseAds(), 50);
+    // Load ads for the main content after it becomes visible
+    if (window.adsbygoogle) {
+        setTimeout(() => loadAdsenseAds(), 50); // Initial call with a small delay
     } else {
-        console.warn('adsbygoogle script not yet loaded. Ads may not render.');
-        // If adsbygoogle is not defined, it means the external script hasn't loaded.
-        // You might need a more robust loading mechanism for the AdSense script itself
-        // if it's not guaranteed to be available when showMainUI is called.
-        // For now, we assume it will load eventually.
-    }
-  }
-  if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
-
-  if (profileDiv && data.picture && data.name) {
-    profileDiv.innerHTML = `
-      <img src="${data.picture}" alt="Profile Picture">
-      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
-    `;
-    profileDiv.style.display = 'flex';
-  }
-
-  // Set data for signout popup
-  if (popupName) popupName.textContent = data.name;
-  if (popupPic) popupPic.src = data.picture;
-}
-
-// ... (rest of the script) ...
-
-
-
-// Display UI after successful login or session restore
-function showMainUI(data) {
-  const homepageHero = document.getElementById('homepage-hero'); // New
-  const whyChooseUs = document.getElementById('why-choose-us'); // New
-  const ourCourses = document.getElementById('our-courses'); // New
-  const homepageTestimonials = document.getElementById('homepage-testimonials'); // New
-  const loginScreen = document.getElementById('login-screen');
-  const mainContent = document.getElementById('main-content');
-  const mainHeader = document.getElementById('main-header');
-  const profileDiv = document.getElementById('profile-info');
-  const popupName = document.getElementById('popup-name');
-  const popupPic = document.getElementById('popup-pic');
-
-  if (homepageHero) homepageHero.style.display = 'none'; // Hide homepage
-  if (whyChooseUs) whyChooseUs.style.display = 'none'; // Hide new sections
-  if (ourCourses) ourCourses.style.display = 'none';
-  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
-  if (loginScreen) loginScreen.style.display = 'none';
-
-  if (mainContent) {
-    mainContent.style.display = 'block';
-    if (window.adsbygoogle) { // Check if AdSense script is loaded
-        // Give a small delay to ensure the browser has rendered the display: block change
-        setTimeout(loadAdsenseAds, 100); // Call after a short delay
-    } else {
-        console.warn('adsbygoogle script not yet loaded. Ads may not render.');
+        console.warn('adsbygoogle script not yet loaded when main content is displayed.');
     }
   }
   if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
@@ -777,10 +726,25 @@ if (signoutBtn) {
     if (mainHeader) mainHeader.style.display = 'none';
     if (profileInfo) profileInfo.style.display = 'none';
     if (loginScreen) loginScreen.style.display = 'none'; // Hide login screen
+
+    // Show homepage sections
     if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
     if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
     if (ourCourses) ourCourses.style.display = 'block';
     if (homepageTestimonials) homepageTestimonials.style.display = 'block';
+
+    // NEW: Load ads for the homepage again after sign out
+    setTimeout(() => {
+        if (window.adsbygoogle) {
+            // Reset adsbygoogleDone for all slots to allow them to be re-rendered
+            document.querySelectorAll('ins.adsbygoogle').forEach(slot => {
+                delete slot.dataset.adsbygoogleDone;
+            });
+            loadAdsenseAds();
+        } else {
+            console.warn('adsbygoogle script not yet loaded on sign out.');
+        }
+    }, 500);
   });
 }
 
