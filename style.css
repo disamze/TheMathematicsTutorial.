@@ -25,13 +25,9 @@ body {
   color: var(--fg);
   line-height: 1.6;
   overflow-x: hidden;
-  /* Crucial: Prevent horizontal scroll for the entire body */
-  /* Removed position: relative; here as it can interfere with fixed positioning of children */
-  /* Removed perspective: 1000px; from body. Apply to specific 3D containers instead. */
 }
 
 /* Global transitions for smooth effects */
-/* Moved this up to ensure it applies broadly */
 * {
   transition: background 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out,
     transform 0.2s ease-out, opacity 0.2s ease-out, border-color 0.2s ease-out,
@@ -124,8 +120,6 @@ ul {
   /* Adjusted for mobile: 100% width minus 1rem padding on each side */
   margin: 0 auto;
   padding: 3rem 0;
-  /* Removed horizontal padding here, handled by width */
-  /* Removed transform-style: preserve-3d; from here. Apply to specific 3D elements. */
 }
 
 /* Ensure sections don't cause overflow */
@@ -166,7 +160,6 @@ section {
   /* Distribute items */
   padding: 0 1.5rem;
   /* More horizontal padding for content */
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .logo {
@@ -246,7 +239,6 @@ section {
 
 @media (max-width: 992px) {
   .nav {
-    /* ...existing code... */
     box-shadow: -5px 0 15px var(--shadow);
     background: var(--card-bg);
     border-left: 1px solid var(--border-color);
@@ -270,7 +262,6 @@ section {
   }
 }
 
-/* ...existing code... */
 /* Profile Info and Nav Toggle (aligned to the right) */
 .profile-info {
   display: none;
@@ -593,15 +584,23 @@ section {
   margin-bottom: 1.5rem;
 }
 
-.g_id_signin {
-  margin-top: 2rem;
+.login-box form .form-row {
+  margin-bottom: 1rem;
 }
 
-.welcome-message {
+.login-box form input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.login-box form button {
+  width: 100%;
   margin-top: 1.5rem;
-  font-weight: 600;
-  color: var(--accent);
-  font-size: 1.1rem;
 }
 
 @keyframes fadeInScale {
@@ -617,235 +616,15 @@ section {
 }
 
 /*———————— HOMEPAGE HERO (NEW) ————————*/
+/* This section is now removed from the initial view */
 .homepage-hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column; /* Allow content and ad to stack */
-  align-items: center;
-  background: var(--bg);
-  padding-top: 6rem;
-  /* Adjust based on header height */
-}
-
-.homepage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.homepage-info h1 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 3.5rem;
-  color: var(--primary);
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
-}
-
-.homepage-info h1 span {
-  color: var(--accent);
-}
-
-.homepage-info p {
-  font-size: 1.15rem;
-  font-weight: 400;
-  color: var(--fg);
-  margin-bottom: 2rem;
-}
-
-.homepage-info .offers {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 5px 15px var(--shadow);
-}
-
-.homepage-info .offers h3 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.3rem;
-  color: var(--primary);
-  margin-bottom: 1rem;
-}
-
-.homepage-info .offers ul {
-  list-style: none;
-  padding: 0;
-}
-
-.homepage-info .offers li {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
-  color: var(--fg);
-  margin-bottom: 0.5rem;
-}
-
-.homepage-info .offers li i {
-  color: var(--accent);
-  font-size: 1.2rem;
-}
-
-.homepage-info .btn {
-  background: var(--primary);
-  color: var(--card-bg);
-  padding: 0.8rem 2rem;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  box-shadow: 0 8px 20px var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  font-weight: 600;
-  font-size: 1.1rem;
-  display: inline-block;
-  will-change: transform, box-shadow;
-  border: none;
-  /* Ensure button has no default border */
-  cursor: pointer;
-}
-
-.homepage-info .btn:hover {
-  transform: translateY(-5px) translateZ(10px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-  filter: brightness(1.1);
-  background: var(--accent);
-}
-
-.homepage-img img {
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px var(--shadow);
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.homepage-img img:hover {
-  transform: scale(1.02) translateZ(15px) rotateY(2deg);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
-  filter: brightness(1.05);
+  display: none; /* Hide this section */
 }
 
 /*———————— HOMEPAGE SECTIONS (NEW) ————————*/
+/* These sections are now removed from the initial view */
 .homepage-section {
-  padding: 4rem 0;
-  background: var(--bg);
-}
-
-.homepage-section h2 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  color: var(--primary);
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-/* Why Choose Us Grid */
-.why-choose-us-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.why-choose-us-grid .card {
-  background: var(--card-bg);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px var(--shadow);
-  text-align: center;
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.why-choose-us-grid .card:hover {
-  transform: translateY(-8px) translateZ(15px) rotateX(2deg);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  filter: brightness(1.05);
-}
-
-.why-choose-us-grid .card i {
-  font-size: 3.5rem;
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-
-.why-choose-us-grid .card h3 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.4rem;
-  color: var(--primary);
-  margin-bottom: 0.75rem;
-}
-
-.why-choose-us-grid .card p {
-  font-size: 1rem;
-  color: var(--fg);
-}
-
-/* Our Courses Grid */
-.our-courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.course-card {
-  background: var(--card-bg);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px var(--shadow);
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.course-card:hover {
-  transform: translateY(-8px) translateZ(15px) rotateX(2deg);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  filter: brightness(1.05);
-}
-
-.course-card h3 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem;
-  color: var(--primary);
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 0.5rem;
-}
-
-.course-card ul {
-  list-style: none;
-  padding: 0;
-}
-
-.course-card li {
-  font-size: 1rem;
-  color: var(--fg);
-  margin-bottom: 0.5rem;
-  position: relative;
-  padding-left: 1.5rem;
-}
-
-.course-card li::before {
-  content: '\2022';
-  /* Bullet point */
-  color: var(--accent);
-  font-weight: bold;
-  display: inline-block;
-  width: 1em;
-  margin-left: -1.5em;
-  position: absolute;
-  left: 0;
-}
-
-/* Homepage Testimonials (reusing existing testimonial-grid styles) */
-.homepage-testimonials .testimonial-grid {
-  /* The existing .testimonial-grid styles will apply here */
-  /* You might want to adjust the width of cards if you want fewer to show at once */
+  display: none; /* Hide these sections */
 }
 
 
@@ -860,7 +639,6 @@ section {
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: center;
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .hero-info h1 {
@@ -932,7 +710,6 @@ section {
   grid-template-columns: 1fr 2fr;
   gap: 3rem;
   align-items: center;
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .about-grid img {
@@ -973,7 +750,6 @@ section {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .info-cards .card {
@@ -1003,7 +779,6 @@ section {
   background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .skills h2 {
@@ -1053,7 +828,6 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .item-list li {
@@ -1135,6 +909,89 @@ section {
   box-shadow: 0 15px 35px var(--shadow);
 }
 
+/* Teacher specific styles for resource management */
+.item-list li .teacher-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
+.item-list li .teacher-actions button {
+  background: var(--primary);
+  color: var(--card-bg);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.item-list li .teacher-actions button.delete-btn {
+  background: #dc3545; /* Red for delete */
+}
+
+.item-list li .teacher-actions button:hover {
+  filter: brightness(1.1);
+}
+
+/* Schedule specific styles */
+#schedule-list li {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#schedule-list li .schedule-info {
+  text-align: left;
+}
+
+#schedule-list li .schedule-info h4 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+#schedule-list li .schedule-info p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+#schedule-list li .schedule-info a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  background: var(--accent);
+  color: var(--card-bg);
+  padding: 0.3rem 0.8rem;
+  border-radius: 5px;
+}
+
+/* Manage Students List */
+#students-list li {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#students-list li .student-info {
+  text-align: left;
+}
+
+#students-list li .student-info span {
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-bottom: 0.3rem;
+}
+
+#students-list li .student-info p {
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+
 /*———————— TESTIMONIALS ————————*/
 .testimonials h2 {
   font-family: 'Poppins', sans-serif;
@@ -1159,7 +1016,6 @@ section {
   user-select: none;
   padding-bottom: 1.5rem;
   /* Space for scrollbar */
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .testimonial-grid:active {
@@ -1227,7 +1083,6 @@ section {
   border-radius: 12px;
   box-shadow: 0 8px 24px var(--shadow);
   border: 1px solid var(--border-color);
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .form-row {
@@ -1237,7 +1092,12 @@ section {
 }
 
 .contact-form input,
-.contact-form textarea {
+.contact-form textarea,
+#schedule-form input,
+#schedule-form textarea,
+#add-student-form input,
+#resource-form input[type="text"],
+#resource-form input[type="file"] {
   padding: 1rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -1248,7 +1108,12 @@ section {
 }
 
 .contact-form input:focus,
-.contact-form textarea:focus {
+.contact-form textarea:focus,
+#schedule-form input:focus,
+#schedule-form textarea:focus,
+#add-student-form input:focus,
+#resource-form input[type="text"]:focus,
+#resource-form input[type="file"]:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
@@ -1274,7 +1139,10 @@ section {
   min-height: 120px;
 }
 
-.contact-form .btn {
+.contact-form .btn,
+#schedule-form .btn,
+#add-student-form .btn,
+#resource-form .btn {
   background: var(--primary);
   color: var(--card-bg);
   padding: 0.8rem 2rem;
@@ -1292,14 +1160,20 @@ section {
   will-change: transform, box-shadow;
 }
 
-.contact-form .btn:hover {
+.contact-form .btn:hover,
+#schedule-form .btn:hover,
+#add-student-form .btn:hover,
+#resource-form .btn:hover {
   transform: translateY(-5px) translateZ(10px);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
   filter: brightness(1.1);
   background: var(--accent);
 }
 
-.contact-form .btn:active {
+.contact-form .btn:active,
+#schedule-form .btn:active,
+#add-student-form .btn:active,
+#resource-form .btn:active {
   transform: translateY(-2px) translateZ(5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -1321,7 +1195,6 @@ section {
   gap: 2rem;
   /* Increased gap to separate sections */
   padding: 0 1rem;
-  /* Removed transform-style: preserve-3d; from here. */
 }
 
 .footer-content {
@@ -1629,6 +1502,71 @@ section {
   gap: 1.5rem;
 }
 
+/* Modals for adding resources */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 5000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  margin: auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px var(--shadow);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.modal-content .close-button {
+  color: var(--fg);
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.modal-content h2 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-content form .form-row {
+  margin-bottom: 1rem;
+}
+
+.modal-content form input[type="text"],
+.modal-content form input[type="file"] {
+  width: 100%;
+}
+
+.modal-content form button {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+
 /* Responsive adjustments for overlay */
 @media (max-width: 768px) {
   .full-screen-content {
@@ -1645,6 +1583,10 @@ section {
     width: 40px;
     height: 40px;
     font-size: 1.8rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
   }
 }
 
@@ -1663,6 +1605,10 @@ section {
     width: 35px;
     height: 35px;
     font-size: 1.5rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
   }
 }
 
