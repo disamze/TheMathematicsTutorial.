@@ -2,10 +2,8 @@
 window.addEventListener('load', () => {
   const preloader = document.getElementById('preloader');
   if (preloader) {
-    // Give a small delay for the Lottie animation to be visible
     setTimeout(() => {
       preloader.classList.add('fade-out');
-      // Remove preloader from DOM after transition
       preloader.addEventListener('transitionend', () => {
         preloader.remove();
       }, { once: true });
@@ -13,12 +11,10 @@ window.addEventListener('load', () => {
   }
 
   // ——— AUTOMATIC THEME DETECTION ON LOAD ———
-  // Check for a saved theme preference first
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
     document.documentElement.dataset.theme = savedTheme;
   } else {
-    // If no saved theme, detect system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.dataset.theme = 'dark';
     } else {
@@ -26,7 +22,6 @@ window.addEventListener('load', () => {
     }
   }
 
-  // Update theme toggle button icon based on initial theme
   const themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) {
     themeBtn.innerHTML = document.documentElement.dataset.theme === 'dark'
@@ -34,29 +29,19 @@ window.addEventListener('load', () => {
       : '<i class="bx bx-moon"></i>';
   }
 
+  // Directly show login screen on load, no welcome screen
+  const loginScreen = document.getElementById('login-screen');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
+
+  if (loginScreen) loginScreen.style.display = 'flex';
+  if (mainContent) mainContent.style.display = 'none';
+  if (mainHeader) mainHeader.style.display = 'none';
+
   // Check for user session on load and display appropriate UI
-  const userData = localStorage.getItem('user');
-  if (userData) {
-    const data = JSON.parse(userData);
-    showMainUI(data);
-  } else {
-    // If no user data, ensure homepage is visible and others are hidden
-    const homepageHero = document.getElementById('homepage-hero');
-    const whyChooseUs = document.getElementById('why-choose-us');
-    const ourCourses = document.getElementById('our-courses');
-    const homepageTestimonials = document.getElementById('homepage-testimonials');
-    const loginScreen = document.getElementById('login-screen');
-    const mainContent = document.getElementById('main-content');
-    const mainHeader = document.getElementById('main-header');
-
-    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
-    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
-    if (ourCourses) ourCourses.style.display = 'block';
-    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
-
-    if (loginScreen) loginScreen.style.display = 'none';
-    if (mainContent) mainContent.style.display = 'none';
-    if (mainHeader) mainHeader.style.display = 'none';
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (currentUser) {
+    showMainUI(currentUser);
   }
 });
 
@@ -67,57 +52,157 @@ document.addEventListener('DOMContentLoaded', async () => {
   const navToggle = document.querySelector('.nav-toggle');
   const header = document.getElementById('main-header');
   const navLinks = document.querySelectorAll('.nav a');
-  const homepageLoginBtn = document.getElementById('homepage-login-btn');
-  const homepageHero = document.getElementById('homepage-hero');
+
+  // --- Custom Login System Elements ---
+  const loginForm = document.getElementById('login-form');
+  const loginEmailInput = document.getElementById('login-email');
+  const loginPasswordInput = document.getElementById('login-password');
+  const loginMessage = document.getElementById('login-message');
   const loginScreen = document.getElementById('login-screen');
-  const whyChooseUs = document.getElementById('why-choose-us');
-  const ourCourses = document.getElementById('our-courses');
-  const homepageTestimonials = document.getElementById('homepage-testimonials');
+  const mainContent = document.getElementById('main-content');
+  const mainHeader = document.getElementById('main-header');
 
+  // --- Teacher Specific Elements ---
+  const addNoteBtn = document.getElementById('add-note-btn');
+  const addQuestionBtn = document.getElementById('add-question-btn');
+  const addBookBtn = document.getElementById('add-book-btn');
+  const scheduleSection = document.getElementById('schedule');
+  const scheduleForm = document.getElementById('schedule-form');
+  const scheduleList = document.getElementById('schedule-list');
+  const manageStudentsSection = document.getElementById('manage-students');
+  const addStudentForm = document.getElementById('add-student-form');
+  const newStudentEmailInput = document.getElementById('new-student-email');
+  const newStudentPasswordInput = document.getElementById('new-student-password');
+  const addStudentMessage = document.getElementById('add-student-message');
+  const studentsList = document.getElementById('students-list');
 
-  // Event listener for the new homepage login button
-  if (homepageLoginBtn && homepageHero && loginScreen && whyChooseUs && ourCourses && homepageTestimonials) {
-    homepageLoginBtn.addEventListener('click', () => {
-      homepageHero.style.display = 'none'; // Hide homepage hero
-      whyChooseUs.style.display = 'none'; // Hide new sections
-      ourCourses.style.display = 'none';
-      homepageTestimonials.style.display = 'none';
-      loginScreen.style.display = 'flex'; // Show login screen
+  // --- Resource Modals (Teacher Only) ---
+  const addResourceModal = document.getElementById('add-resource-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const resourceForm = document.getElementById('resource-form');
+  const resourceTitleInput = document.getElementById('resource-title');
+  const resourceFileInput = document.getElementById('resource-file');
+  const resourceMessage = document.getElementById('resource-message');
+  const closeModalButtons = document.querySelectorAll('.close-button');
+
+  let currentResourceType = ''; // 'notes', 'questions', 'books'
+
+  // --- Data Storage (Simulated Backend) ---
+  // Initialize default users if none exist
+  function initializeUsers() {
+    let users = JSON.parse(localStorage.getItem('users'));
+    if (!users || users.length === 0) {
+      users = [
+        { email: 'teacher@math.com', password: encryptPassword('teacherpass'), role: 'teacher', name: 'Teacher' },
+        { email: 'student1@math.com', password: encryptPassword('studentpass1'), role: 'student', name: 'Student 1' },
+        { email: 'student2@math.com', password: encryptPassword('studentpass2'), role: 'student', name: 'Student 2' }
+      ];
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+  }
+  initializeUsers();
+
+  // Initialize resources and schedules if none exist
+  function initializeData() {
+    if (!localStorage.getItem('notes')) localStorage.setItem('notes', JSON.stringify([]));
+    if (!localStorage.getItem('questions')) localStorage.setItem('questions', JSON.stringify([]));
+    if (!localStorage.getItem('books')) localStorage.setItem('books', JSON.stringify([]));
+    if (!localStorage.getItem('schedules')) localStorage.setItem('schedules', JSON.stringify([]));
+  }
+  initializeData();
+
+  // Simple password encryption (NOT SECURE FOR PRODUCTION)
+  function encryptPassword(password) {
+    return btoa(password); // Base64 encode
+  }
+
+  function decryptPassword(encryptedPassword) {
+    return atob(encryptedPassword); // Base64 decode
+  }
+
+  // --- Login Logic ---
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = loginEmailInput.value;
+      const password = loginPasswordInput.value;
+
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(u => u.email === email && decryptPassword(u.password) === password);
+
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        showMainUI(user);
+        loginMessage.textContent = '';
+      } else {
+        loginMessage.style.color = 'red';
+        loginMessage.textContent = 'Invalid email or password.';
+      }
     });
   }
 
-  // ——— MOBILE MENU TOGGLE & SMOOTH SCROLLING ———
+  // --- Show Main UI based on User Role ---
+  function showMainUI(user) {
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'block';
+    if (mainHeader) mainHeader.style.display = 'flex';
+
+    const profileDiv = document.getElementById('profile-info');
+    if (profileDiv) {
+      profileDiv.innerHTML = `
+        <img src="logo.png" alt="Profile Picture"> <!-- Placeholder image -->
+        <span>${user.name || user.email.split('@')[0]}</span>
+      `;
+      profileDiv.style.display = 'flex';
+    }
+
+    // Adjust navigation and sections based on role
+    const teacherNavLinks = document.querySelectorAll('.nav a[href="#schedule"], .nav a[href="#manage-students"]');
+    const addResourceButtons = document.querySelectorAll('#add-note-btn, #add-question-btn, #add-book-btn');
+
+    if (user.role === 'teacher') {
+      teacherNavLinks.forEach(link => link.style.display = 'flex');
+      addResourceButtons.forEach(btn => btn.style.display = 'block');
+      if (scheduleForm) scheduleForm.style.display = 'grid'; // Teacher can see schedule form
+      if (manageStudentsSection) manageStudentsSection.style.display = 'block'; // Teacher can manage students
+    } else { // student
+      teacherNavLinks.forEach(link => link.style.display = 'none');
+      addResourceButtons.forEach(btn => btn.style.display = 'none');
+      if (scheduleForm) scheduleForm.style.display = 'none'; // Student cannot see schedule form
+      if (manageStudentsSection) manageStudentsSection.style.display = 'none'; // Student cannot manage students
+    }
+
+    // Render all dynamic content
+    renderAllContent(user.role);
+  }
+
+  // --- Mobile Menu Toggle & Smooth Scrolling ---
   if (nav && navToggle && header) {
     navToggle.addEventListener('click', () => {
       const expanded = navToggle.getAttribute('aria-expanded') === 'true';
       navToggle.setAttribute('aria-expanded', String(!expanded));
       nav.classList.toggle('open');
 
-      // Dynamically set top position based on header height
       const headerHeight = header.offsetHeight;
       nav.style.top = `${headerHeight}px`;
-      nav.style.height = `calc(100vh - ${headerHeight}px)`; // Use 100vh for full viewport height
+      nav.style.height = `calc(100vh - ${headerHeight}px)`;
     });
   }
 
-  // Smooth scrolling for navigation links
   navLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       const href = this.getAttribute('href');
-      // Check if it's an internal link (starts with #)
       if (href && href.startsWith('#')) {
         e.preventDefault();
         const targetId = href.substring(1);
         const targetElement = document.getElementById(targetId);
 
         if (targetElement) {
-          // Close mobile nav if open
           if (nav && nav.classList.contains('open')) {
             nav.classList.remove('open');
             if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
           }
 
-          // Calculate the target scroll position
           const headerOffset = header ? header.offsetHeight : 0;
           const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
           const offsetPosition = elementPosition - headerOffset;
@@ -127,7 +212,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             behavior: "smooth"
           });
 
-          // Manually set active class when clicking a nav link
           navLinks.forEach(navLink => navLink.classList.remove('active'));
           this.classList.add('active');
         }
@@ -135,137 +219,121 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ——— DYNAMIC NOTES & QUESTIONS & BOOKS ———
-  // Initial static lists (these will be augmented by fetched files)
-  const initialNotes = [
-    { title: 'SST', file: 'SST99days.pdf' },
-    { title: 'Algebra Basics', file: 'algebra_basics.pdf' },
-    { title: 'Calculus Fundamentals', file: 'calculus_fundamentals.pdf' },
-    { title: 'Geometry Theorems', file: 'geometry_theorems.pdf' },
-    { title: 'Probability Concepts', file: 'probability_concepts.pdf' },
-    { title: 'Advanced Calculus', file: 'advanced_calculus.pdf' }, // Added for testing 'More'
-  ];
-  const initialQuestions = [
-    { title: 'Maths Formulas For class 10', file: 'SST99days.pdf' },
-    { title: 'Advanced Algebra Problems', file: 'advanced_algebra.pdf' },
-    { title: 'Trigonometry Practice Set', file: 'trigonometry_practice.pdf' },
-    { title: 'Physics Numerical Problems', file: 'physics_numerical.pdf' },
-    { title: 'Statistics Case Studies', file: 'statistics_case_studies.pdf' },
-    { title: 'Geometry Problems', file: 'geometry_problems.pdf' }, // Added for testing 'More'
-  ];
-  const initialBooks = [ // New array for books
-    { title: 'NCERT Maths Class 10', file: 'ncert_maths_class10.pdf' },
-    { title: 'RD Sharma Class 11', file: 'rd_sharma_class11.pdf' },
-    { title: 'Concepts of Physics Vol 1', file: 'hc_verma_physics_vol1.pdf' },
-    { title: 'Advanced Math for Engineers', file: 'advanced_math_engineers.pdf' }, // Added for testing 'More'
-    { title: 'Calculus by Spivak', file: 'calculus_spivak.pdf' },
-    { title: 'Linear Algebra Done Right', file: 'linear_algebra_done_right.pdf' }, // Added for testing 'More'
-  ];
-
-  let allNotes = [...initialNotes];
-  let allQuestions = [...initialQuestions];
-  let allBooks = [...initialBooks]; // New variable for all books
-
-  // Function to fetch files from a directory (client-side limitation)
-  // IMPORTANT: JavaScript in a browser cannot directly list files in a directory
-  // for security reasons. To make this truly "automatic," you would need:
-  // 1. A server-side script that lists files in a directory and serves them as JSON.
-  // 2. A build process that generates a JSON file containing file names.
-  // For this example, we'll simulate it or assume files are manually added to the arrays.
-  async function fetchFiles(directoryPath, type) {
-    console.warn(`Client-side JavaScript cannot directly list files from '${directoryPath}'.
-                  You need a server-side solution or a pre-generated list of files.`);
-
-    // For demonstration, we'll just return an empty array or add some dummy files
-    // You would replace this with actual logic to get file names from your server/build
-    if (type === 'notes') {
-      return [
-        { title: 'New Fetched Note 1', file: 'new_fetched_note_1.pdf' },
-        { title: 'New Fetched Note 2', file: 'new_fetched_note_2.pdf' },
-      ];
-    } else if (type === 'questions') {
-      return [
-        { title: 'New Fetched Question 1', file: 'new_fetched_question_1.pdf' },
-        { title: 'New Fetched Question 2', file: 'new_fetched_question_2.pdf' },
-      ];
-    } else if (type === 'books') {
-      return [
-        { title: 'New Fetched Book 1', file: 'new_fetched_book_1.pdf' },
-        { title: 'New Fetched Book 2', file: 'new_fetched_book_2.pdf' },
-      ];
-    }
-    return [];
-  }
-
-  // Fetch additional files and combine with initial lists
-  // Using Promise.all to fetch all data concurrently
-  const [fetchedNotes, fetchedQuestions, fetchedBooks] = await Promise.all([
-    fetchFiles('notes_directory', 'notes'),
-    fetchFiles('questions_directory', 'questions'),
-    fetchFiles('books_directory', 'books')
-  ]);
-
-  // Deduplicate and update global arrays
-  allNotes = [...new Map([...initialNotes, ...fetchedNotes].map(item => [item.file, item])).values()];
-  allQuestions = [...new Map([...initialQuestions, ...fetchedQuestions].map(item => [item.file, item])).values()];
-  allBooks = [...new Map([...initialBooks, ...fetchedBooks].map(item => [item.file, item])).values()];
-
-
-  function renderList(items, containerId, showMoreCard = false) {
+  // --- Dynamic Content Rendering ---
+  function renderList(items, containerId, userRole, showMoreCard = false) {
     const ul = document.getElementById(containerId);
     if (!ul) {
       console.warn(`Container with ID '${containerId}' not found.`);
       return;
     }
-    ul.innerHTML = ''; // Clear existing content
+    ul.innerHTML = '';
 
-    const initialDisplayLimit = 5; // Number of items to show initially
-
-    // Determine which items to display for the initial view
+    const initialDisplayLimit = 5;
     const itemsToRender = showMoreCard ? items.slice(0, initialDisplayLimit) : items;
 
-    itemsToRender.forEach(({ title, file }, index) => {
+    itemsToRender.forEach((item, index) => {
       const li = document.createElement('li');
-      li.classList.add('reveal-item'); // Add reveal class
-      li.style.setProperty('--item-index', index); // Set custom property for staggered delay
-      li.innerHTML = `
-        <span>${title}</span>
-        <a href="${file}" target="_blank" rel="noopener" aria-label="Download ${title}">Download</a>
-      `;
+      li.classList.add('reveal-item');
+      li.style.setProperty('--item-index', index);
+
+      let downloadLink = '';
+      if (item.fileData) { // For notes, questions, books stored as base64
+        const blob = base64toBlob(item.fileData, 'application/pdf');
+        const url = URL.createObjectURL(blob);
+        downloadLink = `<a href="${url}" download="${item.title}.pdf" aria-label="Download ${item.title}">Download</a>`;
+      } else if (item.link) { // For schedule meeting links
+        downloadLink = `<a href="${item.link}" target="_blank" rel="noopener" aria-label="Join ${item.title}">Join Meeting</a>`;
+      }
+
+      let teacherActions = '';
+      if (userRole === 'teacher' && (containerId === 'notes-list' || containerId === 'questions-list' || containerId === 'books-list' || containerId === 'schedule-list')) {
+        teacherActions = `
+          <div class="teacher-actions">
+            <button class="delete-btn" data-id="${item.id}" data-type="${containerId.replace('-list', '')}">Delete</button>
+          </div>
+        `;
+      }
+
+      if (containerId === 'schedule-list') {
+        li.innerHTML = `
+          <div class="schedule-info">
+            <h4>${item.title}</h4>
+            <p>${item.date} at ${item.time}</p>
+            ${item.description ? `<p>${item.description}</p>` : ''}
+            ${downloadLink}
+          </div>
+          ${teacherActions}
+        `;
+      } else if (containerId === 'students-list') {
+        li.innerHTML = `
+          <div class="student-info">
+            <span>${item.email}</span>
+            <p>Password: ${item.password}</p> <!-- Display encrypted password for teacher -->
+          </div>
+          <div class="teacher-actions">
+            <button class="delete-btn" data-email="${item.email}" data-type="student">Remove</button>
+          </div>
+        `;
+      } else {
+        li.innerHTML = `
+          <span>${item.title}</span>
+          ${downloadLink}
+          ${teacherActions}
+        `;
+      }
       ul.appendChild(li);
     });
 
-    // Add "More" card if applicable AND there are more items than the initial limit
     if (showMoreCard && items.length > initialDisplayLimit) {
       const moreCard = document.createElement('li');
-      moreCard.classList.add('more-card', 'reveal-item'); // Add reveal class to more card
-      moreCard.style.setProperty('--item-index', initialDisplayLimit); // Set index for delay
+      moreCard.classList.add('more-card', 'reveal-item');
+      moreCard.style.setProperty('--item-index', initialDisplayLimit);
       let cardText = '';
-      if (containerId === 'notes-list') {
-        cardText = 'More Notes';
-      } else if (containerId === 'questions-list') {
-        cardText = 'More Questions';
-      } else if (containerId === 'books-list') {
-        cardText = 'More Books';
-      }
+      if (containerId === 'notes-list') cardText = 'More Notes';
+      else if (containerId === 'questions-list') cardText = 'More Questions';
+      else if (containerId === 'books-list') cardText = 'More Books';
       moreCard.innerHTML = `<span>${cardText}</span>`;
-      moreCard.addEventListener('click', () => openFullScreenOverlay(containerId));
+      moreCard.addEventListener('click', () => openFullScreenOverlay(containerId, userRole));
       ul.appendChild(moreCard);
     }
+
+    // Add event listeners for delete buttons
+    ul.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const id = e.target.dataset.id;
+        const type = e.target.dataset.type;
+        const email = e.target.dataset.email; // For student removal
+
+        if (type === 'student') {
+          removeStudent(email);
+        } else {
+          deleteResource(id, type);
+        }
+      });
+    });
   }
 
-  // Initial render for main sections with "More" cards
-  renderList(allNotes, 'notes-list', true);
-  renderList(allQuestions, 'questions-list', true);
-  renderList(allBooks, 'books-list', true); // Render books section with 'More' card logic
+  function renderAllContent(userRole) {
+    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+    const questions = JSON.parse(localStorage.getItem('questions')) || [];
+    const books = JSON.parse(localStorage.getItem('books')) || [];
+    const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
+    const students = JSON.parse(localStorage.getItem('users')).filter(u => u.role === 'student') || [];
 
-  // Full-screen overlay logic
+    renderList(notes, 'notes-list', userRole, true);
+    renderList(questions, 'questions-list', userRole, true);
+    renderList(books, 'books-list', userRole, true);
+    renderList(schedules, 'schedule-list', userRole, false); // Schedule always shows all
+    renderList(students, 'students-list', userRole, false); // Students always shows all
+  }
+
+  // --- Full-screen Overlay Logic ---
   const fullScreenOverlay = document.getElementById('full-screen-overlay');
   const overlayTitle = document.getElementById('overlay-title');
   const overlayList = document.getElementById('overlay-list');
   const closeBtn = fullScreenOverlay ? fullScreenOverlay.querySelector('.close-btn') : null;
 
-  function openFullScreenOverlay(listType) {
+  function openFullScreenOverlay(listType, userRole) {
     if (!fullScreenOverlay || !overlayTitle || !overlayList) {
       console.error("Full screen overlay elements not found.");
       return;
@@ -275,43 +343,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     let title = '';
 
     if (listType === 'notes-list') {
-      itemsToDisplay = allNotes;
+      itemsToDisplay = JSON.parse(localStorage.getItem('notes')) || [];
       title = 'All Downloadable Notes';
     } else if (listType === 'questions-list') {
-      itemsToDisplay = allQuestions;
+      itemsToDisplay = JSON.parse(localStorage.getItem('questions')) || [];
       title = 'All Practice Questions';
     } else if (listType === 'books-list') {
-      itemsToDisplay = allBooks;
+      itemsToDisplay = JSON.parse(localStorage.getItem('books')) || [];
       title = 'All Recommended Books';
     }
 
     overlayTitle.textContent = title;
-    overlayList.innerHTML = ''; // Clear previous content
+    overlayList.innerHTML = '';
 
-    itemsToDisplay.forEach(({ title, file }) => {
+    itemsToDisplay.forEach((item) => {
       const li = document.createElement('li');
+      const blob = base64toBlob(item.fileData, 'application/pdf');
+      const url = URL.createObjectURL(blob);
+      let teacherActions = '';
+      if (userRole === 'teacher') {
+        teacherActions = `
+          <div class="teacher-actions">
+            <button class="delete-btn" data-id="${item.id}" data-type="${listType.replace('-list', '')}">Delete</button>
+          </div>
+        `;
+      }
       li.innerHTML = `
-        <span>${title}</span>
-        <a href="${file}" target="_blank" rel="noopener" aria-label="Download ${title}">Download</a>
+        <span>${item.title}</span>
+        <a href="${url}" download="${item.title}.pdf" aria-label="Download ${item.title}">Download</a>
+        ${teacherActions}
       `;
       overlayList.appendChild(li);
     });
 
+    // Add event listeners for delete buttons in overlay
+    overlayList.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const id = e.target.dataset.id;
+        const type = e.target.dataset.type;
+        deleteResource(id, type);
+        // Re-render overlay after deletion
+        openFullScreenOverlay(listType, userRole);
+      });
+    });
+
     fullScreenOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling body when overlay is open
+    document.body.style.overflow = 'hidden';
   }
 
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
       if (fullScreenOverlay) fullScreenOverlay.classList.remove('active');
-      document.body.style.overflow = ''; // Restore body scrolling
+      document.body.style.overflow = '';
     });
   }
 
-  // Close overlay if clicked outside content (on the overlay itself)
   if (fullScreenOverlay) {
     fullScreenOverlay.addEventListener('click', (e) => {
-      // Check if the click target is the overlay itself or the close button
       if (e.target === fullScreenOverlay || e.target === closeBtn) {
         fullScreenOverlay.classList.remove('active');
         document.body.style.overflow = '';
@@ -319,71 +407,206 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Helper to convert base64 to Blob
+  function base64toBlob(base64, type = 'application/octet-stream') {
+    const binStr = atob(base64);
+    const len = binStr.length;
+    const arr = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      arr[i] = binStr.charCodeAt(i);
+    }
+    return new Blob([arr], { type: type });
+  }
 
-  // ——— THEME TOGGLE ———
+  // --- Teacher: Add/Delete Resources (Notes, Questions, Books) ---
+  const addResourceModalElement = document.getElementById('add-resource-modal');
+  const resourceCloseButtons = addResourceModalElement ? addResourceModalElement.querySelectorAll('.close-button') : [];
+
+  function openResourceModal(type) {
+    currentResourceType = type;
+    if (modalTitle) modalTitle.textContent = `Add New ${type.charAt(0).toUpperCase() + type.slice(1).replace(/s$/, '')}`;
+    if (resourceForm) resourceForm.reset();
+    if (resourceMessage) resourceMessage.textContent = '';
+    if (addResourceModalElement) addResourceModalElement.style.display = 'flex';
+  }
+
+  function closeResourceModal() {
+    if (addResourceModalElement) addResourceModalElement.style.display = 'none';
+  }
+
+  if (addNoteBtn) addNoteBtn.addEventListener('click', () => openResourceModal('notes'));
+  if (addQuestionBtn) addQuestionBtn.addEventListener('click', () => openResourceModal('questions'));
+  if (addBookBtn) addBookBtn.addEventListener('click', () => openResourceModal('books'));
+
+  resourceCloseButtons.forEach(btn => btn.addEventListener('click', closeResourceModal));
+  if (addResourceModalElement) {
+    addResourceModalElement.addEventListener('click', (e) => {
+      if (e.target === addResourceModalElement) closeResourceModal();
+    });
+  }
+
+  if (resourceForm) {
+    resourceForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = resourceTitleInput.value;
+      const file = resourceFileInput.files[0];
+
+      if (!file) {
+        if (resourceMessage) {
+          resourceMessage.style.color = 'red';
+          resourceMessage.textContent = 'Please select a PDF file.';
+        }
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const fileData = event.target.result.split(',')[1]; // Get base64 string
+        const resources = JSON.parse(localStorage.getItem(currentResourceType)) || [];
+        const newResource = {
+          id: Date.now().toString(), // Simple unique ID
+          title: title,
+          fileData: fileData
+        };
+        resources.push(newResource);
+        localStorage.setItem(currentResourceType, JSON.stringify(resources));
+
+        if (resourceMessage) {
+          resourceMessage.style.color = 'var(--accent)';
+          resourceMessage.textContent = 'Resource added successfully!';
+        }
+        resourceForm.reset();
+        renderAllContent(JSON.parse(localStorage.getItem('currentUser')).role);
+        setTimeout(closeResourceModal, 1500);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function deleteResource(id, type) {
+    let resources = JSON.parse(localStorage.getItem(type)) || [];
+    resources = resources.filter(res => res.id !== id);
+    localStorage.setItem(type, JSON.stringify(resources));
+    renderAllContent(JSON.parse(localStorage.getItem('currentUser')).role);
+  }
+
+  // --- Teacher: Manage Students ---
+  if (addStudentForm) {
+    addStudentForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = newStudentEmailInput.value;
+      const password = newStudentPasswordInput.value;
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      if (users.some(u => u.email === email)) {
+        addStudentMessage.style.color = 'red';
+        addStudentMessage.textContent = 'Student with this email already exists.';
+        return;
+      }
+
+      const newStudent = {
+        email: email,
+        password: encryptPassword(password),
+        role: 'student',
+        name: email.split('@')[0]
+      };
+      users.push(newStudent);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      addStudentMessage.style.color = 'var(--accent)';
+      addStudentMessage.textContent = 'Student added successfully!';
+      addStudentForm.reset();
+      renderAllContent(JSON.parse(localStorage.getItem('currentUser')).role);
+    });
+  }
+
+  function removeStudent(email) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    users = users.filter(u => u.email !== email);
+    localStorage.setItem('users', JSON.stringify(users));
+    renderAllContent(JSON.parse(localStorage.getItem('currentUser')).role);
+  }
+
+  // --- Teacher: Set Schedule ---
+  if (scheduleForm) {
+    scheduleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('schedule-title').value;
+      const date = document.getElementById('schedule-date').value;
+      const time = document.getElementById('schedule-time').value;
+      const link = document.getElementById('schedule-link').value;
+      const description = document.getElementById('schedule-description').value;
+
+      const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
+      const newSchedule = {
+        id: Date.now().toString(),
+        title,
+        date,
+        time,
+        link,
+        description
+      };
+      schedules.push(newSchedule);
+      localStorage.setItem('schedules', JSON.stringify(schedules));
+      scheduleForm.reset();
+      renderAllContent(JSON.parse(localStorage.getItem('currentUser')).role);
+    });
+  }
+
+  // --- Theme Toggle ---
   const themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
       const isDark = document.documentElement.dataset.theme === 'dark';
       const newTheme = isDark ? 'light' : 'dark';
       document.documentElement.dataset.theme = newTheme;
-      localStorage.setItem('theme', newTheme); // Save user's preference
+      localStorage.setItem('theme', newTheme);
       themeBtn.setAttribute('aria-expanded', String(isDark));
       themeBtn.innerHTML = isDark
-        ? '<i class="bx bx-moon"></i>' // Switch to moon icon for light theme
-        : '<i class="bx bx-sun"></i>'; // Switch to sun icon for dark theme
+        ? '<i class="bx bx-moon"></i>'
+        : '<i class="bx bx-sun"></i>';
     });
   }
 
-  // ——— INTERSECTION OBSERVER FOR REVEAL ANIMATIONS (INFINITE) ———
-  // Select all elements that should be revealed
+  // --- Intersection Observer for Reveal Animations ---
   const revealElements = document.querySelectorAll(
-    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box, .welcome-message, .homepage-info, .homepage-img, .homepage-section h2, .homepage-section .card, .homepage-section .course-card, .homepage-testimonials .testimonial-card' // Added new homepage elements
+    '.hero-info, .hero-img img, .about-info, .about-grid img, .skills h2, .list-section h2, .testimonials h2, .contact h2, .skills-list li, .item-list li, .testimonial-card, .contact-form, .logo, .nav a, .footer p, .login-box'
   );
 
   const observerOptions = {
-    root: null, // Use the viewport as the root
+    root: null,
     rootMargin: '0px',
-    threshold: 0.1 // Trigger when 10% of the item is visible
+    threshold: 0.1
   };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        // If you want the animation to play only once, uncomment the line below:
-        // observer.unobserve(entry.target);
-        // If you want the animation to reset when out of view and replay when in view, keep it commented.
       } else {
-        // If not intersecting, remove the class to reset the animation
         entry.target.classList.remove('is-visible');
       }
     });
   }, observerOptions);
 
   revealElements.forEach(element => {
-    // Add 'reveal-item' class to all elements that should be observed
-    // This is important for the CSS to apply initial hidden state and transitions
     element.classList.add('reveal-item');
     observer.observe(element);
   });
 
-  // ——— TESTIMONIAL SLIDER (AUTOMATIC SCROLL & LOOP) ———
-  // Select both testimonial grids
+  // --- Testimonial Slider ---
   const sliders = document.querySelectorAll('.testimonial-grid');
 
-  sliders.forEach(slider => { // Iterate over each slider
+  sliders.forEach(slider => {
     if (slider) {
       let isDown = false;
       let startX;
       let scrollLeft;
       let scrollInterval;
-      const scrollSpeed = 1; // Adjust for faster/slower scroll
-      const scrollDelay = 50; // Milliseconds between scroll steps
+      const scrollSpeed = 1;
+      const scrollDelay = 50;
 
-      // Duplicate cards for seamless looping
       const cards = Array.from(slider.children);
-      // Only duplicate if there are enough cards to scroll
       if (cards.length > 0) {
         cards.forEach(card => {
           slider.appendChild(card.cloneNode(true));
@@ -391,14 +614,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const startAutoScroll = () => {
-        if (scrollInterval) clearInterval(scrollInterval); // Clear any existing interval
+        if (scrollInterval) clearInterval(scrollInterval);
         scrollInterval = setInterval(() => {
           slider.scrollLeft += scrollSpeed;
-
-          // Corrected loop condition:
-          // If scrolled past the original content (which is half the total scrollWidth after duplication),
-          // reset to the beginning of the duplicated content.
-          // Use scrollWidth / 2 as the threshold for resetting.
           if (slider.scrollLeft >= slider.scrollWidth / 2) {
             slider.scrollLeft = 0;
           }
@@ -409,76 +627,67 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearInterval(scrollInterval);
       };
 
-      // Start auto-scroll when the page loads
-      // Only start if the slider actually has scrollable content
-      if (slider.scrollWidth > slider.clientWidth) { // Check if content overflows
+      if (slider.scrollWidth > slider.clientWidth) {
         startAutoScroll();
       }
 
-
-      // Pause auto-scroll on mouse hover/touch
       slider.addEventListener('mouseenter', stopAutoScroll);
       slider.addEventListener('mouseleave', startAutoScroll);
       slider.addEventListener('touchstart', stopAutoScroll);
       slider.addEventListener('touchend', startAutoScroll);
 
-      // Existing drag functionality (modified to interact with auto-scroll)
       slider.addEventListener('mousedown', (e) => {
         isDown = true;
         slider.classList.add('active');
         startX = e.pageX - slider.offsetLeft;
         scrollLeft = slider.scrollLeft;
-        stopAutoScroll(); // Stop auto-scroll when dragging starts
+        stopAutoScroll();
       });
       slider.addEventListener('mouseleave', () => {
         isDown = false;
         slider.classList.remove('active');
-        // Only resume if not currently dragging (mouse up hasn't fired)
-        if (!isDown) startAutoScroll(); // This condition might be tricky, better to always resume on mouseup/touchend
+        startAutoScroll();
       });
       slider.addEventListener('mouseup', () => {
         isDown = false;
         slider.classList.remove('active');
-        startAutoScroll(); // Resume auto-scroll when drag ends
+        startAutoScroll();
       });
       slider.addEventListener('mousemove', (e) => {
         if (!isDown) return;
         e.preventDefault();
         const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2; // scroll speed
+        const walk = (x - startX) * 2;
         slider.scrollLeft = scrollLeft - walk;
       });
 
-      // Touch events for mobile
       slider.addEventListener('touchstart', (e) => {
         isDown = true;
         slider.classList.add('active');
         startX = e.touches[0].pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft; // Store current scroll position
-        stopAutoScroll(); // Stop auto-scroll when dragging starts
+        scrollLeft = slider.scrollLeft;
+        stopAutoScroll();
       });
       slider.addEventListener('touchend', () => {
         isDown = false;
         slider.classList.remove('active');
-        startAutoScroll(); // Resume auto-scroll when drag ends
+        startAutoScroll();
       });
       slider.addEventListener('touchmove', (e) => {
         if (!isDown) return;
-        e.preventDefault(); // Prevent scrolling the page
+        e.preventDefault();
         const x = e.touches[0].pageX - slider.offsetLeft;
         const walk = (x - startX) * 2;
         slider.scrollLeft = scrollLeft - walk;
       });
     }
-  }); // End of forEach(slider => { ... })
+  });
 
-
-  // ——— CONTACT FORM SUBMISSION & VALIDATION ———
+  // --- Contact Form Submission & Validation ---
   const contactForm = document.getElementById('contact-form');
   const formMessage = document.getElementById('form-message');
   const formInputs = contactForm ? contactForm.querySelectorAll('input[required], textarea[required]') : [];
 
-  // Function to validate a single input
   const validateInput = (input) => {
     if (input.checkValidity()) {
       input.classList.remove('invalid');
@@ -491,16 +700,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
-  // Add real-time validation on input change/blur
   formInputs.forEach(input => {
     input.addEventListener('input', () => validateInput(input));
     input.addEventListener('blur', () => validateInput(input));
   });
 
-
   if (contactForm && formMessage) {
     contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevent default form submission
+      e.preventDefault();
 
       let allInputsValid = true;
       formInputs.forEach(input => {
@@ -515,7 +722,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      // Use FormData to easily get form data
       const formData = new FormData(contactForm);
 
       try {
@@ -523,15 +729,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           method: 'POST',
           body: formData,
           headers: {
-            'Accept': 'application/json' // Important for FormSubmit.co to return JSON
+            'Accept': 'application/json'
           }
         });
 
         if (response.ok) {
           formMessage.style.color = 'var(--accent)';
           formMessage.textContent = 'Message sent successfully! We will get back to you soon.';
-          contactForm.reset(); // Clear the form
-          // Remove validation classes after successful submission
+          contactForm.reset();
           formInputs.forEach(input => {
             input.classList.remove('valid', 'invalid');
           });
@@ -548,9 +753,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ——— ACTIVE NAVIGATION LINK ON SCROLL ———
-  const sections = document.querySelectorAll('section[id]'); // Get all sections with an ID
-  const headerHeight = header ? header.offsetHeight : 0; // Get header height for offset
+  // --- Active Navigation Link on Scroll ---
+  const sections = document.querySelectorAll('section[id]');
+  const headerHeight = header ? header.offsetHeight : 0;
 
   const activateNavLink = (id) => {
     navLinks.forEach(link => {
@@ -561,11 +766,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
-  // Initial check on load
   let currentActiveSection = '';
   for (let i = 0; i < sections.length; i++) {
     const rect = sections[i].getBoundingClientRect();
-    // Adjust the offset for header height and a small buffer
     if (rect.top <= headerHeight + 50 && rect.bottom >= headerHeight + 50) {
       currentActiveSection = sections[i].id;
       break;
@@ -574,16 +777,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (currentActiveSection) {
     activateNavLink(currentActiveSection);
   } else if (sections.length > 0) {
-    // If no section is perfectly in view, activate the first one
     activateNavLink(sections[0].id);
   }
 
-
   const sectionObserverOptions = {
     root: null,
-    // A simpler rootMargin that triggers when the top of the section hits the bottom of the header
     rootMargin: `-${headerHeight}px 0px 0px 0px`,
-    threshold: 0 // Trigger as soon as any part of the target enters the root
+    threshold: 0
   };
 
   const sectionObserver = new IntersectionObserver((entries) => {
@@ -598,20 +798,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     sectionObserver.observe(section);
   });
 
-  // ——— BACK TO TOP BUTTON VISIBILITY & SCROLL ———
+  // --- Back to Top Button Visibility & Scroll ---
   const backToTopBtn = document.querySelector('.back-top');
   if (backToTopBtn) {
     const toggleBackToTop = () => {
-      if (window.scrollY > window.innerHeight / 2) { // Show after scrolling half a viewport
+      if (window.scrollY > window.innerHeight / 2) {
         backToTopBtn.classList.add('show');
       } else {
         backToTopBtn.classList.remove('show');
       }
     };
 
-    // Smooth scroll to top when clicked
     backToTopBtn.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default anchor behavior
+      e.preventDefault();
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -619,78 +818,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     window.addEventListener('scroll', toggleBackToTop);
-    toggleBackToTop(); // Initial check on load
+    toggleBackToTop();
   }
 
 }); // End of DOMContentLoaded
 
-// ——— GOOGLE SIGN-IN LOGIC ———
-// Google Sign-In callback must be globally accessible
-window.handleCredentialResponse = function (response) {
-  const data = parseJwt(response.credential);
-  if (!data || !data.name || !data.picture) return;
-
-  localStorage.setItem('user', JSON.stringify(data));
-  showMainUI(data);
-};
-
-// Parse JWT token to extract user info
-function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  );
-  return JSON.parse(jsonPayload);
-}
-
-// Display UI after successful login or session restore
-function showMainUI(data) {
-  const homepageHero = document.getElementById('homepage-hero');
-  const whyChooseUs = document.getElementById('why-choose-us');
-  const ourCourses = document.getElementById('our-courses');
-  const homepageTestimonials = document.getElementById('homepage-testimonials');
-  const loginScreen = document.getElementById('login-screen');
-  const mainContent = document.getElementById('main-content');
-  const mainHeader = document.getElementById('main-header');
-  const profileDiv = document.getElementById('profile-info');
-  const popupName = document.getElementById('popup-name');
-  const popupPic = document.getElementById('popup-pic');
-
-  // Hide homepage sections
-  if (homepageHero) homepageHero.style.display = 'none';
-  if (whyChooseUs) whyChooseUs.style.display = 'none';
-  if (ourCourses) ourCourses.style.display = 'none';
-  if (homepageTestimonials) homepageTestimonials.style.display = 'none';
-  if (loginScreen) loginScreen.style.display = 'none';
-
-  // Show main content
-  if (mainContent) {
-    mainContent.style.display = 'block';
-  }
-  if (mainHeader) mainHeader.style.display = 'flex'; // Use flex for header
-
-  if (profileDiv && data.picture && data.name) {
-    profileDiv.innerHTML = `
-      <img src="${data.picture}" alt="Profile Picture">
-      <span>${data.name.split(' ')[0]}</span> <!-- Display first name -->
-    `;
-    profileDiv.style.display = 'flex';
-  }
-
-  // Set data for signout popup
-  if (popupName) popupName.textContent = data.name;
-  if (popupPic) popupPic.src = data.picture;
-}
-
-// Handle sign out
+// --- Sign Out Logic ---
 const signoutBtn = document.getElementById('signout-btn');
 if (signoutBtn) {
   signoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
 
     const popupOverlay = document.getElementById('popup-overlay');
     const signoutPopup = document.getElementById('signout-popup');
@@ -698,54 +835,41 @@ if (signoutBtn) {
     const mainHeader = document.getElementById('main-header');
     const profileInfo = document.getElementById('profile-info');
     const loginScreen = document.getElementById('login-screen');
-    const homepageHero = document.getElementById('homepage-hero');
-    const whyChooseUs = document.getElementById('why-choose-us');
-    const ourCourses = document.getElementById('our-courses');
-    const homepageTestimonials = document.getElementById('homepage-testimonials');
 
     if (popupOverlay) popupOverlay.style.display = 'none';
     if (signoutPopup) signoutPopup.style.display = 'none';
     if (mainContent) mainContent.style.display = 'none';
     if (mainHeader) mainHeader.style.display = 'none';
     if (profileInfo) profileInfo.style.display = 'none';
-    if (loginScreen) loginScreen.style.display = 'none'; // Hide login screen
-
-    // Show homepage sections
-    if (homepageHero) homepageHero.style.display = 'flex'; // Show homepage
-    if (whyChooseUs) whyChooseUs.style.display = 'block'; // Show new sections
-    if (ourCourses) ourCourses.style.display = 'block';
-    if (homepageTestimonials) homepageTestimonials.style.display = 'block';
+    if (loginScreen) loginScreen.style.display = 'flex'; // Show login screen
   });
 }
 
-// Handle profile click to show popup
+// --- Handle Profile Click to Show Popup ---
 document.addEventListener('click', (e) => {
   const profileInfo = e.target.closest('#profile-info');
   const popupOverlay = document.getElementById('popup-overlay');
   const signoutPopup = document.getElementById('signout-popup');
 
   if (profileInfo) {
-    const data = JSON.parse(localStorage.getItem('user'));
-    if (data && popupOverlay && signoutPopup) {
-      document.getElementById('popup-name').textContent = data.name;
-      document.getElementById('popup-pic').src = data.picture;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && popupOverlay && signoutPopup) {
+      document.getElementById('popup-name').textContent = currentUser.name || currentUser.email.split('@')[0];
+      document.getElementById('popup-pic').src = 'logo.png'; // Placeholder image
       popupOverlay.style.display = 'block';
       signoutPopup.style.display = 'block';
     }
   }
 });
 
-// Hide popup on outside click
+// --- Hide Popup on Outside Click ---
 const popupOverlay = document.getElementById('popup-overlay');
 if (popupOverlay) {
   popupOverlay.addEventListener('click', (e) => {
     const signoutPopup = document.getElementById('signout-popup');
-    // Only close if the click is directly on the overlay, not its children
     if (e.target === popupOverlay && signoutPopup) {
-      popupOverlay.classList.remove('active'); // Use class for transition
-      signoutPopup.classList.remove('active'); // Use class for transition
-      // For immediate removal, you can set display: 'none' after a short delay
-      // to allow transition to complete, or just set it directly if no transition.
+      popupOverlay.classList.remove('active');
+      signoutPopup.classList.remove('active');
       popupOverlay.style.display = 'none';
       signoutPopup.style.display = 'none';
     }
