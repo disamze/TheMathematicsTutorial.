@@ -13,8 +13,6 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Lottie Player CDN -->
   <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6841485505414854" crossorigin="anonymous"></script>
@@ -39,6 +37,8 @@
         <a href="#notes" aria-label="Go to Notes section" title="Notes"><i class='bx bx-note'></i><span>Notes</span></a>
         <a href="#questions" aria-label="Go to Questions section" title="Questions"><i class='bx bx-help-circle'></i><span>Questions</span></a>
         <a href="#books" aria-label="Go to Books section" title="Books"><i class='bx bx-book'></i><span>Books</span></a>
+        <a href="#schedule" aria-label="Go to Schedule section" title="Schedule" style="display: none;"><i class='bx bx-calendar'></i><span>Schedule</span></a>
+        <a href="#manage-students" aria-label="Go to Manage Students section" title="Manage Students" style="display: none;"><i class='bx bx-group'></i><span>Students</span></a>
         <a href="#testimonials" aria-label="Go to Testimonials section" title="Testimonials"><i class='bx bx-message-square-dots'></i><span>Testimonials</span></a>
         <a href="#contact" class="btn small" aria-label="Go to Contact section" title="Contact"><i class='bx bx-envelope'></i><span>Contact</span></a>
       </nav>
@@ -50,144 +50,24 @@
     </div>
   </header>
 
-  <!-- Homepage Section -->
-  <section class="homepage-hero" id="homepage-hero">
-    <div class="container homepage-grid">
-      <div class="homepage-info">
-        <h1>Unlock Your Potential with <span>The Mathematics Tutorial</span></h1>
-        <p>
-          Expert-led online and offline tuition for Mathematics & Science.
-          Achieve academic excellence with personalized coaching and proven strategies.
-        </p>
-        <div class="offers">
-          <h3>Exclusive Offers:</h3>
-          <ul>
-            <li><i class='bx bx-check-circle'></i> First 3 classes FREE for new students!</li>
-            <li><i class='bx bx-check-circle'></i> 15% off on annual tuition plans.</li>
-            <li><i class='bx bx-check-circle'></i> Group discounts available.</li>
-          </ul>
-        </div>
-        <button class="btn" id="homepage-login-btn">Login to Access Resources</button>
-      </div>
-      <div class="homepage-img">
-        <img src="shashi.png" alt="Mathematics Tutorial" />
-      </div>
-    </div>
-    <!-- NEW AD SLOT ON HOMEPAGE -->
-    
-  </section>
-
-  <!-- Why Choose Us Section (New) -->
-  <section class="homepage-section why-choose-us" id="why-choose-us">
-    <div class="container">
-      <h2>Why Choose Us?</h2>
-      <div class="why-choose-us-grid">
-        <div class="card">
-          <i class='bx bx-award'></i>
-          <h3>Experienced Educators</h3>
-          <p>Learn from highly qualified and experienced tutors dedicated to your success.</p>
-        </div>
-        <div class="card">
-          <i class='bx bx-book-open'></i>
-          <h3>Comprehensive Curriculum</h3>
-          <p>Covers ICSE, CBSE, and State Boards with in-depth subject mastery.</p>
-        </div>
-        <div class="card">
-          <i class='bx bx-group'></i>
-          <h3>Personalized Attention</h3>
-          <p>Small batch sizes ensure individual focus and tailored learning plans.</p>
-        </div>
-        <div class="card">
-          <i class='bx bx-line-chart'></i>
-          <h3>Proven Results</h3>
-          <p>Our students consistently achieve top grades and academic milestones.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Our Courses Section (New) -->
-  <section class="homepage-section our-courses" id="our-courses">
-    <div class="container">
-      <h2>Our Courses</h2>
-      <div class="our-courses-grid">
-        <div class="course-card">
-          <h3>Mathematics</h3>
-          <ul>
-            <li>Algebra & Trigonometry</li>
-            <li>Calculus & Analytic Geometry</li>
-            <li>Statistics & Probability</li>
-            <li>Geometry & Mensuration</li>
-          </ul>
-        </div>
-        <div class="course-card">
-          <h3>Science</h3>
-          <ul>
-            <li>Physics Fundamentals</li>
-            <li>Chemistry Basics</li>
-            <li>Biology Essentials</li>
-            <li>Environmental Science</li>
-          </ul>
-        </div>
-        <div class="course-card">
-          <h3>Exam Prep</h3>
-          <ul>
-            <li>Board Exam Crash Courses</li>
-            <li>Competitive Exam Coaching</li>
-            <li>Mock Tests & Analysis</li>
-            <li>Doubt Clearing Sessions</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Homepage Testimonials Section (New) -->
-  <section class="homepage-section homepage-testimonials" id="homepage-testimonials">
-    <div class="container">
-      <h2>What Our Students Say</h2>
-      <div class="testimonial-grid">
-        <div class="testimonial-card">
-          <p>“Shashi Sir’s classes transformed my problem-solving—I jumped from 65% to 88% in boards!”</p>
-          <h5>— Aisha K., Class 12</h5>
-        </div>
-        <div class="testimonial-card">
-          <p>“His concise notes and real-life examples make every concept stick. Highly recommend!”</p>
-          <h5>— Rahul S., Class 10</h5>
-        </div>
-        <div class="testimonial-card">
-          <p>“Excellent teacher with a unique way of explaining complex concepts!”</p>
-          <h5>— Priya M., Class 9</h5>
-        </div>
-        <div class="testimonial-card">
-          <p>“Math was never this fun! Shashi Sir makes everything easy to understand.”</p>
-          <h5>— Rohan T., Class 11</h5>
-        </div>
-        <div class="testimonial-card">
-          <p>“Outstanding tutor! Cleared all my doubts before exams.”</p>
-          <h5>— Neha R., Class 10</h5>
-        </div>
-        <div class="testimonial-card">
-          <p>“He explains complex topics in the simplest way possible.”</p>
-          <h5>— Aman S., Class 12</h5>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Login Screen -->
-  <section class="login-container" id="login-screen" style="display: none;">
+  <section class="login-container" id="login-screen">
     <div class="login-box" id="login-box">
       <div class="login-header">
         <img src="logo.png" alt="Logo" class="login-logo">
         <h2>Welcome to The Mathematics Tutorial</h2>
-        <p>Sign in to access exclusive notes, practice questions, and more!</p>
+        <p>Sign in to access your resources!</p>
       </div>
-      <div id="g_id_onload" data-client_id="504410333231-pm1tcs3nrdurskku87dbqev71o6iogde.apps.googleusercontent.com"
-        data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
-      <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with"
-        data-size="large"></div>
-      <div class="welcome-message" id="welcome-message"></div>
+      <form id="login-form">
+        <div class="form-row">
+          <input type="email" id="login-email" placeholder="Email Address" required aria-label="Email Address" />
+        </div>
+        <div class="form-row">
+          <input type="password" id="login-password" placeholder="Password" required aria-label="Password" />
+        </div>
+        <button type="submit" class="btn">Login</button>
+        <div id="login-message" style="margin-top: 1rem; text-align: center; font-weight: 600;"></div>
+      </form>
     </div>
   </section>
 
@@ -300,6 +180,7 @@
       <section id="notes" class="list-section">
         <div class="container">
           <h2>Downloadable Notes</h2>
+          <button id="add-note-btn" class="btn" style="display: none; margin-bottom: 1rem;">Add New Note</button>
           <ul id="notes-list" class="item-list"></ul>
         </div>
       </section>
@@ -308,6 +189,7 @@
       <section id="questions" class="list-section">
         <div class="container">
           <h2>Practice Questions</h2>
+          <button id="add-question-btn" class="btn" style="display: none; margin-bottom: 1rem;">Add New Question</button>
           <ul id="questions-list" class="item-list"></ul>
         </div>
       </section>
@@ -316,7 +198,51 @@
       <section id="books" class="list-section">
         <div class="container">
           <h2>Recommended Books</h2>
+          <button id="add-book-btn" class="btn" style="display: none; margin-bottom: 1rem;">Add New Book</button>
           <ul id="books-list" class="item-list"></ul>
+        </div>
+      </section>
+
+      <!-- SCHEDULE (Teacher can set, Student can view) -->
+      <section id="schedule" class="list-section" style="display: none;">
+        <div class="container">
+          <h2>Class Schedule</h2>
+          <div id="schedule-content">
+            <!-- Teacher form to add schedule -->
+            <form id="schedule-form" style="display: none; margin-bottom: 2rem;">
+              <h3>Set New Schedule Entry</h3>
+              <div class="form-row">
+                <input type="text" id="schedule-title" placeholder="Event Title" required />
+                <input type="date" id="schedule-date" required />
+              </div>
+              <div class="form-row">
+                <input type="time" id="schedule-time" required />
+                <input type="text" id="schedule-link" placeholder="Meeting Link (Optional)" />
+              </div>
+              <textarea id="schedule-description" rows="3" placeholder="Description (e.g., topics covered)"></textarea>
+              <button type="submit" class="btn">Add Schedule Entry</button>
+            </form>
+            <!-- Display schedule -->
+            <ul id="schedule-list" class="item-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- MANAGE STUDENTS (Teacher Only) -->
+      <section id="manage-students" class="list-section" style="display: none;">
+        <div class="container">
+          <h2>Manage Students</h2>
+          <form id="add-student-form" style="margin-bottom: 2rem;">
+            <h3>Add New Student</h3>
+            <div class="form-row">
+              <input type="email" id="new-student-email" placeholder="Student Email" required />
+              <input type="password" id="new-student-password" placeholder="Student Password" required />
+            </div>
+            <button type="submit" class="btn">Add Student</button>
+            <div id="add-student-message" style="margin-top: 1rem; text-align: center; font-weight: 600;"></div>
+          </form>
+          <h3>Current Students</h3>
+          <ul id="students-list" class="item-list"></ul>
         </div>
       </section>
 
@@ -393,7 +319,7 @@
           </div>
         </div>
       </section>
-      
+
 
       <!-- CONTACT -->
       <section id="contact" class="contact">
@@ -461,8 +387,6 @@
       </div>
     </footer>
 
-
-
     <!-- Signout Popup -->
     <div id="popup-overlay"></div>
     <div id="signout-popup">
@@ -482,8 +406,26 @@
       </div>
       <button class="close-btn" aria-label="Close overlay">&times;</button>
     </div>
+
+    <!-- Modals for Adding Resources (Teacher Only) -->
+    <div id="add-resource-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modal-title">Add New Resource</h2>
+        <form id="resource-form">
+          <div class="form-row">
+            <input type="text" id="resource-title" placeholder="Resource Title" required />
+          </div>
+          <div class="form-row">
+            <input type="file" id="resource-file" accept=".pdf" required />
+          </div>
+          <button type="submit" class="btn">Add Resource</button>
+          <div id="resource-message" style="margin-top: 1rem; text-align: center; font-weight: 600;"></div>
+        </form>
+      </div>
+    </div>
+
     <!-- Custom Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6841485505414854" crossorigin="anonymous"></script>
     <script src="script.js"></script>
 </body>
 <amp-auto-ads type="adsense"
